@@ -1,0 +1,24 @@
+name: Relatar problema
+description: Algo não funcionou como esperado.
+title: '[Bug] '
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Versão do PiP Overlay
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Ambiente
+      description: Windows, navegador, GPU e modo de exibição do jogo. Não inclua dados pessoais.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: O que aconteceu e como reproduzir
+      description: Informe o resultado esperado, o observado e os passos para chegar ao problema.
+    validations:
+      required: true

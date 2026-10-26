@@ -1,0 +1,32 @@
+# Build outputs, local toolchains and package caches
+bin/
+obj/
+artifacts/
+dist/
+.cache/
+.tools/
+.vs/
+.idea/
+
+# Local preferences, credentials and machine-specific discovery data
+data/
+.env
+.env.*
+!.env.example
+*.user
+*.suo
+*.pdb
+PipD3D9-*.bin
+*.log
+*.zip
+*.exe
+*.dll
+*.pem
+*.key
+hosts.yml
+credentials*
+
+# Editor / OS files
+Thumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,17 @@
+PiP Overlay 0.10 — um único instalador
+
+PARA LEVAR PARA OUTRO COMPUTADOR
+Copie somente Instalar-PiP-Overlay.exe. Abra, clique em Instalar e depois em Concluir. O runtime necessário já está incluído. Não é preciso extensão, conta de desenvolvedor, RTSS ou outro download.
+
+PARA USAR
+1. Deixe PiP Overlay aberto; fechar a janela mantém a ferramenta junto ao relógio.
+2. Abra o vídeo em Picture-in-Picture no Edge ou Chrome usando o recurso do próprio navegador.
+3. Abra o Digimon. A overlay conecta automaticamente, sem voltar à ferramenta para iniciar.
+
+A abertura do PiP no navegador continua necessária. Esta versão elimina a extensão e sua instalação; não aciona o PiP de uma aba automaticamente.
+
+Arraste o vídeo no editor para ajustar posição e tamanho. Pausar interrompe também a reconexão automática; Retomar a reativa. Para encerrar o aplicativo, escolha Sair no ícone perto do relógio.
+
+O aplicativo não se configura para iniciar com o Windows. Depois de reiniciar o computador, abra PipOverlay.exe na pasta instalada. As preferências são guardadas na subpasta data. Para remover, encerre o aplicativo e exclua a pasta instalada.
+
+Esta atualização simplifica a instalação e mantém o renderizador e a conexão automática da versão 0.9. Não instala extensão nem altera políticas do navegador, Registro, serviços ou drivers. A instalação foi testada em pasta isolada; o fluxo real com navegador e jogo não foi repetido nesta atualização.

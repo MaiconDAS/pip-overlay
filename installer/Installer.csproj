@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType><TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+    <AssemblyName>Instalar-PiP-Overlay</AssemblyName><Version>0.10.0</Version>
+    <ApplicationIcon>../src/Assets/App.ico</ApplicationIcon>
+    <PublishSingleFile>true</PublishSingleFile><IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile><DebugType>none</DebugType>
+  </PropertyGroup>
+  <ItemGroup><EmbeddedResource Include="../dist/PiP-Overlay-Windows-x64-portatil.zip" LogicalName="payload.zip" /></ItemGroup>
+</Project>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="PiP Overlay">
+<rect width="128" height="128" rx="28" fill="#0f141e"/>
+<rect x="22" y="29" width="84" height="66" rx="8" fill="none" stroke="#6ce7c4" stroke-width="6"/>
+<rect x="62" y="61" width="37" height="27" rx="4" fill="#6ce7c4"/>
+</svg>
