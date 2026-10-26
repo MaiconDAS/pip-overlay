@@ -19,7 +19,7 @@
 
 ## O que é
 
-PiP Overlay é um aplicativo para Windows que leva o Picture-in-Picture do Edge ou Chrome para dentro de um jogo Direct3D 9. O foco atual é **Digimon Masters em fullscreen**. A imagem é desenhada pelo renderizador nativo, sem uma janela interativa sobre o jogo.
+PiP Overlay é um aplicativo para Windows que leva o Picture-in-Picture do Edge ou Chrome para dentro de um jogo Direct3D 9. Use o PiP sobre **seu jogo em fullscreen**, quando compatível com o renderizador. A imagem é desenhada pelo renderizador nativo, sem uma janela interativa sobre o jogo.
 
 Você abre o PiP do navegador. A ferramenta encontra o vídeo e o jogo, inicia a overlay e mantém os controles no editor, fora da partida.
 
@@ -28,7 +28,7 @@ Você abre o PiP do navegador. A ferramenta encontra o vídeo e o jogo, inicia a
 1. Baixe **`Instalar-PiP-Overlay.exe`** em [Releases](https://github.com/MaiconDAS/pip-overlay/releases).
 2. Execute o instalador, escolha uma pasta nova e conclua a instalação. O .NET necessário já está incluído.
 3. Deixe o aplicativo aberto e abra o vídeo em PiP no **Microsoft Edge** ou **Google Chrome**.
-4. Abra o Digimon. A conexão é automática; não é preciso voltar ao aplicativo para clicar em Iniciar.
+4. Abra seu jogo. A conexão é automática; não é preciso voltar ao aplicativo para clicar em Iniciar.
 
 **Não é necessário instalar extensão, RTSS ou criar uma conta de desenvolvedor.** O PiP normal do navegador continua sendo a fonte de vídeo e precisa permanecer aberto, sem minimizar.
 
@@ -66,7 +66,7 @@ A posição e o tamanho são proporcionais ao monitor selecionado. A interação
 | Sistema | Windows 10 a partir da versão 2004 / Windows 11, x64 |
 | Navegadores de origem | Edge e Chrome, usando o PiP nativo |
 | Renderizador | Direct3D 9; carregamento direcionado ao processo permitido |
-| Jogo priorizado | Digimon Masters; não é um overlay universal para qualquer jogo |
+| Jogos | A detecção automática ainda é limitada aos processos suportados; compatibilidade com outros jogos não foi implementada nem validada |
 | Outros renderizadores | Direct3D 11/12, Vulkan e OpenGL não implementados |
 | Distribuição | Projeto experimental, versão 0.10.0 |
 
@@ -78,7 +78,7 @@ Vídeos protegidos podem não ser capturáveis. O projeto não altera proteçõe
 
 O navegador continua decodificando o vídeo. A captura é reduzida na GPU antes de uma leitura assíncrona e do envio ao renderizador Direct3D 9. Não há codificação ou gravação de imagens por quadro.
 
-Ainda existe transferência pela CPU e consumo de GPU. Um overlay maior custa mais. As medições sintéticas disponíveis variaram e **não demonstram uma redução conclusiva do impacto no Digimon**. Em repouso, a busca ocorre a cada 1,5 segundo; seu consumo ainda não foi medido separadamente.
+Ainda existe transferência pela CPU e consumo de GPU. Um overlay maior custa mais. As medições sintéticas disponíveis variaram e **não demonstram uma redução conclusiva do impacto no jogo**. Em repouso, a busca ocorre a cada 1,5 segundo; seu consumo ainda não foi medido separadamente.
 
 Para uma máquina mais limitada, comece com um vídeo pequeno e o modo **Econômico**. Saiba mais em [arquitetura e validação](docs/ARCHITECTURE.md).
 
@@ -101,4 +101,4 @@ O projeto ainda não definiu uma licença de código aberto para o código próp
 
 ---
 
-<p align="center">Criado por <a href="https://github.com/MaiconDAS">MaiconDAS</a> · Projeto independente, sem afiliação com Microsoft, Google, MSI ou Digimon Masters.</p>
+<p align="center">Criado por <a href="https://github.com/MaiconDAS">MaiconDAS</a> · Projeto independente, sem afiliação com Microsoft, Google, MSI ou desenvolvedores de jogos.</p>

@@ -74,7 +74,7 @@ internal static class RtssTest
             bool released=client.Release();
             log.Add($"Atualizações aceitas pela memória: {accepted}. Liberação imediata: {released}.");
             log.Add("Isso NÃO comprova que as imagens foram renderizadas. Conferir visualmente alternância A/B no host de teste RTSS.");
-            log.Add("Ainda não testa vídeo, recarga de pixels no mesmo arquivo, fullscreen do Digimon ou desempenho.");
+            log.Add("Ainda não testa vídeo, recarga de pixels no mesmo arquivo, fullscreen do jogo ou desempenho.");
             File.WriteAllLines(report,log);return accepted>0?0:1;
         } catch(Exception e) {
             log.Add("Não foi possível executar o teste RTSS: "+e.Message);

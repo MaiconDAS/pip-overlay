@@ -93,7 +93,7 @@ internal sealed class MainForm : Form
             if(automatic.TakeAttempt(source==null?null:$"{source.Handle}:{source.ProcessId}",target?.Pid,false))Start();
             else if(!automatic.Enabled)status.Text="Pausado · clique em Retomar quando quiser.";
             else if(source==null)status.Text="Abra o vídeo em PiP no Edge ou Chrome.";
-            else if(target==null)status.Text="Vídeo pronto · aguardando o Digimon abrir.";
+            else if(target==null)status.Text="Vídeo pronto · aguardando seu jogo abrir.";
         }finally{refreshing=false;}
     }
     protected override void OnHandleDestroyed(EventArgs e){hotkeys?.Dispose();hotkeys=null;base.OnHandleDestroyed(e);}
@@ -108,7 +108,7 @@ internal sealed class MainForm : Form
     void RefreshTargets(){Stop("");targets.Items.Clear();targets.Items.AddRange(RenderTarget.Find().Where(x=>x.Name=="DigimonMasters").ToArray());if(targets.Items.Count>0)targets.SelectedIndex=0;}
     void Start(){if(sources.SelectedItem is not WindowSource source){status.Text="Abra o vídeo em PiP no Edge ou Chrome.";return;}connectionFailed=false;Stop("");try{
         if(!source.Exists||Native.IsIconic(source.Handle))throw new InvalidOperationException("Restaure o PiP antes de iniciar.");
-        if(targets.SelectedItem is not RenderTarget target)throw new InvalidOperationException("Abra o Digimon Masters e clique em Atualizar.");
+        if(targets.SelectedItem is not RenderTarget target)throw new InvalidOperationException("Abra seu jogo e clique em Atualizar.");
         session=new GpuVideoSession(source,settings,editor.MonitorSize,target);editor.Aspect=(double)session.SourceSize.Width/session.SourceSize.Height;UpdateCanvas();editor.AttachSource(source.Handle);
         lease=new SourceLease(source);active=source;activeTarget=target.Pid;start.Enabled=false;stop.Enabled=true;elapsed.Restart();lastFrames=0;lastTick=Environment.TickCount64;pulse.Start();status.Text="Conectando ao vídeo…";
     }catch(Exception e){Fail(e.Message);}}

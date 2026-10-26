@@ -24,7 +24,7 @@ As duas compilações usam `artifacts/app` por padrão. Para um Zig já disponí
 pwsh ./scripts/Test.ps1
 ```
 
-O comando executa testes de conexão automática, atalhos simulados e geometria. Não registra atalhos globais nem conecta ao Digimon. O workflow de CI roda esse conjunto em Windows.
+O comando executa testes de conexão automática, atalhos simulados e geometria. Não registra atalhos globais nem conecta ao seu jogo. O workflow de CI roda esse conjunto em Windows.
 
 Para teste de renderização, compile primeiro os componentes nativos e execute explicitamente:
 

@@ -6,7 +6,7 @@ Copie somente Instalar-PiP-Overlay.exe. Abra, clique em Instalar e depois em Con
 PARA USAR
 1. Deixe PiP Overlay aberto; fechar a janela mantém a ferramenta junto ao relógio.
 2. Abra o vídeo em Picture-in-Picture no Edge ou Chrome usando o recurso do próprio navegador.
-3. Abra o Digimon. A overlay conecta automaticamente, sem voltar à ferramenta para iniciar.
+3. Abra seu jogo. A overlay conecta automaticamente, sem voltar à ferramenta para iniciar.
 
 A abertura do PiP no navegador continua necessária. Esta versão elimina a extensão e sua instalação; não aciona o PiP de uma aba automaticamente.
 

@@ -28,7 +28,7 @@ Quando não há sessão, uma consulta periódica de 1,5 segundo busca PiP e jogo
 - Validação sintética anterior da renderização em fullscreen: 25 verificações de pixels sem divergências, aproximadamente 29 fps enviados naquela execução.
 - Testes de integridade da extração do instalador 0.10 e recusa a sobrescrever pasta existente.
 
-Esses resultados têm escopos diferentes. Não representam benchmark controlado do Digimon, medição de consumo em repouso ou garantia de comportamento em outro computador. Os resultados históricos com caminhos locais não são publicados no repositório.
+Esses resultados têm escopos diferentes. Não representam benchmark controlado do jogo, medição de consumo em repouso ou garantia de comportamento em outro computador. Os resultados históricos com caminhos locais não são publicados no repositório.
 
 ## Limites atuais
 
