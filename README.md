@@ -23,6 +23,16 @@ PiP Overlay é um aplicativo para Windows que leva o Picture-in-Picture do Edge 
 
 Você escolhe seu jogo uma vez, usa **Abrir jogo** e abre o PiP do navegador. A ferramenta conecta o vídeo automaticamente e mantém os controles fora da partida.
 
+## Mudanças na versão 0.11
+
+- **Mais nitidez:** captura em resolução nativa até 1080p no modo Máxima, evitando redução intermediária quando a fonte permite.
+- **Mais renderizadores:** DirectX 11, DirectX 12 e OpenGL com motor incluído; Vulkan com camada própria, em 32 e 64 bits.
+- **Abertura de Jogos:** botão **Abrir jogo**, seleção salva e reconexão ao mesmo processo após reabrir a ferramenta.
+- **Controle de consumo:** opções de até 60, 30 e 15 fps; resolução e taxa efetiva no status.
+- **Distribuição:** um instalador com dependências incluídas e interface sem ferramentas internas de teste.
+
+Consulte o [histórico completo](CHANGELOG.md), a [compatibilidade com Jogos](docs/COMPATIBILITY.md) e os [resultados dos testes](docs/VALIDATION-0.11.md).
+
 ## Como usar
 
 1. Baixe **`Instalar-PiP-Overlay.exe`** em [Releases](https://github.com/MaiconDAS/pip-overlay/releases).
@@ -61,18 +71,21 @@ A posição e o tamanho são proporcionais ao monitor selecionado. A interação
 - **Até 60 fps**, com alternativas de 30 e 15 fps.
 - **Um instalador independente**, sem downloads extras durante a instalação.
 
-## Compatibilidade e estado do projeto
+## Compatibilidade com Jogos
 
 | Item | Estado |
 | --- | --- |
 | Sistema | Windows 10 a partir da versão 2004 / Windows 11, x64 |
 | Navegadores de origem | Edge e Chrome, usando o PiP nativo |
-| Renderizadores | D3D9 legado; D3D11, D3D12 e OpenGL via motor incluído; Vulkan por camada própria |
+| DirectX 9 | Legado para processos reconhecidos; não é suporte genérico a todos os jogos D3D9 |
+| DirectX 11 / DirectX 12 / OpenGL | Implementados e testados em hosts próprios, em 32 e 64 bits |
 | Jogos | Inicialização do executável escolhido; launchers que criam outro processo e proteções podem impedir a conexão |
-| Vulkan | SDR RGBA/BGRA 8 bits, fila gráfica com apresentação; limitações adicionais na arquitetura |
+| Vulkan | Camada própria, testada em 32 e 64 bits; inicialmente SDR RGBA/BGRA UNORM de 8 bits |
 | Distribuição | Projeto experimental, versão 0.11.0 |
 
 Os testes automatizados cobrem lógica de conexão, atalhos e geometria. A renderização também foi exercitada em um aplicativo Direct3D 9 próprio, incluindo fullscreen. Isso **não equivale a uma certificação de compatibilidade com todas as versões do jogo ou drivers**. D3D11, D3D12, OpenGL e Vulkan passaram por verificações de pixels em hosts próprios; a captura nativa preservou os pixels de padrões em 720p e 1080p. Veja [os resultados e limites](docs/VALIDATION-0.11.md).
+
+A tabela detalhada de [compatibilidade com Jogos](docs/COMPATIBILITY.md) diferencia implementação, testes em janela/fullscreen e casos ainda não validados. Não há lista de jogos certificados para as novas APIs.
 
 Vídeos protegidos podem não ser capturáveis. O projeto não altera proteções do jogo nem tenta contorná-las.
 
