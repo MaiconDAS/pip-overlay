@@ -4,7 +4,7 @@
 - **.NET / Windows Desktop Runtime**, Microsoft e contribuidores. O empacotamento inclui `LICENSE-DOTNET.txt`, `LICENSE-WINDOWSDESKTOP.txt` e `THIRD-PARTY-NOTICES-DOTNET.txt` dos pacotes oficiais usados na compilação.
 - **Zig 0.14.1**, ferramenta de compilação portátil obtida de https://ziglang.org/download/0.14.1/. Não é distribuída dentro do instalador do aplicativo.
 
-Os nomes de navegadores, jogos e tecnologias identificam compatibilidade; não indicam parceria ou aprovação de seus titulares. A licença do código original do PiP Overlay ainda será definida pelo mantenedor.
+Os nomes de navegadores, jogos e tecnologias identificam compatibilidade; não indicam parceria ou aprovação de seus titulares. O código original do PiP Overlay está sob a [licença MIT](LICENSE). Essa licença não substitui as licenças dos componentes de terceiros listados aqui.
 
 ## Renderizadores da versão 0.11
 

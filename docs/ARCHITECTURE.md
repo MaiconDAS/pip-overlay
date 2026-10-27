@@ -4,9 +4,9 @@ A captura usa Windows Graphics Capture e D3D11, com três buffers de leitura e m
 
 ## Qualidade
 
-Máxima preserva a resolução capturada até 1920 × 1080 e permite até 60 fps. Quando tamanho e formato BGRA coincidem, uma cópia direta substitui a filtragem. O PiP do navegador é ampliado temporariamente, sem ativação, e restaurado ao parar. O navegador pode limitar esse tamanho; o status mostra a resolução efetiva. Selecionar 1080p no site não garante uma janela PiP com 1920 × 1080 pixels.
+Resolução e FPS são independentes. Os limites de captura são 1920 × 1080, 1280 × 720, 854 × 480 ou adaptação ao tamanho do overlay. A frequência pode ser 60, 30 ou 15 fps. Quando tamanho e formato BGRA coincidem, uma cópia direta substitui a filtragem. O PiP do navegador é ampliado temporariamente, sem ativação, e restaurado ao parar. O navegador pode limitar esse tamanho; o status mostra a resolução efetiva. Selecionar 1080p no site não garante uma janela PiP com 1920 × 1080 pixels.
 
-Equilibrada e Econômica usam 30 e 15 fps e reduzem a captura ao tamanho do overlay. Máxima pode consumir mais memória e largura de banda.
+Alterar apenas o FPS mantém o limite de resolução e o tamanho solicitado à janela de origem. A opção Adaptar ao tamanho quantiza a resolução para reduzir realocações durante o arraste. Resoluções maiores podem consumir mais memória e largura de banda.
 
 ## Renderizadores
 
@@ -16,7 +16,7 @@ Equilibrada e Econômica usam 30 e 15 fps e reduzem a captura ao tamanho do over
 
 ## Inicialização
 
-**Abrir jogo** inicia o executável escolhido. O auxiliar da mesma arquitetura prepara esse processo antes do ponto de entrada. Arquivos e configurações ficam em `data/games` na instalação. Não são escritos arquivos na pasta do jogo, Registro, serviços ou variáveis globais. A camada Vulkan é habilitada somente no ambiente do processo filho.
+**Iniciar jogo configurado**, no menu do ícone perto do relógio, inicia o executável escolhido. O auxiliar da mesma arquitetura prepara esse processo antes do ponto de entrada. Arquivos e configurações ficam em `data/games` na instalação. Não são escritos arquivos na pasta do jogo, Registro, serviços ou variáveis globais. A camada Vulkan é habilitada somente no ambiente do processo filho.
 
 Pausar torna os renderizadores passivos; bibliotecas permanecem carregadas até o jogo terminar. A descoberta do PiP ocorre a cada 1,5 segundo quando não há sessão. Uma falha não gera tentativas infinitas.
 

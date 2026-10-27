@@ -1,6 +1,6 @@
 # Compatibilidade com Jogos
 
-Estado da versão **0.11.0**, experimental. Suporte ao renderizador não significa que todos os jogos que usam essa API sejam compatíveis.
+Estado da versão **0.11.1**, experimental. Suporte ao renderizador não significa que todos os jogos que usam essa API sejam compatíveis.
 
 | Componente | Suporte e validação |
 | --- | --- |
@@ -20,7 +20,7 @@ Estado da versão **0.11.0**, experimental. Suporte ao renderizador não signifi
 
 ## Como iniciar Jogos
 
-Abra o PiP no navegador e use **Abrir jogo** na ferramenta. Selecione o executável na primeira vez. A seleção fica salva. A conexão com o vídeo é automática quando a fonte e o renderizador estão disponíveis.
+Abra o PiP no navegador e use **Iniciar jogo configurado** no menu do ícone da ferramenta perto do relógio. Selecione o executável na primeira vez. A seleção fica salva. A conexão com o vídeo é automática quando a fonte e o renderizador estão disponíveis.
 
 Launchers que criam outro processo e proteções do jogo podem impedir a conexão. Não há tentativa de contornar essas proteções. Vídeos protegidos também podem não ser capturáveis.
 

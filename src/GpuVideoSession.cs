@@ -89,7 +89,7 @@ internal sealed class GpuVideoSession : IDisposable
             while(!cancel.IsCancellationRequested) {
                 long started=Environment.TickCount64;Settings current;Size screen;lock(gate){current=settings;screen=monitor;}
                 // Quantize resize requests to avoid reallocating textures for each mouse pixel.
-                PipResolution(producer,current.Quality=="maximum"?1920u:(uint)Math.Min(1920,((current.Width+63)/64)*64),current.Quality=="maximum"?1080u:(uint)Math.Min(1080,((current.Height+35)/36)*36));
+                var resolution=current.CaptureResolution;PipResolution(producer,(uint)resolution.Width,(uint)resolution.Height);
                 PipLayout(producer,(float)current.X/screen.Width,(float)current.Y/screen.Height,(float)current.Width/screen.Width,(float)current.Height/screen.Height);
                 var next=poolSize;
                 using(var frame=pool.TryGetNextFrame())if(frame!=null) {

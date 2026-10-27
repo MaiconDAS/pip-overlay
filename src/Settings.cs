@@ -14,7 +14,8 @@ internal sealed record Settings
     public int Height { get; set; } = 236;
     public int Opacity { get; set; } = 100;
     public int FramesPerSecond { get; set; } = 60;
-    public string Quality {get;set;} = "maximum";
+    public string Quality {get;set;} = "maximum"; // Legacy preference, used only when migrating.
+    public string? Resolution {get;set;}
     public string GameExecutable {get;set;} = "";
     public int CropLeft { get; set; }
     public int CropTop { get; set; }
@@ -22,12 +23,17 @@ internal sealed record Settings
     public int CropBottom { get; set; }
 
     internal Settings Validated() => this with {
-        X=Math.Clamp(X,0,32000), Y=Math.Clamp(Y,0,32000),FramesPerSecond=Quality=="economy"?15:Quality=="balanced"?30:60,
-        Quality=Quality is "balanced" or "economy"?Quality:"maximum",
+        X=Math.Clamp(X,0,32000), Y=Math.Clamp(Y,0,32000),FramesPerSecond=FramesPerSecond is 15 or 30 or 60?FramesPerSecond:30,
+        Resolution=Resolution is "1080p" or "720p" or "480p" or "auto"?Resolution:Resolution==null&&Quality is "balanced" or "economy"?"auto":"1080p",
         Width=Math.Clamp(Width,120,7680),Height=Math.Clamp(Height,68,4320),Opacity=Math.Clamp(Opacity,10,100),
         CropLeft=Math.Clamp(CropLeft,0,16000),CropTop=Math.Clamp(CropTop,0,16000),
         CropRight=Math.Clamp(CropRight,0,16000),CropBottom=Math.Clamp(CropBottom,0,16000)
     };
+    internal Size? SourceResolution => Validated().Resolution switch {
+        "1080p" => new Size(1920,1080), "720p" => new Size(1280,720),
+        "480p" => new Size(854,480), _ => null
+    };
+    internal Size CaptureResolution => SourceResolution ?? new Size(Math.Min(1920,((Width+63)/64)*64),Math.Min(1080,((Height+35)/36)*36));
     internal Rectangle Bounds(Rectangle screen)
     {
         var s=Validated();

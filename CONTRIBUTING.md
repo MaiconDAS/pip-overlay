@@ -12,4 +12,4 @@ Para alterações de código:
 
 Não altere configurações do Windows, políticas do navegador, serviços ou drivers para fazer um teste passar. Não adicione mecanismos para contornar proteções de jogos. Dependências devem manter suas licenças e ficar locais ao projeto sempre que possível.
 
-A licença de código próprio ainda não foi definida pelo mantenedor. Confirme as condições antes de planejar redistribuição ou contribuições extensas.
+O código próprio está sob a [licença MIT](LICENSE). Ao enviar uma contribuição, você concorda em disponibilizá-la sob essa mesma licença. Dependências de terceiros mantêm suas licenças originais.

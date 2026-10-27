@@ -31,8 +31,8 @@ internal static class Program
         using var form=new Form{Text="Instalar PiP Overlay",ClientSize=new Size(580,320),StartPosition=FormStartPosition.CenterScreen,FormBorderStyle=FormBorderStyle.FixedDialog,MaximizeBox=false,BackColor=Color.FromArgb(16,22,32),ForeColor=Color.White,Font=new Font("Segoe UI",10)};
         form.Icon=Icon.ExtractAssociatedIcon(Environment.ProcessPath!);
         var heading=new Label{Text="PiP Overlay",Font=new Font("Segoe UI",22,FontStyle.Bold),AutoSize=true,Location=new Point(24,20)};
-        var description=new Label{Text="Tudo em um instalador. Sem extensão ou cadastro.\nAbra seu jogo pela ferramenta e o PiP do navegador.",AutoSize=true,Location=new Point(26,76)};
-        var path=new TextBox{Text=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"PiP Overlay 0.11"),Location=new Point(26,139),Width=410};
+        var description=new Label{Text="Tudo em um instalador. Sem extensão ou cadastro.\nAbra o PiP do navegador para começar.",AutoSize=true,Location=new Point(26,76)};
+        var path=new TextBox{Text=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"PiP Overlay 0.11.1"),Location=new Point(26,139),Width=410};
         var browse=new Button{Text="Escolher…",Location=new Point(445,137),Size=new Size(108,32)};
         var status=new Label{Text="Escolha uma pasta nova. Para remover, basta excluir essa pasta.\nNão é necessário fechar os jogos para abrir a ferramenta.",Location=new Point(26,184),Size=new Size(530,58)};
         var install=new Button{Text="Instalar",Location=new Point(393,260),Size=new Size(160,38),BackColor=Color.FromArgb(91,210,187),ForeColor=Color.Black,FlatStyle=FlatStyle.Flat};
