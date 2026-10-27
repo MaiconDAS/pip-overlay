@@ -1,17 +1,21 @@
-PiP Overlay 0.10 — um único instalador
+PiP Overlay 0.11 — um único instalador
 
 PARA LEVAR PARA OUTRO COMPUTADOR
-Copie somente Instalar-PiP-Overlay.exe. Abra, clique em Instalar e depois em Concluir. O runtime necessário já está incluído. Não é preciso extensão, conta de desenvolvedor, RTSS ou outro download.
+Copie Instalar-PiP-Overlay.exe. Abra, escolha uma pasta nova e clique em Instalar e Concluir. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
 
 PARA USAR
 1. Deixe PiP Overlay aberto; fechar a janela mantém a ferramenta junto ao relógio.
-2. Abra o vídeo em Picture-in-Picture no Edge ou Chrome usando o recurso do próprio navegador.
-3. Abra seu jogo. A overlay conecta automaticamente, sem voltar à ferramenta para iniciar.
+2. Abra o vídeo em Picture-in-Picture no Edge ou Chrome.
+3. Clique em Abrir jogo na ferramenta. Escolha o executável na primeira vez.
+4. Arraste o vídeo no editor para ajustar posição e tamanho. A conexão é automática.
 
-A abertura do PiP no navegador continua necessária. Esta versão elimina a extensão e sua instalação; não aciona o PiP de uma aba automaticamente.
+A abertura do PiP no navegador continua necessária. Mantenha-o aberto e sem minimizar. Em Ajustes, Máxima preserva a resolução disponível até 1080p e solicita até 60 fps; o navegador e o computador podem impor limites menores. A janela de origem é ampliada temporariamente e restaurada ao parar. Equilibrada e Econômica reduzem o custo.
 
-Arraste o vídeo no editor para ajustar posição e tamanho. Pausar interrompe também a reconexão automática; Retomar a reativa. Para encerrar o aplicativo, escolha Sair no ícone perto do relógio.
+Pausar interrompe também a reconexão automática; Retomar a reativa. Configure atalhos em Ajustes. Para encerrar, escolha Sair no ícone perto do relógio.
 
-O aplicativo não se configura para iniciar com o Windows. Depois de reiniciar o computador, abra PipOverlay.exe na pasta instalada. As preferências são guardadas na subpasta data. Para remover, encerre o aplicativo e exclua a pasta instalada.
+COMPATIBILIDADE
+D3D9 legado, DirectX 11/12, OpenGL e Vulkan experimental. Os novos renderizadores precisam que o jogo seja iniciado pela ferramenta. Launchers que abrem outro processo e proteções do jogo podem impedir a conexão. Vulkan inicialmente suporta SDR RGBA/BGRA UNORM de 8 bits e apresentação por fila gráfica; HDR, múltiplas swapchains por apresentação e cadeias de extensão na apresentação não são suportados.
 
-Esta atualização simplifica a instalação e mantém o renderizador e a conexão automática da versão 0.9. Não instala extensão nem altera políticas do navegador, Registro, serviços ou drivers. A instalação foi testada em pasta isolada; o fluxo real com navegador e jogo não foi repetido nesta atualização.
+Os renderizadores passaram em aplicativos próprios de teste. Isso não comprova funcionamento em todos os jogos. Não há medição controlada do impacto em jogos reais desta versão nem garantia de 60 fps. Resultados: https://github.com/MaiconDAS/pip-overlay/blob/main/docs/VALIDATION-0.11.md
+
+O aplicativo não se configura para iniciar com o Windows. Abra PipOverlay.exe na pasta instalada após reiniciar. As preferências ficam em data. Para remover, encerre a ferramenta e os jogos iniciados por ela e exclua a pasta instalada. Nenhuma alteração no Registro, serviços, drivers ou políticas do navegador é necessária.

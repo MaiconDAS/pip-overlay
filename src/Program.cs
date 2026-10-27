@@ -9,6 +9,8 @@ internal static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 #if !PRODUCTION
+        if(args.Length>=2&&args[0]=="--quality-test")return QualityTests.Run(args[1]);
+        if(args.Length>=3&&args[0]=="--multi-test")return MultiApiTests.Run(args[1],args[2],args.Length>3?args[3]:"--timed");
         if(args.Length>=2&&args[0]=="--geometry-test")return GeometryTests.Run(args[1]);
         if(args.Length>=2&&args[0]=="--ux-preview"){using var form=new MainForm(true);form.Show();Application.DoEvents();if(args.Contains("--advanced")){var all=new List<Control>();void Collect(Control c){all.Add(c);foreach(Control child in c.Controls)Collect(child);}Collect(form);all.OfType<Button>().First(x=>x.AccessibleName=="Mostrar ou ocultar ajustes avançados").PerformClick();Application.DoEvents();}using var bitmap=new Bitmap(form.Width,form.Height);form.DrawToBitmap(bitmap,new Rectangle(Point.Empty,form.Size));bitmap.Save(args[1]);return 0;}
         if(args.Length>=2&&args[0]=="--auto-test")return AutoConnectTests.Run(args[1]);

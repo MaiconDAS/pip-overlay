@@ -9,6 +9,10 @@ New-Item -ItemType Directory -Force $dist | Out-Null
 & "$PSScriptRoot/Build-Native.ps1" -Destination $native -ZigPath $ZigPath
 foreach($file in @('PipRender32.dll','PipRender64.dll','PipAttach32.exe','PipAttach64.exe','PipProbe32.exe','PipProbe64.exe','PipGpu.dll','LICENSE-MINHOOK.txt')){Copy-Item (Join-Path $native $file) $stage}
 Copy-Item "$root/docs/USO.txt" "$stage/LEIA-ME.txt"
+New-Item -ItemType Directory "$stage/graphics" | Out-Null
+foreach($file in @('ReShade32.dll','ReShade64.dll','ReShade32.json','ReShade64.json','PipOverlay.addon32','PipOverlay.addon64','PipVulkan32.dll','PipVulkan64.dll','PipLaunch32.exe','PipLaunch64.exe','LICENSE-RESHADE.md')){Copy-Item "$native/graphics/$file" "$stage/graphics/$file"}
+Copy-Item "$root/vendor/vulkan/LICENSE.md" "$stage/graphics/LICENSE-VULKAN-HEADERS.md"
+Copy-Item "$root/effects" "$stage/effects" -Recurse
 $runtime=Get-ChildItem "$env:NUGET_PACKAGES/microsoft.netcore.app.runtime.win-x64" -Directory | Sort-Object {[version]$_.Name} -Descending | Select-Object -First 1
 $desktop=Get-ChildItem "$env:NUGET_PACKAGES/microsoft.windowsdesktop.app.runtime.win-x64" -Directory | Sort-Object {[version]$_.Name} -Descending | Select-Object -First 1
 Copy-Item "$($runtime.FullName)/LICENSE.TXT" "$stage/LICENSE-DOTNET.txt"

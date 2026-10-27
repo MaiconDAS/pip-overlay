@@ -13,14 +13,17 @@ internal sealed record Settings
     public int Width { get; set; } = 420;
     public int Height { get; set; } = 236;
     public int Opacity { get; set; } = 100;
-    public int FramesPerSecond { get; set; } = 30;
+    public int FramesPerSecond { get; set; } = 60;
+    public string Quality {get;set;} = "maximum";
+    public string GameExecutable {get;set;} = "";
     public int CropLeft { get; set; }
     public int CropTop { get; set; }
     public int CropRight { get; set; }
     public int CropBottom { get; set; }
 
     internal Settings Validated() => this with {
-        X=Math.Clamp(X,0,32000), Y=Math.Clamp(Y,0,32000),FramesPerSecond=Math.Clamp(FramesPerSecond,10,30),
+        X=Math.Clamp(X,0,32000), Y=Math.Clamp(Y,0,32000),FramesPerSecond=Quality=="economy"?15:Quality=="balanced"?30:60,
+        Quality=Quality is "balanced" or "economy"?Quality:"maximum",
         Width=Math.Clamp(Width,120,7680),Height=Math.Clamp(Height,68,4320),Opacity=Math.Clamp(Opacity,10,100),
         CropLeft=Math.Clamp(CropLeft,0,16000),CropTop=Math.Clamp(CropTop,0,16000),
         CropRight=Math.Clamp(CropRight,0,16000),CropBottom=Math.Clamp(CropBottom,0,16000)

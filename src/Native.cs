@@ -80,19 +80,37 @@ internal sealed record WindowSource(nint Handle,uint ProcessId,string Browser,st
     }
 }
 
-// Only transient Z-order is changed. No browser styles, settings, position or size are modified.
+// Transient source size and Z-order are restored when capture stops.
 internal sealed class SourceLease : IDisposable
 {
     readonly WindowSource source;
     readonly bool wasTopmost;
+    readonly Native.Rect original;
+    Size? requested;
+    bool resized;
     bool disposed;
-    internal SourceLease(WindowSource source)
+    internal SourceLease(WindowSource source,Size? resolution=null)
     {
         this.source=source;
         if (!source.Exists) throw new InvalidOperationException("A janela selecionada foi fechada. Atualize a lista.");
         wasTopmost=Native.IsTopmost(source.Handle);
-        try { KeepBehind(); } catch { Dispose(); throw; }
+        if(!Native.GetWindowRect(source.Handle,out original))throw new InvalidOperationException("A janela PiP não está mais disponível.");
+        try { KeepBehind();EnsureResolution(resolution); } catch { Dispose(); throw; }
     }
+    internal void EnsureResolution(Size? resolution){
+        if(disposed||!source.Exists||requested==resolution)return;
+        if(resolution is Size size){
+            var area=Screen.FromHandle(source.Handle).WorkingArea;
+            double ratio=(double)Math.Max(1,original.Right-original.Left)/Math.Max(1,original.Bottom-original.Top);
+            int width=Math.Min(size.Width,area.Width),height=(int)Math.Round(width/ratio);
+            if(height>Math.Min(size.Height,area.Height)){height=Math.Min(size.Height,area.Height);width=(int)Math.Round(height*ratio);}
+            if(!Native.SetWindowPos(source.Handle,Native.HwndBottom,area.X,area.Y,width,height,Native.NoActivatePos))
+                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+            resized=true;
+        }else if(resized){RestoreSize();resized=false;}
+        requested=resolution;
+    }
+    void RestoreSize(){Native.SetWindowPos(source.Handle,Native.HwndBottom,original.Left,original.Top,original.Right-original.Left,original.Bottom-original.Top,Native.NoActivatePos);}
     internal void KeepBehind()
     {
         if (disposed || !source.Exists) return;
@@ -108,6 +126,7 @@ internal sealed class SourceLease : IDisposable
     {
         if (disposed) return;
         disposed=true;
+        if(resized&&source.Exists)RestoreSize();
         if (wasTopmost && source.Exists)
             Native.SetWindowPos(source.Handle,Native.HwndTopmost,0,0,0,0,Native.NoMove|Native.NoSize|Native.NoActivatePos);
     }

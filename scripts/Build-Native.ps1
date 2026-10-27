@@ -24,3 +24,13 @@ foreach($arch in @('x86','x86_64')){
 & $ZigPath c++ -target x86_64-windows-gnu -O2 -shared "$native/capture.cpp" -ld3d11 -ld3dcompiler_47 -luser32 -o "$Destination/PipGpu.dll"
 if($LASTEXITCODE){throw 'Falha captura GPU'}
 Copy-Item "$mh/LICENSE.txt" "$Destination/LICENSE-MINHOOK.txt" -Force
+$graphics=Join-Path $Destination 'graphics'
+& "$PSScriptRoot/Initialize-Graphics.ps1" -Destination $graphics
+foreach($arch in @('x86','x86_64')){
+    $bits=if($arch -eq 'x86'){32}else{64}
+    & $ZigPath c++ -target "$arch-windows-gnu" -std=c++17 -O2 -municode "$native/launch.cpp" -o "$graphics/PipLaunch$bits.exe"
+    if($LASTEXITCODE){throw "Falha launcher $bits"}
+    & $ZigPath c++ -target "$arch-windows-gnu" -std=c++17 -O2 -shared -I "$root/vendor/vulkan/include" "$native/vulkan_layer.cpp" -luser32 "$native/vulkan_layer.def" -o "$graphics/PipVulkan$bits.dll"
+    if($LASTEXITCODE){throw "Falha Vulkan $bits"}
+}
+& "$PSScriptRoot/Build-Addon.ps1" -Destination $graphics

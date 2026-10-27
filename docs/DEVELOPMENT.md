@@ -63,3 +63,21 @@ A instalação é uma extração para uma pasta nova escolhida pelo usuário. N�
 Arquivos `Rtss*` e validações V4 em `src/` são referências históricas de desenvolvimento. O `.csproj` os exclui da build de produção. O produto atual não depende de RTSS.
 
 Não versionar executáveis, dados de uso, tokens, caches, resultados com caminhos pessoais ou arquivos `PipD3D9-*.bin` gerados em uma máquina específica.
+
+## Compilação e validação gráfica 0.11
+
+`Build-Native.ps1` também prepara ReShade 6.8.0 (extração, sem executar seu instalador), os cabeçalhos Vulkan e o compilador MSVC portátil. Downloads da Microsoft e do ReShade têm SHA-256 verificado e ficam em `.tools`. O primeiro build pode baixar centenas de megabytes. Os termos das ferramentas Microsoft continuam aplicáveis. O MSVC é necessário para a ABI do SDK ReShade; Zig compila os demais componentes.
+
+```powershell
+pwsh ./scripts/Test-Graphics.ps1 -ZigPath C:\caminho\zig.exe
+```
+
+Esse teste abre exclusivamente hosts próprios de D3D11, D3D12, OpenGL e Vulkan, em 32 e 64 bits. Verifica cinco posições e tamanhos por API; requer drivers com suporte às APIs. Também valida a preservação dos pixels em 720p/1080p, restauração da janela de origem e captura contínua em um host D3D9. Não é um benchmark de jogos nem do YouTube. Relatórios locais ficam em `artifacts/tests` e não devem ser versionados porque incluem caminhos da máquina. Veja `docs/VALIDATION-0.11.md` para os resultados publicados.
+
+Para conferir o instalador sem abrir o aplicativo nem alterar o Windows:
+
+```powershell
+pwsh ./scripts/Test-Package.ps1
+```
+
+O script compara por SHA-256 todos os arquivos extraídos com o ZIP, verifica a recusa de sobrescrita e procura artefatos internos indevidos. A pasta de teste permanece em `artifacts` para inspeção.

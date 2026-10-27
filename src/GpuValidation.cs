@@ -29,6 +29,7 @@ internal static class GpuValidation
         };
         Application.Run(demo);return result;
     }
+    [System.Runtime.InteropServices.DllImport("user32.dll")] static extern bool ShowWindow(nint window,int command);
     internal static int Run(string report,bool fullscreen,bool browser)
     {
         int result=1;using var demo=new DemoSource();
@@ -37,6 +38,7 @@ internal static class GpuValidation
             Process? host=null;GpuVideoSession? session=null;SourceLease? sourceLease=null;
             var samples=new List<object>();
             try {
+                ShowWindow(demo.Handle,4);await Task.Delay(150);
                 host=Process.Start(new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"PipTest32.exe"),(fullscreen?"--fullscreen ":"")+"--timed"){UseShellExecute=false,CreateNoWindow=true})!;
                 await Task.Delay(700);
                 if(host.HasExited)throw new InvalidOperationException($"Host encerrou: {host.ExitCode}");

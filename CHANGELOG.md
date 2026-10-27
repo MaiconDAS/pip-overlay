@@ -1,5 +1,15 @@
 # Histórico
 
+## 0.11.0 — qualidade e novos renderizadores
+
+- Captura em resolução nativa até 1080p no modo Máxima, com alvo de 60 fps; modos de 30/15 fps continuam disponíveis.
+- Ampliação temporária do PiP de origem e restauração ao parar; resolução efetiva visível no status.
+- DirectX 11/12 e OpenGL com motor incluído e add-on próprio; Vulkan com camada própria ativada apenas no processo iniciado.
+- Botão Abrir jogo e seleção persistente do executável, sem copiar arquivos para a pasta do jogo.
+- Preservação da conexão após reabrir a ferramenta, enquanto o mesmo processo do jogo continua ativo.
+- Testes gráficos com posições, tamanhos e conferência de pixels; documentação dos limites por API.
+
+Versão experimental: validação em hosts próprios, sem certificação de jogos, HDR ou garantia de 60 fps. Não altera configurações globais do Windows.
 ## 0.10.0 — primeira versão publicada neste repositório
 
 - Instalação independente em um único executável, sem extensão ou RTSS.

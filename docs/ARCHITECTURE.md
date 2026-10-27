@@ -1,35 +1,31 @@
 # Arquitetura e validação
 
-```mermaid
-flowchart LR
-    A[PiP do Edge ou Chrome] --> B[Windows Graphics Capture]
-    B --> C[Redimensionamento na GPU / D3D11]
-    C --> D[Leitura assíncrona + memória compartilhada]
-    D --> E[Textura e desenho no Direct3D 9]
-    E --> F[Jogo]
-    G[Editor WinForms] --> C
-    G --> E
-```
+A captura usa Windows Graphics Capture e D3D11, com três buffers de leitura e memória compartilhada. Não há recodificação nem gravação. Ainda existe cópia pela CPU; não é zero-copy.
 
-O vídeo não é recodificado. O produtor usa buffers de leitura e evita esperar por uma GPU ocupada. Há cópias por CPU entre a captura e o renderizador: esta implementação não é zero-copy.
+## Qualidade
 
-O renderizador preserva/restaura estados do dispositivo e desenha antes de `Present`. O auxiliar de carregamento aceita somente os nomes de processo explicitamente permitidos no código. Não é um injetor genérico. Ao pausar, o renderizador fica inativo; sua DLL permanece carregada até o processo do jogo terminar.
+Máxima preserva a resolução capturada até 1920 × 1080 e permite até 60 fps. Quando tamanho e formato BGRA coincidem, uma cópia direta substitui a filtragem. O PiP do navegador é ampliado temporariamente, sem ativação, e restaurado ao parar. O navegador pode limitar esse tamanho; o status mostra a resolução efetiva. Selecionar 1080p no site não garante uma janela PiP com 1920 × 1080 pixels.
 
-## Fluxo automático
+Equilibrada e Econômica usam 30 e 15 fps e reduzem a captura ao tamanho do overlay. Máxima pode consumir mais memória e largura de banda.
 
-`AutoConnect` permite uma tentativa por combinação de vídeo e processo. Falhas não geram uma sequência infinita de novas conexões. `Pausar` bloqueia novas tentativas; `Retomar` permite uma nova tentativa. As preferências ficam na própria pasta da instalação.
+## Renderizadores
 
-Quando não há sessão, uma consulta periódica de 1,5 segundo busca PiP e jogo. Com sessão ativa, essa busca de vídeo deixa de ocorrer; o aplicativo verifica se o processo do jogo continua disponível. Não é usada inicialização automática do Windows.
+- D3D9 mantém o renderizador legado para os processos reconhecidos.
+- D3D11, D3D12 e OpenGL usam ReShade 6.8.0 e um add-on próprio. O efeito desenha somente o retângulo do vídeo. A interface interna do motor é bloqueada; hooks de entrada e navegação por controle são desativados.
+- Vulkan usa uma camada própria de transferência/blit, sem shaders de storage image. Cada imagem da swapchain possui comandos, textura, upload, fence e semáforo próprios. A submissão espera os semáforos originais e a apresentação espera a composição. O semáforo só é reutilizado quando sua imagem retorna ao aplicativo. A GPU não é bloqueada a cada quadro; espera completa só ocorre na destruição dos recursos.
 
-## Evidência disponível
+## Inicialização
 
-- 14 verificações de lógica de conexão e persistência da pausa na versão 0.9.
-- Testes de atalhos e geometria disponíveis no código.
-- Validação sintética anterior da renderização em fullscreen: 25 verificações de pixels sem divergências, aproximadamente 29 fps enviados naquela execução.
-- Testes de integridade da extração do instalador 0.10 e recusa a sobrescrever pasta existente.
+**Abrir jogo** inicia o executável escolhido. O auxiliar da mesma arquitetura prepara esse processo antes do ponto de entrada. Arquivos e configurações ficam em `data/games` na instalação. Não são escritos arquivos na pasta do jogo, Registro, serviços ou variáveis globais. A camada Vulkan é habilitada somente no ambiente do processo filho.
 
-Esses resultados têm escopos diferentes. Não representam benchmark controlado do jogo, medição de consumo em repouso ou garantia de comportamento em outro computador. Os resultados históricos com caminhos locais não são publicados no repositório.
+Pausar torna os renderizadores passivos; bibliotecas permanecem carregadas até o jogo terminar. A descoberta do PiP ocorre a cada 1,5 segundo quando não há sessão. Uma falha não gera tentativas infinitas.
 
-## Limites atuais
+## Limites
 
-O PiP de origem precisa estar disponível à captura. Uma origem pequena limita a nitidez. O máximo de transporte é 1920 × 1080, e o tamanho solicitado acompanha o overlay. Direct3D 9 é o backend atual; outras APIs não estão implementadas. Conteúdo protegido pode bloquear a captura.
+- Se um launcher abre outro processo, selecione o executável que renderiza o jogo.
+- Vulkan inicial: SDR RGBA/BGRA 8 bits, fila gráfica com apresentação, uma swapchain por apresentação e sem extensões na cadeia de apresentação. Outros casos passam sem composição. HDR e device groups não são suportados.
+- Não há tentativa de contornar proteção de jogos ou conteúdo de vídeo.
+- Suporte à API não garante compatibilidade com todos os jogos e drivers.
+- Fonte, resolução disponibilizada pelo navegador e capacidade da máquina continuam limitando qualidade e fps.
+
+Veja [VALIDATION-0.11.md](VALIDATION-0.11.md).

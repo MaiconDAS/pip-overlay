@@ -45,7 +45,7 @@ internal sealed class MainForm : Form
         foreach(var box in new[]{sources,targets,monitors,quality})UiTheme.Combo(box);
         var toolbar=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false};toolbar.Controls.Add(UiTheme.Field("VÍDEO DO NAVEGADOR",sources,360));toolbar.Controls.Add(UiTheme.Field("JOGO",targets,300));
         var refresh=new Button{AccessibleName="Atualizar vídeos e jogos"};UiTheme.Button(refresh,"Atualizar","refresh");refresh.Margin=new Padding(0,25,0,0);refresh.Click+=(_,_)=>{automatic.Reset();Discover();};toolbar.Controls.Add(refresh);layout.Controls.Add(toolbar,0,1);
-        quality.Items.AddRange(new object[]{"Fluido · 30 fps","Econômico · 15 fps"});quality.SelectedIndex=settings.FramesPerSecond==15?1:0;
+        quality.Items.AddRange(new object[]{"Máxima · 60 fps","Equilibrada · 30 fps","Econômica · 15 fps"});quality.SelectedIndex=settings.Quality=="economy"?2:settings.Quality=="balanced"?1:0;
         var options=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false};options.Controls.Add(UiTheme.Field("MONITOR",monitors,260));options.Controls.Add(UiTheme.Field("REPRODUÇÃO",quality,205));dimensions.Margin=new Padding(10,31,0,0);dimensions.ForeColor=UiTheme.Muted;options.Controls.Add(dimensions);layout.Controls.Add(options,0,2);
         layout.Controls.Add(new Label{Text="POSIÇÃO DO VÍDEO    ·    Arraste para mover. Puxe as bordas para redimensionar.",AutoSize=true,ForeColor=UiTheme.Muted,Margin=new Padding(0,12,0,0)},0,3);layout.Controls.Add(editor,0,4);
         var footer=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false,Padding=new Padding(0,16,0,0)};UiTheme.Button(start,"Retomar","play",true);UiTheme.Button(stop,"Pausar","stop");status.AutoSize=false;status.Size=new Size(650,44);status.TextAlign=ContentAlignment.MiddleLeft;status.ForeColor=UiTheme.Muted;footer.Controls.Add(start);footer.Controls.Add(stop);footer.Controls.Add(status);layout.Controls.Add(footer,0,5);
@@ -58,7 +58,7 @@ internal sealed class MainForm : Form
         editor.LayoutChanged+=box=>{settings=settings with {X=box.X,Y=box.Y,Width=box.Width,Height=box.Height};Apply();};
         monitors.SelectedIndexChanged+=(_,_)=>{Stop("");automatic.Reset();UpdateCanvas();Discover();};
         sources.SelectedIndexChanged+=(_,_)=>{if(refreshing)return;Stop("");automatic.Reset();PreviewSelection();Discover();};
-        quality.SelectedIndexChanged+=(_,_)=>{settings=settings with {FramesPerSecond=quality.SelectedIndex==1?15:30};Apply();};
+        quality.SelectedIndexChanged+=(_,_)=>{settings=settings with {Quality=quality.SelectedIndex==2?"economy":quality.SelectedIndex==1?"balanced":"maximum",FramesPerSecond=quality.SelectedIndex==2?15:quality.SelectedIndex==1?30:60};Apply();};
         start.Click+=(_,_)=>ResumeAutomatic();stop.Click+=(_,_)=>PauseAutomatic();
         pulse.Tick+=(_,_)=>Poll();save.Tick+=(_,_)=>{save.Stop();Save();};
         targets.SelectedIndexChanged+=(_,_)=>{if(refreshing)return;Stop("");automatic.Reset();Discover();};
@@ -68,6 +68,8 @@ internal sealed class MainForm : Form
         tray.Icon=Icon;tray.Text="PiP Overlay · automático";tray.Visible=!designPreview;
         VisibleChanged+=(_,_)=>{if(!Visible)editor.DetachSource();else PreviewSelection();};
         var menu=new ContextMenuStrip();menu.Items.Add("Ajustar posição e tamanho",null,(_,_)=>ShowEditor());menu.Items.Add("Retomar",null,(_,_)=>ResumeAutomatic());menu.Items.Add("Pausar",null,(_,_)=>PauseAutomatic());menu.Items.Add("Sair",null,(_,_)=>{exiting=true;Close();});tray.ContextMenuStrip=menu;tray.DoubleClick+=(_,_)=>ShowEditor();
+        var launchGame=new Button{AccessibleName="Abrir seu jogo com PiP"};UiTheme.Button(launchGame,"Abrir jogo","play");launchGame.Margin=new Padding(12,8,0,0);footer.Controls.Add(launchGame);launchGame.Click+=async (_,_)=>{try{if(!File.Exists(settings.GameExecutable)){using var picker=new OpenFileDialog{Filter="Jogo Windows (*.exe)|*.exe",Title="Escolha o executável do seu jogo"};if(picker.ShowDialog(this)!=DialogResult.OK)return;settings.GameExecutable=picker.FileName;Save();}launchGame.Enabled=false;status.Text="Preparando seu jogo…";await GameLauncher.Launch(settings.GameExecutable);automatic.Reset();Discover();}catch(Exception ex){status.Text=ex.Message;}finally{launchGame.Enabled=true;}};
+        var chooseGame=new Button();UiTheme.Button(chooseGame,"Trocar jogo","pip");chooseGame.Width=150;chooseGame.Margin=new Padding(12,25,0,0);options.Controls.Add(chooseGame);chooseGame.Click+=(_,_)=>{using var picker=new OpenFileDialog{Filter="Jogo Windows (*.exe)|*.exe"};if(picker.ShowDialog(this)==DialogResult.OK){settings.GameExecutable=picker.FileName;Save();status.Text="Jogo selecionado. Clique em Abrir jogo.";}};
         var shortcuts=new Button{AccessibleName="Configurar atalhos de teclado"};UiTheme.Button(shortcuts,"Atalhos","keyboard");shortcuts.Margin=new Padding(12,25,0,0);toolbar.Controls.Add(shortcuts);shortcuts.Click+=(_,_)=>ConfigureShortcuts();
         Shown+=(_,_)=>{if(designPreview)return;hotkeys=new Hotkeys(Handle);Discover();if(!hotkeys.Apply(new(settings.StartShortcut),new(settings.StopShortcut),out var error))status.Text=error;};
         if(designPreview){save.Stop();exiting=true;ShowInTaskbar=false;StartPosition=FormStartPosition.Manual;Location=new Point(-20000,-20000);}
@@ -85,7 +87,7 @@ internal sealed class MainForm : Form
         refreshing=true;
         try{
             var found=WindowSource.Find().Where(x=>x.LikelyPip).ToArray();
-            var games=RenderTarget.Find().Where(x=>x.Name=="DigimonMasters").ToArray();
+            var games=GameLauncher.Targets().Concat(RenderTarget.Find().Where(x=>x.Name=="DigimonMasters")).DistinctBy(x=>x.Pid).ToArray();
             if(!found.Select(x=>(x.Handle,x.ProcessId)).SequenceEqual(sources.Items.Cast<WindowSource>().Select(x=>(x.Handle,x.ProcessId)))){var old=sources.SelectedItem as WindowSource;sources.Items.Clear();sources.Items.AddRange(found);sources.SelectedItem=found.FirstOrDefault(x=>x.Handle==old?.Handle&&x.ProcessId==old?.ProcessId)??found.FirstOrDefault();PreviewSelection();}
             if(!games.Select(x=>x.Pid).SequenceEqual(targets.Items.Cast<RenderTarget>().Select(x=>x.Pid))){var old=targets.SelectedItem as RenderTarget;targets.Items.Clear();targets.Items.AddRange(games);targets.SelectedItem=games.FirstOrDefault(x=>x.Pid==old?.Pid)??games.FirstOrDefault();}
             var source=sources.SelectedItem as WindowSource;var target=targets.SelectedItem as RenderTarget;
@@ -93,33 +95,34 @@ internal sealed class MainForm : Form
             if(automatic.TakeAttempt(source==null?null:$"{source.Handle}:{source.ProcessId}",target?.Pid,false))Start();
             else if(!automatic.Enabled)status.Text="Pausado · clique em Retomar quando quiser.";
             else if(source==null)status.Text="Abra o vídeo em PiP no Edge ou Chrome.";
-            else if(target==null)status.Text="Vídeo pronto · aguardando seu jogo abrir.";
+            else if(target==null)status.Text="Vídeo pronto · clique em Abrir jogo.";
         }finally{refreshing=false;}
     }
     protected override void OnHandleDestroyed(EventArgs e){hotkeys?.Dispose();hotkeys=null;base.OnHandleDestroyed(e);}
     Screen SelectedScreen=>((MonitorItem?)monitors.SelectedItem)?.Screen??Screen.AllScreens[0];
     void UpdateCanvas(){editor.MonitorSize=SelectedScreen.Bounds.Size;settings=settings with {Monitor=SelectedScreen.DeviceName};var b=LayoutMath.Constrain(new(settings.X,settings.Y,settings.Width,settings.Height),editor.MonitorSize,editor.Aspect);settings=settings with{X=b.X,Y=b.Y,Width=b.Width,Height=b.Height};editor.Video=b;Apply();}
-    void Apply(){editor.Video=new(settings.X,settings.Y,settings.Width,settings.Height);editor.Invalidate();session?.Apply(settings);
+    void Apply(){try{lease?.EnsureResolution(settings.Quality=="maximum"?new Size(1920,1080):null);}catch(System.ComponentModel.Win32Exception ex){Fail(ex.Message);}editor.Video=new(settings.X,settings.Y,settings.Width,settings.Height);editor.Invalidate();session?.Apply(settings);
         dimensions.Text=$"Vídeo · {100.0*settings.Width/editor.MonitorSize.Width:F0}% da largura da tela";
         save.Stop();save.Start();}
     void Save(){try{settings.Save(settingsPath);}catch(Exception e)when(e is IOException or UnauthorizedAccessException){status.Text="Não foi possível salvar: "+e.Message;}}
     void RefreshSources(){Stop("");sources.Items.Clear();foreach(var source in WindowSource.Find().Where(x=>x.LikelyPip))sources.Items.Add(source);if(sources.Items.Count>0)sources.SelectedIndex=0;else status.Text="Abra o PiP do navegador. Vídeo e jogo são detectados automaticamente.";}
     void PreviewSelection(){if(sources.SelectedItem is WindowSource source&&source.Exists){Native.GetWindowRect(source.Handle,out var rect);if(rect.Right>rect.Left&&rect.Bottom>rect.Top){editor.Aspect=(double)(rect.Right-rect.Left)/(rect.Bottom-rect.Top);UpdateCanvas();}editor.AttachSource(source.Handle);}}
-    void RefreshTargets(){Stop("");targets.Items.Clear();targets.Items.AddRange(RenderTarget.Find().Where(x=>x.Name=="DigimonMasters").ToArray());if(targets.Items.Count>0)targets.SelectedIndex=0;}
+    void RefreshTargets(){Stop("");targets.Items.Clear();targets.Items.AddRange(GameLauncher.Targets().Concat(RenderTarget.Find().Where(x=>x.Name=="DigimonMasters")).DistinctBy(x=>x.Pid).ToArray());if(targets.Items.Count>0)targets.SelectedIndex=0;}
     void Start(){if(sources.SelectedItem is not WindowSource source){status.Text="Abra o vídeo em PiP no Edge ou Chrome.";return;}connectionFailed=false;Stop("");try{
         if(!source.Exists||Native.IsIconic(source.Handle))throw new InvalidOperationException("Restaure o PiP antes de iniciar.");
         if(targets.SelectedItem is not RenderTarget target)throw new InvalidOperationException("Abra seu jogo e clique em Atualizar.");
+        lease=new SourceLease(source,settings.Quality=="maximum"?new Size(1920,1080):null);
         session=new GpuVideoSession(source,settings,editor.MonitorSize,target);editor.Aspect=(double)session.SourceSize.Width/session.SourceSize.Height;UpdateCanvas();editor.AttachSource(source.Handle);
-        lease=new SourceLease(source);active=source;activeTarget=target.Pid;start.Enabled=false;stop.Enabled=true;elapsed.Restart();lastFrames=0;lastTick=Environment.TickCount64;pulse.Start();status.Text="Conectando ao vídeo…";
+        active=source;activeTarget=target.Pid;start.Enabled=false;stop.Enabled=true;elapsed.Restart();lastFrames=0;lastTick=Environment.TickCount64;pulse.Start();status.Text="Conectando ao vídeo…";
     }catch(Exception e){Fail(e.Message);}}
     void Stop(string message){pulse.Stop();session?.Dispose();session=null;editor.DetachSource();lease?.Dispose();lease=null;active=null;activeTarget=null;UpdateActions();status.Text=message;}
     void Poll(){if(session==null||active==null)return;
         if(!active.Exists){Stop("Abra outro vídeo em PiP no navegador.");automatic.Reset();return;}
         if(session.Error is string error){Fail(error);return;}
         if(session.Published==0&&elapsed.Elapsed.TotalSeconds>8){Fail("Nenhum quadro recebido. Restaure o PiP.");return;}
-        if(!session.Ready&&elapsed.Elapsed.TotalSeconds>8){Fail("O renderizador Direct3D não confirmou a conexão.");return;}
+        if(!session.Ready&&elapsed.Elapsed.TotalSeconds>20){Fail("O renderizador não confirmou a conexão. Confira a compatibilidade do jogo.");return;}
         if(Visible&&WindowState!=FormWindowState.Minimized)editor.RefreshThumbnail();lease?.KeepBehind();
-        long now=Environment.TickCount64;if(now-lastTick>=1000){long count=session.Published;double fps=(count-lastFrames)*1000.0/(now-lastTick);lastFrames=count;lastTick=now;status.Text=session.Rendered>0?$"●  Overlay ativa · {fps:F0} fps":"Aguardando o jogo ficar visível…";}
+        long now=Environment.TickCount64;if(now-lastTick>=1000){long count=session.Published;double fps=(count-lastFrames)*1000.0/(now-lastTick);lastFrames=count;lastTick=now;status.Text=session.Rendered>0?$"●  Overlay ativa · {session.TransferSize.Width}×{session.TransferSize.Height} · {fps:F0} fps":"Aguardando o jogo ficar visível…";}
     }
     protected override void Dispose(bool disposing){if(disposing){tray.Visible=false;tray.ContextMenuStrip?.Dispose();tray.Dispose();discovery.Dispose();pulse.Dispose();save.Dispose();session?.Dispose();session=null;lease?.Dispose();lease=null;}base.Dispose(disposing);}
     sealed record MonitorItem(Screen Screen){public override string ToString()=>$"{Screen.DeviceName.Replace("\\\\.\\","")} · {Screen.Bounds.Width}×{Screen.Bounds.Height}";}

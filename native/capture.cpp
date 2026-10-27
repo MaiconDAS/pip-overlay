@@ -57,6 +57,10 @@ struct Producer {
             } else if(hr!=DXGI_ERROR_WAS_STILL_DRAWING)return hr;
         }
         if(pending[index]) {index=(index+1)%3;return S_FALSE;}
+        // Native-size BGRA frames need no sampling pass or intermediate source copy.
+        if(w==sw&&h==sh&&format==DXGI_FORMAT_B8G8R8A8_UNORM){
+            context->CopyResource(staging[index],input);context->Flush();pending[index]=true;index=(index+1)%3;return S_OK;
+        }
         context->CopyResource(source,input);
         context->IASetInputLayout(nullptr);context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         context->VSSetShader(vs,nullptr,0);context->PSSetShader(ps,nullptr,0);
@@ -81,6 +85,7 @@ extern "C" __declspec(dllexport) HRESULT __cdecl PipSubmit(Producer* p,ID3D11Tex
 extern "C" __declspec(dllexport) void __cdecl PipResolution(Producer* p,UINT width,UINT height) {p->maxW=std::max(1u,std::min((UINT)PIP_WIDTH,width));p->maxH=std::max(1u,std::min((UINT)PIP_HEIGHT,height));}
 extern "C" __declspec(dllexport) void __cdecl PipFrameSize(Producer* p,uint32_t* size) {size[0]=p->memory->width;size[1]=p->memory->height;}
 extern "C" __declspec(dllexport) void __cdecl PipLayout(Producer* p,float x,float y,float w,float h) {
+    p->memory->heartbeat=GetTickCount(); // Liveness is independent of whether a paused video produces frames.
     if(TryLock(p->memory)){p->memory->x=x;p->memory->y=y;p->memory->w=w;p->memory->h=h;Unlock(p->memory);}
 }
 extern "C" __declspec(dllexport) void __cdecl PipStats(Producer* p,uint32_t* stats) {

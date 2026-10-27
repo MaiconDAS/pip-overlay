@@ -2,7 +2,7 @@
 
 **Nome:** PiP Overlay
 **Assinatura:** Seu vídeo. Seu jogo. Seu espaço.
-**Descrição curta:** Vídeo do Edge e Chrome sobre o jogo, com conexão automática e editor visual. Windows / Direct3D 9, sem RTSS ou extensão.
+**Descrição curta:** Vídeo do Edge e Chrome sobre o jogo, com conexão automática e editor visual. Windows / DirectX, OpenGL e Vulkan, sem RTSS ou extensão.
 
 | Uso | Cor |
 | --- | --- |

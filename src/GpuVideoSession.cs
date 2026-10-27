@@ -6,7 +6,7 @@ using Windows.Graphics.DirectX.Direct3D11;
 
 namespace PipOverlay;
 
-internal sealed record RenderTarget(int Pid,string Name,bool Is32Bit)
+internal sealed record RenderTarget(int Pid,string Name,bool Is32Bit,bool MultiApi=false)
 {
     public override string ToString()=>$"{Name} · PID {Pid}";
     [DllImport("kernel32.dll",SetLastError=true)] static extern bool IsWow64Process(nint process,out bool wow);
@@ -64,14 +64,14 @@ internal sealed class GpuVideoSession : IDisposable
     [UnmanagedFunctionPointer(CallingConvention.StdCall)] delegate int GetInterface(nint self,ref Guid iid,out nint result);
     internal GpuVideoSession(WindowSource source,Settings initial,Size screen,RenderTarget target)
     {
-        PortableSetup.Ensure(target.Is32Bit?32:64);
+        if(!target.MultiApi)PortableSetup.Ensure(target.Is32Bit?32:64);
         settings=initial.Validated();monitor=screen;
         producer=PipOpen((uint)target.Pid);if(producer==0)throw new InvalidOperationException("Não foi possível abrir o transporte em memória.");
         var initialStats=new uint[8];PipStats(producer,initialStats);firstSent=initialStats[0];firstRendered=initialStats[1];firstUploaded=initialStats[2];
         IDirect3DDevice? d=null;Direct3D11CaptureFramePool? f=null;GraphicsCaptureSession? s=null;
         try {
             string attach=Path.Combine(AppContext.BaseDirectory,$"PipAttach{(target.Is32Bit?32:64)}.exe");
-            using(var helper=Process.Start(new ProcessStartInfo(attach,target.Pid.ToString()){UseShellExecute=false,CreateNoWindow=true})!) {
+            if(!target.MultiApi)using(var helper=Process.Start(new ProcessStartInfo(attach,target.Pid.ToString()){UseShellExecute=false,CreateNoWindow=true})!) {
                 if(!helper.WaitForExit(12000))throw new InvalidOperationException("Tempo de conexão excedido. O alvo não foi confirmado.");
                 if(helper.ExitCode!=0)throw new InvalidOperationException($"Conexão Direct3D recusada (código {helper.ExitCode}). Nenhuma proteção foi alterada.");
             }
@@ -89,7 +89,7 @@ internal sealed class GpuVideoSession : IDisposable
             while(!cancel.IsCancellationRequested) {
                 long started=Environment.TickCount64;Settings current;Size screen;lock(gate){current=settings;screen=monitor;}
                 // Quantize resize requests to avoid reallocating textures for each mouse pixel.
-                PipResolution(producer,(uint)Math.Min(1920,((current.Width+63)/64)*64),(uint)Math.Min(1080,((current.Height+35)/36)*36));
+                PipResolution(producer,current.Quality=="maximum"?1920u:(uint)Math.Min(1920,((current.Width+63)/64)*64),current.Quality=="maximum"?1080u:(uint)Math.Min(1080,((current.Height+35)/36)*36));
                 PipLayout(producer,(float)current.X/screen.Width,(float)current.Y/screen.Height,(float)current.Width/screen.Width,(float)current.Height/screen.Height);
                 var next=poolSize;
                 using(var frame=pool.TryGetNextFrame())if(frame!=null) {
