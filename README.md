@@ -33,6 +33,8 @@ Abra o PiP do navegador. Para iniciar Jogos nas novas APIs, use **Iniciar jogo c
 
 ![Novo ícone do PiP Overlay](docs/assets/app-icon.png)
 
+[Resultados dos testes de instalação e desinstalação](docs/VALIDATION-0.14.md).
+
 ## Mudanças na versão 0.13
 
 - **Escolha visual do vídeo:** quando há vários PiPs, o botão Vídeos abre miniaturas para selecionar a origem com um clique.

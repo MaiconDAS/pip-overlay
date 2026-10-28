@@ -52,7 +52,7 @@ internal sealed class MainForm : Form
         var layout=new TableLayoutPanel{Dock=DockStyle.Fill,Padding=new Padding(20),ColumnCount=1,RowCount=7};Controls.Add(layout);
         foreach(int h in new[]{90,82,78,130,54})layout.RowStyles.Add(new(SizeType.Absolute,h));layout.RowStyles.Add(new(SizeType.Percent,100));layout.RowStyles.Add(new(SizeType.Absolute,72));
         var header=new TableLayoutPanel{Dock=DockStyle.Fill,ColumnCount=2,RowCount=1};header.ColumnStyles.Add(new(SizeType.Absolute,64));header.ColumnStyles.Add(new(SizeType.Percent,100));
-        header.Controls.Add(new PictureBox{Image=Icon?.ToBitmap(),SizeMode=PictureBoxSizeMode.Zoom,Size=new Size(48,48),Margin=new Padding(0,6,0,0)});
+        header.Controls.Add(new PictureBox{Image=UiTheme.Brand(48),SizeMode=PictureBoxSizeMode.Zoom,Size=new Size(48,48),Margin=new Padding(0,6,0,0)});
         var heading=new FlowLayoutPanel{Dock=DockStyle.Fill,FlowDirection=FlowDirection.TopDown,WrapContents=false};heading.Controls.Add(new Label{Text="PiP Overlay",AutoSize=true,Font=new Font("Segoe UI Semibold",24),Margin=Padding.Empty});heading.Controls.Add(new Label{Text="Seu vídeo por perto. Seu jogo em foco.",AutoSize=true,ForeColor=UiTheme.Muted,Margin=new Padding(0,5,0,0)});header.Controls.Add(heading);layout.Controls.Add(header,0,0);
         foreach(var box in new[]{sources,targets,monitors,quality,frameRate})UiTheme.Combo(box);
         var toolbar=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false};toolbar.Controls.Add(UiTheme.Field("VÍDEO DO NAVEGADOR",sources,360));toolbar.Controls.Add(UiTheme.Field("JOGO",targets,300));

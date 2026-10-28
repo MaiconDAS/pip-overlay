@@ -15,6 +15,7 @@
   <PropertyGroup Condition="'$(ProductionBuild)' == 'true'">
     <DefineConstants>$(DefineConstants);PRODUCTION</DefineConstants>
   </PropertyGroup>
+  <ItemGroup><EmbeddedResource Include="Assets/App.ico" LogicalName="PipOverlay.Brand.ico" /></ItemGroup>
   <ItemGroup Condition="'$(ProductionBuild)' == 'true'">
     <Compile Remove="SoakTests.cs;UxTests.cs;ContentionTest.cs;ImprovementTests.cs;QualityTests.cs;MultiApiTests.cs;GeometryTests.cs;AutoConnectTests.cs;HotkeyTests.cs;DemoSource.cs;GpuValidation.cs;ValidationV4.cs;Diagnostics.cs;SelfTest.cs;RtssTest.cs;Overlay.cs;VideoSession.cs;LegacyRtssFrameOutput.cs;RtssFrameOutput.cs;RtssClient.cs" />
   </ItemGroup>

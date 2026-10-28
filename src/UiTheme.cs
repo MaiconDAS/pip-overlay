@@ -2,6 +2,7 @@ using System.Drawing.Drawing2D;
 namespace PipOverlay;
 internal static class UiTheme
 {
+    internal static Bitmap Brand(int size){using var stream=typeof(UiTheme).Assembly.GetManifestResourceStream("PipOverlay.Brand.ico")!;using var icon=new Icon(stream,new Size(size,size));return icon.ToBitmap();}
     internal static readonly Color Accent=Color.FromArgb(108,231,196),Panel=Color.FromArgb(25,33,46),Muted=Color.FromArgb(154,169,190);
     internal static Bitmap Icon(string kind,Color color,int size=22){
         var image=new Bitmap(size,size);using var g=Graphics.FromImage(image);g.SmoothingMode=SmoothingMode.AntiAlias;g.ScaleTransform(size/24f,size/24f);using var p=new Pen(color,1.8f){StartCap=LineCap.Round,EndCap=LineCap.Round,LineJoin=LineJoin.Round};using var b=new SolidBrush(color);
