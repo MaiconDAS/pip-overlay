@@ -37,7 +37,7 @@ try {
         if($install){$ready=$true;break}
         $accept=$children | Where-Object {([WizardProbe]::Text($_) -replace '&','') -match '^Eu aceito|^Aceito'} | Select-Object -First 1
         if($accept){[WizardProbe]::SendMessage($accept,0xF5,[IntPtr]::Zero,[IntPtr]::Zero)|Out-Null;Start-Sleep -Milliseconds 100}
-        $next=$children | Where-Object {[WizardProbe]::Text($_) -match 'Avançar' -and [WizardProbe]::IsWindowEnabled($_)} | Select-Object -First 1
+        $next=$children | Where-Object {[WizardProbe]::Text($_) -match '^&?Avançar' -and [WizardProbe]::IsWindowEnabled($_)} | Select-Object -First 1
         if(!$next){throw 'Wizard cannot advance without extra input'}
         [WizardProbe]::SendMessage($next,0xF5,[IntPtr]::Zero,[IntPtr]::Zero)|Out-Null
         Start-Sleep -Milliseconds 300
