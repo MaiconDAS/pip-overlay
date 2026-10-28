@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType><TargetFramework>net8.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
-    <AssemblyName>Instalar-PiP-Overlay</AssemblyName><Version>0.12.0</Version>
+    <AssemblyName>Instalar-PiP-Overlay</AssemblyName><Version>0.13.0</Version>
     <ApplicationIcon>../src/Assets/App.ico</ApplicationIcon>
     <PublishSingleFile>true</PublishSingleFile><IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile><DebugType>none</DebugType>

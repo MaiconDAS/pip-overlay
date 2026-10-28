@@ -34,7 +34,7 @@ int WINAPI WinMain(HINSTANCE instance,HINSTANCE,LPSTR command,int) {
         if(SUCCEEDED(hr)&&stats){LARGE_INTEGER now;QueryPerformanceCounter(&now);stats->frameMs[stats->sampleCount%4096]=float(1000.0*(now.QuadPart-previous.QuadPart)/frequency.QuadPart);InterlockedIncrement(&stats->sampleCount);previous=now;stats->frames++;stats->clicks=clicks;DWORD cull=0,blend=0;device->GetRenderState(D3DRS_CULLMODE,&cull);device->GetRenderState(D3DRS_ALPHABLENDENABLE,&blend);if(cull!=D3DCULL_CW||blend!=TRUE)stats->stateErrors++;}
         if(hr==D3DERR_DEVICELOST){Sleep(100);if(device->TestCooperativeLevel()==D3DERR_DEVICENOTRESET)device->Reset(&pp);}
         if(frames%60==0){wchar_t title[160];wsprintfW(title,L"PiP Direct3D9 — %lu frames · %d cliques · Esc fecha",frames,clicks);SetWindowTextW(window,title);}
-        if(strstr(command,"--timed")&&t>40000)DestroyWindow(window);
+        if((strstr(command,"--timed")&&t>40000)||(strstr(command,"--long")&&t>600000))DestroyWindow(window);
     }
     device->Release();d3d->Release();if(stats)UnmapViewOfFile(stats);if(map)CloseHandle(map);return 0;
 }

@@ -3,6 +3,11 @@ namespace PipOverlay;
 [Flags] internal enum ResizeEdge {None=0,Left=1,Right=2,Top=4,Bottom=8}
 internal static class LayoutMath
 {
+    internal static Rectangle Snap(Rectangle box,Size screen,int margin,int threshold){
+        int Axis(int value,int length,int available){int free=Math.Max(0,available-length);int inset=Math.Clamp(margin,0,free/2);
+            int candidate=new[]{inset,free/2,free-inset}.MinBy(x=>Math.Abs(x-value));return Math.Abs(candidate-value)<=threshold?candidate:value;}
+        return new(Axis(box.X,box.Width,screen.Width),Axis(box.Y,box.Height,screen.Height),box.Width,box.Height);
+    }
     internal static Rectangle Constrain(Rectangle box,Size screen,double aspect)
     {
         aspect=Math.Clamp(aspect,0.05,20);
@@ -33,6 +38,14 @@ internal static class LayoutMath
 internal sealed class LayoutEditor : Control
 {
     internal event Action<Rectangle>? LayoutChanged;
+    internal event Action? HistoryChanged;
+    internal bool SnapEnabled {get;set;}=true;
+    internal int SnapMargin {get;set;}=24;
+    Rectangle? undo;
+    internal bool CanUndo=>undo.HasValue;
+    internal void ClearHistory(){undo=null;HistoryChanged?.Invoke();}
+    internal void Undo(){if(undo is not Rectangle old)return;undo=null;Video=LayoutMath.Constrain(old,MonitorSize,Aspect);LayoutChanged?.Invoke(Video);HistoryChanged?.Invoke();Invalidate();}
+    internal void Center(){var next=new Rectangle((MonitorSize.Width-Video.Width)/2,(MonitorSize.Height-Video.Height)/2,Video.Width,Video.Height);if(next==Video)return;undo=Video;Video=next;LayoutChanged?.Invoke(Video);HistoryChanged?.Invoke();Invalidate();}
     internal Size MonitorSize {get;set;}=new(1920,1080);
     internal double Aspect {get;set;}=16.0/9;
     internal Rectangle Video {get;set;}=new(24,24,420,236);
@@ -45,7 +58,7 @@ internal sealed class LayoutEditor : Control
     ResizeEdge edge;
     Rectangle original;
     Point anchor;
-    internal LayoutEditor(){DoubleBuffered=true;BackColor=Color.FromArgb(18,24,34);Cursor=Cursors.Default;AccessibleName="Editor visual: arraste o vídeo ou suas bordas";}
+    internal LayoutEditor(){SetStyle(ControlStyles.Selectable,true);TabStop=true;DoubleBuffered=true;BackColor=Color.FromArgb(18,24,34);Cursor=Cursors.Default;AccessibleName="Editor visual: arraste o vídeo ou suas bordas";}
     Rectangle Canvas=>Settings.Fit(MonitorSize,new Rectangle(20,20,Math.Max(1,Width-40),Math.Max(1,Height-40)));
     internal Rectangle ToPreview(Rectangle box) {
         var canvas=Canvas;double s=(double)canvas.Width/MonitorSize.Width;
@@ -61,13 +74,14 @@ internal sealed class LayoutEditor : Control
     }
     protected override void OnMouseDown(MouseEventArgs e){base.OnMouseDown(e);if(e.Button!=MouseButtons.Left)return;
         edge=Hit(e.Location);if(edge==ResizeEdge.None&&!ToPreview(Video).Contains(e.Location))return;
-        anchor=e.Location;original=Video;dragging=true;Capture=true;
+        Focus();anchor=e.Location;original=Video;dragging=true;Capture=true;
     }
     protected override void OnMouseMove(MouseEventArgs e){base.OnMouseMove(e);
         if(dragging) {
             double scale=(double)MonitorSize.Width/Canvas.Width;
             var delta=new Point((int)Math.Round((e.X-anchor.X)*scale),(int)Math.Round((e.Y-anchor.Y)*scale));
             Video=edge==ResizeEdge.None?LayoutMath.Drag(original,delta,MonitorSize):LayoutMath.Resize(original,delta,edge,MonitorSize,Aspect);
+            if(edge==ResizeEdge.None&&SnapEnabled&&(ModifierKeys&Keys.Alt)==0)Video=LayoutMath.Snap(Video,MonitorSize,SnapMargin,Math.Max(1,(int)Math.Round(10*scale)));
             Invalidate();LayoutChanged?.Invoke(Video);return;
         }
         var hit=Hit(e.Location);
@@ -75,8 +89,10 @@ internal sealed class LayoutEditor : Control
             hit is ResizeEdge.Left or ResizeEdge.Right?Cursors.SizeWE:hit is ResizeEdge.Top or ResizeEdge.Bottom?Cursors.SizeNS:
             hit==(ResizeEdge.Left|ResizeEdge.Top)||hit==(ResizeEdge.Right|ResizeEdge.Bottom)?Cursors.SizeNWSE:Cursors.SizeNESW;
     }
-    protected override void OnMouseUp(MouseEventArgs e){base.OnMouseUp(e);dragging=false;Capture=false;}
-    protected override void OnMouseCaptureChanged(EventArgs e){base.OnMouseCaptureChanged(e);if(!Capture)dragging=false;}
+    void FinishGesture(){if(!dragging)return;dragging=false;if(original!=Video){undo=original;HistoryChanged?.Invoke();}}
+    protected override void OnMouseUp(MouseEventArgs e){base.OnMouseUp(e);FinishGesture();Capture=false;}
+    protected override void OnMouseCaptureChanged(EventArgs e){base.OnMouseCaptureChanged(e);if(!Capture)FinishGesture();}
+    protected override void OnKeyDown(KeyEventArgs e){if(e.Control&&e.KeyCode==Keys.Z){Undo();e.Handled=true;}base.OnKeyDown(e);}
     protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);if(Width<50||Height<50)return;
         var c=Canvas;using var bg=new SolidBrush(Color.FromArgb(9,13,20));e.Graphics.FillRectangle(bg,c);
         using var grid=new Pen(Color.FromArgb(34,44,58));for(int i=1;i<4;i++){e.Graphics.DrawLine(grid,c.Left+c.Width*i/4,c.Top,c.Left+c.Width*i/4,c.Bottom);e.Graphics.DrawLine(grid,c.Left,c.Top+c.Height*i/4,c.Right,c.Top+c.Height*i/4);}e.Graphics.DrawRectangle(grid,c);

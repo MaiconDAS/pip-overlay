@@ -26,6 +26,6 @@ try{
 & $installer --extract $Destination | Out-Null
 if($LASTEXITCODE -eq 0){throw 'Installer did not refuse an existing directory'}
 $assembly=[Text.Encoding]::UTF8.GetString([IO.File]::ReadAllBytes((Join-Path $Destination 'PipOverlay.dll')))
-foreach($name in @('ImprovementTests','ContentionTest','QualityTests','MultiApiTests','GpuValidation','DemoSource','RtssTest')){if($assembly.Contains($name)){throw "Development type leaked: $name"}}
+foreach($name in @('UxTests','SoakTests','ImprovementTests','ContentionTest','QualityTests','MultiApiTests','GpuValidation','DemoSource','RtssTest')){if($assembly.Contains($name)){throw "Development type leaked: $name"}}
 Write-Output "PASS: $count extracted files match the package; existing destination refused; no developer tools or user settings."
 Write-Output "Isolated test directory: $Destination"

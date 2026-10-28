@@ -1,5 +1,15 @@
 # Histórico
 
+## 0.13.0 — seleção visual e posicionamento
+
+- **Escolha visual do vídeo:** quando há vários PiPs, o botão Vídeos abre miniaturas para selecionar a origem com um clique.
+- **Posicionamento mais fácil:** encaixe nas bordas e no centro, margem ajustável, centralização e desfazer a última posição. Segure Alt para arrastar livremente; Ctrl+Z funciona somente no editor.
+- **Perfil visível:** nome do jogo, restauração dos padrões e cópia dos ajustes para outro executável.
+- **Status mais claros:** diferencia espera por vídeo, espera por jogo, captura interrompida e conexão não confirmada.
+- **Assinatura preparada:** fluxo de assinatura e verificação disponível; o instalador continua sem assinatura pública enquanto não houver certificado.
+
+Veja a [validação da 0.13](docs/VALIDATION-0.13.md) e o [fluxo de assinatura](docs/SIGNING.md).
+
 ## 0.12.0 — estabilidade, perfis e manutenção
 
 - Preserva o último quadro em contenção no D3D9/Vulkan; teste reproduz o defeito anterior e verifica a correção.

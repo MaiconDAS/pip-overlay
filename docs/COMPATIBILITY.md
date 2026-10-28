@@ -35,3 +35,5 @@ Launchers que criam outro processo e proteções do jogo podem impedir a conexã
 Veja os [resultados de teste](VALIDATION-0.11.md) e a [arquitetura](ARCHITECTURE.md).
 
 Consulte a [matriz de testes](TEST-MATRIX.md) e a [validação 0.12](VALIDATION-0.12.md) para os novos recursos. As limitações por API continuam aplicáveis.
+
+A versão 0.13 adiciona seleção visual de PiPs e melhorias de edição; não amplia a lista de GPUs ou jogos validados. Consulte [validação 0.13](VALIDATION-0.13.md).

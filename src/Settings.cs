@@ -16,6 +16,8 @@ internal sealed record Settings
     public int FramesPerSecond { get; set; } = 60;
     public string Quality {get;set;} = "maximum"; // Legacy preference, used only when migrating.
     public string? Resolution {get;set;}
+    public bool SnapEnabled {get;set;}=true;
+    public int SnapMargin {get;set;}=24;
     public bool AdaptiveFps {get;set;}
     public int MinimumFps {get;set;}=15;
     public bool CheckForUpdates {get;set;}=true;
@@ -27,7 +29,7 @@ internal sealed record Settings
 
     internal Settings Validated() => this with {
         X=Math.Clamp(X,0,32000), Y=Math.Clamp(Y,0,32000),FramesPerSecond=FramesPerSecond is 15 or 30 or 60?FramesPerSecond:30,
-        MinimumFps=MinimumFps==30?30:15,
+        MinimumFps=MinimumFps==30?30:15,SnapMargin=Math.Clamp(SnapMargin,0,96),
         Resolution=Resolution is "1080p" or "720p" or "480p" or "auto"?Resolution:Resolution==null&&Quality is "balanced" or "economy"?"auto":"1080p",
         Width=Math.Clamp(Width,120,7680),Height=Math.Clamp(Height,68,4320),Opacity=Math.Clamp(Opacity,10,100),
         CropLeft=Math.Clamp(CropLeft,0,16000),CropTop=Math.Clamp(CropTop,0,16000),

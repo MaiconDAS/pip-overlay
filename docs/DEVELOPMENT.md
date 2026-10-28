@@ -96,3 +96,5 @@ pwsh ./scripts/Test-Upgrade.ps1
 O teste de compartilhamento é um experimento D3D11 entre processos próprios, não um modo de captura habilitado no produto. O benchmark registra FPS, p95 do tempo de quadro e CPU em fases sem/com/sem overlay. A importação do instalador é validada exclusivamente em pastas temporárias dentro de artifacts.
 
 Perfis ficam em `data/profiles`; nomes usam hash do executável. A verificação de releases não transmite configurações e pode ser desativada em Ajustes. Sua frequência automática máxima é uma consulta bem-sucedida por dia, ao abrir a ferramenta. A atualização é baixada pelo usuário na página da release; o app não executa um instalador automaticamente.
+
+Para testar miniaturas e edição em uma sessão Windows com DWM, execute scripts/Test-UX.ps1. O modo de desenvolvimento --soak-test usa PipTest32.exe e as bibliotecas nativas junto do executável de testes para 30 ciclos de captura. Esses modos são excluídos da distribuição. Assinatura pública: [SIGNING.md](SIGNING.md).

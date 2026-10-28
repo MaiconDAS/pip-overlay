@@ -52,7 +52,7 @@ internal static class Program
         form.Icon=Icon.ExtractAssociatedIcon(Environment.ProcessPath!);
         var heading=new Label{Text="PiP Overlay",Font=new Font("Segoe UI",22,FontStyle.Bold),AutoSize=true,Location=new Point(24,20)};
         var description=new Label{Text="Tudo em um instalador. Sem extensão ou cadastro.\nAbra o PiP do navegador para começar.",AutoSize=true,Location=new Point(26,76)};
-        var path=new TextBox{Text=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"PiP Overlay 0.12"),Location=new Point(26,139),Width=410};
+        var path=new TextBox{Text=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"PiP Overlay 0.13"),Location=new Point(26,139),Width=410};
         var browse=new Button{Text="Escolher…",Location=new Point(445,137),Size=new Size(108,32)};
         string? previous=null;
         var import=new Button{Text="Importar preferências…",Location=new Point(26,180),Size=new Size(220,30)};
