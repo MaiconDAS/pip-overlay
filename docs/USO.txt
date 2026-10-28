@@ -1,4 +1,4 @@
-PiP Overlay 0.14 — um único instalador
+PiP Overlay 0.14.1 — um único instalador
 
 PARA LEVAR PARA OUTRO COMPUTADOR
 Copie Instalar-PiP-Overlay.exe. Abra e siga o assistente. O atalho na área de trabalho vem marcado por padrão. O menu Iniciar e a entrada em Aplicativos instalados são criados automaticamente. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
@@ -23,7 +23,7 @@ O aplicativo não se configura para iniciar com o Windows. Abra pelo atalho na �
 Código próprio open source sob licença MIT. Consulte LICENSE e THIRD_PARTY_NOTICES.md; componentes de terceiros mantêm suas licenças.
 
 NOVIDADES 0.12
-FPS automático: opcional, mantém a resolução e respeita os limites escolhidos. Perfis de posição e qualidade são lembrados por jogo. Em Ajustes, consulte Atualizações ou exporte Diagnóstico sem imagens, URLs ou caminhos pessoais. Atualizações podem usar a mesma pasta e preservam preferências. Para migrar de uma versão portátil, selecione a pasta antiga na etapa opcional de importação; ela será preservada. O compartilhamento de texturas por GPU permanece experimental e não está ativado.
+FPS automático: opcional, mantém a resolução e respeita os limites escolhidos. Perfis de posição e qualidade são lembrados por jogo. Em Ajustes, consulte Atualizações ou exporte Diagnóstico sem imagens, URLs ou caminhos pessoais. Atualizações podem usar a mesma pasta e preservam preferências. O instalador detecta a instalação registrada automaticamente. Para atualizar uma versão portátil, escolha a própria pasta existente; seus ajustes serão preservados. Não há etapa de importação. O compartilhamento de texturas por GPU permanece experimental e não está ativado.
 
 NOVIDADES 0.13
 Com vários PiPs abertos, escolha Vídeos e clique na miniatura desejada. Arraste no editor para encaixar nas bordas ou no centro; segure Alt para movimento livre. Ajuste a margem em Ajustes. Centralizar e Desfazer posição ficam acima do editor; Ctrl+Z funciona somente nele. O perfil do jogo fica visível e pode ser restaurado ou copiado em Ajustes. O instalador permanece sem assinatura pública; o fluxo para um certificado futuro está preparado.

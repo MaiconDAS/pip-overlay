@@ -24,6 +24,15 @@ PiP Overlay é um aplicativo para Windows que leva o Picture-in-Picture do Edge 
 
 Abra o PiP do navegador. Para iniciar Jogos nas novas APIs, use **Iniciar jogo configurado** no menu do ícone da ferramenta perto do relógio; escolha o executável na primeira vez. A ferramenta conecta o vídeo automaticamente e mantém os controles fora da partida.
 
+## Correção 0.14.1 — instalação automática
+
+- Removida a etapa de importação que bloqueava o avanço com o campo vazio.
+- O instalador reutiliza automaticamente a pasta da instalação registrada.
+- Uma pasta existente pode ser escolhida diretamente, sem aviso intermediário de pasta existente; preferências e perfis nessa pasta são preservados.
+- Ao escolher outro destino, as preferências da instalação registrada são copiadas automaticamente, sem substituir ajustes que já existam no destino.
+- Instalações portáteis são atualizadas escolhendo sua própria pasta. Não há busca indiscriminada no disco.
+- Teste novo percorre o assistente interativo até a confirmação, além dos testes de instalação limpa e atualização.
+
 ## Mudanças na versão 0.14
 
 - **Instalador completo:** atalho na área de trabalho (opcional e marcado por padrão), menu Iniciar e entrada em Aplicativos instalados / Programas e Recursos.
@@ -122,7 +131,7 @@ A posição e o tamanho são proporcionais ao monitor selecionado. A interação
 | DirectX 11 / DirectX 12 / OpenGL | Implementados e testados em hosts próprios, em 32 e 64 bits |
 | Jogos | Inicialização do executável escolhido; launchers que criam outro processo e proteções podem impedir a conexão |
 | Vulkan | Camada própria, testada em 32 e 64 bits; inicialmente SDR RGBA/BGRA UNORM de 8 bits |
-| Distribuição | Projeto experimental, versão 0.14.0 |
+| Distribuição | Projeto experimental, versão 0.14.1 |
 
 Os testes automatizados cobrem lógica de conexão, atalhos e geometria. A renderização também foi exercitada em um aplicativo Direct3D 9 próprio, incluindo fullscreen. Isso **não equivale a uma certificação de compatibilidade com todas as versões do jogo ou drivers**. D3D11, D3D12, OpenGL e Vulkan passaram por verificações de pixels em hosts próprios; a captura nativa preservou os pixels de padrões em 720p e 1080p. Veja [os resultados e limites](docs/VALIDATION-0.11.md).
 

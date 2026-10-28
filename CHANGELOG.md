@@ -1,5 +1,14 @@
 # Histórico
 
+## 0.14.1 — detecção automática da instalação
+
+- Removida a etapa de importação que bloqueava o avanço com o campo vazio.
+- O instalador reutiliza automaticamente a pasta da instalação registrada.
+- Uma pasta existente pode ser escolhida diretamente, sem aviso intermediário de pasta existente; preferências e perfis nessa pasta são preservados.
+- Ao escolher outro destino, as preferências da instalação registrada são copiadas automaticamente, sem substituir ajustes que já existam no destino.
+- Instalações portáteis são atualizadas escolhendo sua própria pasta. Não há busca indiscriminada no disco.
+- Teste novo percorre o assistente interativo até a confirmação, além dos testes de instalação limpa e atualização.
+
 ## 0.14.0 — instalador completo e identidade visual
 
 - **Instalador completo:** atalho na área de trabalho (opcional e marcado por padrão), menu Iniciar e entrada em Aplicativos instalados / Programas e Recursos.

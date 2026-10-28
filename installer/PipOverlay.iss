@@ -1,7 +1,7 @@
 #ifndef Stage
   #error Stage is required
 #endif
-#define AppVersion "0.14.0"
+#define AppVersion "0.14.1"
 [Setup]
 AppId={{BFAFEE61-6519-4912-B741-389AC78FA812}
 AppName=PiP Overlay
@@ -12,6 +12,9 @@ AppSupportURL=https://github.com/MaiconDAS/pip-overlay/issues
 AppUpdatesURL=https://github.com/MaiconDAS/pip-overlay/releases
 DefaultDirName={localappdata}\Programs\PiP Overlay
 DefaultGroupName=PiP Overlay
+UsePreviousAppDir=yes
+DirExistsWarning=no
+AppendDefaultDirName=no
 PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
@@ -54,16 +57,15 @@ Name: "{app}\Desinstalar PiP Overlay"; Filename: "{uninstallexe}"
 Filename: "{app}\PipOverlay.exe"; WorkingDir: "{app}"; Description: "Abrir PiP Overlay"; Flags: nowait postinstall skipifsilent
 
 [Code]
-var PreviousPage: TInputDirWizardPage;
+var PreviousDirectory: String;
 
-procedure InitializeWizard;
+function InitializeSetup: Boolean;
 begin
-  PreviousPage := CreateInputDirPage(wpSelectDir, 'Importar preferências (opcional)',
-    'Já utilizava uma versão portátil?', 'Selecione a pasta antiga para copiar suas preferências. Deixe em branco para começar do zero. A pasta antiga será preservada.', False, '');
-  PreviousPage.Add('Pasta da versão anterior:');
-  PreviousPage.Values[0] := ExpandConstant('{param:IMPORTFROM|}');
+  PreviousDirectory := '';
+  RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{BFAFEE61-6519-4912-B741-389AC78FA812}_is1', 'InstallLocation', PreviousDirectory);
+  if not FileExists(AddBackslash(PreviousDirectory) + 'PipOverlay.exe') then PreviousDirectory := '';
+  Result := True;
 end;
-
 procedure CopyPreference(Source, Destination: String);
 begin
   if FileExists(Source) and not FileExists(Destination) then begin
@@ -86,8 +88,8 @@ end;
 procedure CurStepChanged(CurStep: TSetupStep);
 var Previous, Target: String; Find: TFindRec;
 begin
-  if (CurStep = ssPostInstall) and (PreviousPage.Values[0] <> '') then begin
-    Previous := AddBackslash(PreviousPage.Values[0]) + 'data\';
+  if (CurStep = ssPostInstall) and (PreviousDirectory <> '') then begin
+    Previous := AddBackslash(PreviousDirectory) + 'data\';
     Target := ExpandConstant('{app}\data\');
     CopyPreference(Previous + 'settings.json', Target + 'settings.json');
     if FindFirst(Previous + 'profiles\*.json', Find) then begin
