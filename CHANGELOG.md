@@ -1,5 +1,14 @@
 # Histórico
 
+## 0.14.0 — instalador completo e identidade visual
+
+- **Instalador completo:** atalho na área de trabalho (opcional e marcado por padrão), menu Iniciar e entrada em Aplicativos instalados / Programas e Recursos.
+- **Desinstalação:** pelo Windows, pelo menu Iniciar ou pelo atalho na pasta do app. Preferências e arquivos pessoais são preservados.
+- **Atualização na mesma pasta:** mantém os ajustes. Instalação por usuário em AppData, sem administrador, serviço ou inicialização automática.
+- **Ícone novo:** símbolo arredondado em azul profundo e verde-menta, com nove tamanhos de 16 a 256 pixels para o executável, atalhos e bandeja.
+
+![Novo ícone do PiP Overlay](docs/assets/app-icon.png)
+
 ## 0.13.0 — seleção visual e posicionamento
 
 - **Escolha visual do vídeo:** quando há vários PiPs, o botão Vídeos abre miniaturas para selecionar a origem com um clique.

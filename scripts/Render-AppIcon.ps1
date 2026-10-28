@@ -1,7 +1,9 @@
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName System.Drawing
 $root=Split-Path $PSScriptRoot -Parent
-Add-Type -ReferencedAssemblies System.Drawing.Common,System.Drawing.Primitives,System.Private.Windows.GdiPlus,System.Private.Windows.Core -TypeDefinition @'
+$drawingReferences=@('System.Drawing.Common','System.Drawing.Primitives')
+foreach($name in @('System.Private.Windows.GdiPlus','System.Private.Windows.Core')){if(Test-Path (Join-Path $PSHOME ($name+'.dll'))){$drawingReferences+=$name}}
+Add-Type -ReferencedAssemblies $drawingReferences -TypeDefinition @'
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;

@@ -24,6 +24,15 @@ PiP Overlay é um aplicativo para Windows que leva o Picture-in-Picture do Edge 
 
 Abra o PiP do navegador. Para iniciar Jogos nas novas APIs, use **Iniciar jogo configurado** no menu do ícone da ferramenta perto do relógio; escolha o executável na primeira vez. A ferramenta conecta o vídeo automaticamente e mantém os controles fora da partida.
 
+## Mudanças na versão 0.14
+
+- **Instalador completo:** atalho na área de trabalho (opcional e marcado por padrão), menu Iniciar e entrada em Aplicativos instalados / Programas e Recursos.
+- **Desinstalação:** pelo Windows, pelo menu Iniciar ou pelo atalho na pasta do app. Preferências e arquivos pessoais são preservados.
+- **Atualização na mesma pasta:** mantém os ajustes. Instalação por usuário em AppData, sem administrador, serviço ou inicialização automática.
+- **Ícone novo:** símbolo arredondado em azul profundo e verde-menta, com nove tamanhos de 16 a 256 pixels para o executável, atalhos e bandeja.
+
+![Novo ícone do PiP Overlay](docs/assets/app-icon.png)
+
 ## Mudanças na versão 0.13
 
 - **Escolha visual do vídeo:** quando há vários PiPs, o botão Vídeos abre miniaturas para selecionar a origem com um clique.
@@ -63,7 +72,7 @@ Consulte o [histórico completo](CHANGELOG.md), a [compatibilidade com Jogos](do
 ## Como usar
 
 1. Baixe **`Instalar-PiP-Overlay.exe`** em [Releases](https://github.com/MaiconDAS/pip-overlay/releases).
-2. Execute o instalador, escolha uma pasta nova e conclua a instalação. O .NET necessário já está incluído.
+2. Execute o instalador e conclua a instalação. O atalho na área de trabalho vem marcado por padrão; o menu Iniciar e a opção de desinstalar são criados automaticamente. O .NET já está incluído.
 3. Deixe o aplicativo aberto e abra o vídeo em PiP no **Microsoft Edge** ou **Google Chrome**.
 4. A conexão com jogos reconhecidos é automática. Para as novas APIs, clique com o botão direito no ícone PiP Overlay perto do relógio e escolha **Iniciar jogo configurado**. Na primeira vez, selecione o executável.
 
@@ -111,7 +120,7 @@ A posição e o tamanho são proporcionais ao monitor selecionado. A interação
 | DirectX 11 / DirectX 12 / OpenGL | Implementados e testados em hosts próprios, em 32 e 64 bits |
 | Jogos | Inicialização do executável escolhido; launchers que criam outro processo e proteções podem impedir a conexão |
 | Vulkan | Camada própria, testada em 32 e 64 bits; inicialmente SDR RGBA/BGRA UNORM de 8 bits |
-| Distribuição | Projeto experimental, versão 0.13.0 |
+| Distribuição | Projeto experimental, versão 0.14.0 |
 
 Os testes automatizados cobrem lógica de conexão, atalhos e geometria. A renderização também foi exercitada em um aplicativo Direct3D 9 próprio, incluindo fullscreen. Isso **não equivale a uma certificação de compatibilidade com todas as versões do jogo ou drivers**. D3D11, D3D12, OpenGL e Vulkan passaram por verificações de pixels em hosts próprios; a captura nativa preservou os pixels de padrões em 720p e 1080p. Veja [os resultados e limites](docs/VALIDATION-0.11.md).
 

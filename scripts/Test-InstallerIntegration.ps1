@@ -40,6 +40,11 @@ RunSetup
 if((Get-FileHash "$target/data/settings.json").Hash -ne $settingsHash){throw 'Update overwrote preferences'}
 $uninstaller=Join-Path $target 'unins000.exe'
 if($entry.UninstallString -notlike ('*'+$uninstaller+'*')){throw 'Uninstall entry does not point to uninstaller'}
+$mutex=[Threading.Mutex]::new($false,'Local\PipOverlay-Portable-0.1')
+try {
+    $blocked=Start-Process -FilePath $uninstaller -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART') -WindowStyle Hidden -PassThru -Wait
+    if($blocked.ExitCode -eq 0 -or !(Test-Path "$target/PipOverlay.exe")){throw 'Running application was not protected from uninstall'}
+}finally{$mutex.Dispose()}
 $p=Start-Process -FilePath $uninstaller -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',('/LOG="'+$root+'/uninstall.log"')) -WindowStyle Hidden -PassThru -Wait
 if($p.ExitCode){throw 'Uninstall failed'}
 if((Test-Path $registry) -or (Test-Path $desktop) -or (Test-Path "$menu/PiP Overlay.lnk") -or (Test-Path "$target/PipOverlay.exe")){throw 'Integration or app remained after uninstall'}

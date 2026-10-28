@@ -68,7 +68,7 @@ procedure CopyPreference(Source, Destination: String);
 begin
   if FileExists(Source) and not FileExists(Destination) then begin
     ForceDirectories(ExtractFileDir(Destination));
-    if not FileCopy(Source, Destination, False) then
+    if not CopyFile(Source, Destination, False) then
       RaiseException('Não foi possível importar as preferências. A pasta antiga permanece intacta.');
   end;
 end;
@@ -104,7 +104,7 @@ end;
 function InitializeUninstall: Boolean;
 begin
   Result := not CheckForMutexes('Local\PipOverlay-Portable-0.1');
-  if not Result then MsgBox('Encerre o PiP Overlay pelo ícone perto do relógio antes de desinstalar.', mbInformation, MB_OK);
+  if not Result and not UninstallSilent then MsgBox('Encerre o PiP Overlay pelo ícone perto do relógio antes de desinstalar.', mbInformation, MB_OK);
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);

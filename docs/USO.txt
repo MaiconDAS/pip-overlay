@@ -1,7 +1,7 @@
-PiP Overlay 0.13 — um único instalador
+PiP Overlay 0.14 — um único instalador
 
 PARA LEVAR PARA OUTRO COMPUTADOR
-Copie Instalar-PiP-Overlay.exe. Abra, escolha uma pasta nova e clique em Instalar e Concluir. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
+Copie Instalar-PiP-Overlay.exe. Abra e siga o assistente. O atalho na área de trabalho vem marcado por padrão. O menu Iniciar e a entrada em Aplicativos instalados são criados automaticamente. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
 
 PARA USAR
 1. Deixe PiP Overlay aberto; fechar a janela mantém a ferramenta junto ao relógio.
@@ -18,12 +18,12 @@ D3D9 legado, DirectX 11/12, OpenGL e Vulkan experimental. Os novos renderizadore
 
 Os renderizadores passaram em aplicativos próprios de teste. Isso não comprova funcionamento em todos os jogos. Não há medição controlada do impacto em jogos reais desta versão nem garantia de 60 fps. Resultados: https://github.com/MaiconDAS/pip-overlay/blob/main/docs/VALIDATION-0.11.md
 
-O aplicativo não se configura para iniciar com o Windows. Abra PipOverlay.exe na pasta instalada após reiniciar. As preferências ficam em data. Para remover, encerre a ferramenta e os jogos iniciados por ela e exclua a pasta instalada. Nenhuma alteração no Registro, serviços, drivers ou políticas do navegador é necessária.
+O aplicativo não se configura para iniciar com o Windows. Abra pelo atalho na área de trabalho ou pelo menu Iniciar após reiniciar. As preferências ficam em data. Para remover, encerre a ferramenta e os jogos iniciados por ela e use Aplicativos instalados, Desinstalar PiP Overlay no menu Iniciar ou o atalho na pasta instalada. Preferências e arquivos pessoais são preservados. O instalador registra somente a entrada de desinstalação do usuário; não instala serviços, drivers nem políticas do navegador.
 
 Código próprio open source sob licença MIT. Consulte LICENSE e THIRD_PARTY_NOTICES.md; componentes de terceiros mantêm suas licenças.
 
 NOVIDADES 0.12
-FPS automático: opcional, mantém a resolução e respeita os limites escolhidos. Perfis de posição e qualidade são lembrados por jogo. Em Ajustes, consulte Atualizações ou exporte Diagnóstico sem imagens, URLs ou caminhos pessoais. Ao instalar uma versão nova, use Importar preferências e selecione a pasta anterior; ela será preservada. O compartilhamento de texturas por GPU permanece experimental e não está ativado.
+FPS automático: opcional, mantém a resolução e respeita os limites escolhidos. Perfis de posição e qualidade são lembrados por jogo. Em Ajustes, consulte Atualizações ou exporte Diagnóstico sem imagens, URLs ou caminhos pessoais. Atualizações podem usar a mesma pasta e preservam preferências. Para migrar de uma versão portátil, selecione a pasta antiga na etapa opcional de importação; ela será preservada. O compartilhamento de texturas por GPU permanece experimental e não está ativado.
 
 NOVIDADES 0.13
 Com vários PiPs abertos, escolha Vídeos e clique na miniatura desejada. Arraste no editor para encaixar nas bordas ou no centro; segure Alt para movimento livre. Ajuste a margem em Ajustes. Centralizar e Desfazer posição ficam acima do editor; Ctrl+Z funciona somente nele. O perfil do jogo fica visível e pode ser restaurado ou copiado em Ajustes. O instalador permanece sem assinatura pública; o fluxo para um certificado futuro está preparado.

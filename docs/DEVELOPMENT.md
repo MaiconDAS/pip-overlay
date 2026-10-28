@@ -8,7 +8,7 @@
 - Acesso ao NuGet oficial para o primeiro restore.
 - Zig 0.14.1 portátil para os componentes nativos.
 
-Os scripts não instalam dependências globalmente nem alteram Registro, serviços, drivers ou inicialização. `Initialize-Tools.ps1` baixa o Zig oficial em `.tools` e valida SHA-256 antes da extração. MinHook 1.3.4 está em `vendor/minhook`.
+Os scripts de compilação não instalam dependências globalmente nem alteram Registro, serviços, drivers ou inicialização. O teste de integração de instalação altera apenas uma máquina descartável do GitHub. `Initialize-Tools.ps1` baixa o Zig oficial em `.tools` e valida SHA-256 antes da extração. MinHook 1.3.4 está em `vendor/minhook`.
 
 ```powershell
 pwsh ./scripts/Initialize-Tools.ps1
@@ -43,12 +43,11 @@ pwsh ./scripts/Package.ps1
 
 Saídas: `dist/installer/Instalar-PiP-Overlay.exe`, `dist/SHA256SUMS.txt` e o ZIP intermediário. O instalador inclui .NET, componentes nativos e os avisos de licença. Não inclui ferramentas de desenvolvimento, hosts de teste, extensão ou preferências do usuário.
 
-A instalação é uma extração para uma pasta nova escolhida pelo usuário. Não sobrescreve uma pasta existente. A opção de abrir o aplicativo só é executada ao concluir a interface. A extração automatizada pode ser validada em pasta temporária:
+O instalador é compilado com Inno Setup 7.1.0. `Initialize-Installer.ps1` baixa arquivos fixados por SHA256 e extrai o compilador em `.tools`, sem executar seu instalador. O motor de distribuição gerencia atalhos, registro de desinstalação por usuário e atualização.
 
-```powershell
-./dist/installer/Instalar-PiP-Overlay.exe --extract C:\caminho\de\teste\pasta-nova
-```
+`Test-Package.ps1` extrai e compara o conteúdo sem instalar no Windows. `Test-InstallerIntegration.ps1` é bloqueado fora de um runner Windows temporário do GitHub: ele instala, verifica atalhos e Registro, atualiza preservando preferências e desinstala. O workflow `installer.yml` recebe a tag de uma release em rascunho. Nunca usar o computador do usuário como primeiro teste de integração do instalador.
 
+O ícone é reproduzível com `Render-AppIcon.ps1`; os arquivos finais já estão versionados e não precisam ser regenerados para compilar.
 ## Estrutura
 
 | Pasta | Conteúdo |
