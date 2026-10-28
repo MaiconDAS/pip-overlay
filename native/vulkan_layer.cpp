@@ -15,7 +15,7 @@ struct Instance{VkInstance handle;PFN_vkGetInstanceProcAddr next;};
 struct Frame{
     VkCommandPool pool{};VkCommandBuffer command{};VkFence fence{};VkSemaphore done{};
     VkImage source{};VkDeviceMemory imageMemory{},uploadMemory{},readMemory{};VkBuffer upload{},read{};void* mapped{};void* readMapped{};
-    uint32_t sequence=0,expected=0;bool initialized=false,pending=false,verify=false;
+    uint32_t sequence=0,expected=0,width=0,height=0;float x=0,y=0,w=0,h=0;bool initialized=false,pending=false,verify=false;
 };
 struct Swap{
     VkSwapchainKHR handle{};VkExtent2D size{};VkFormat format{};bool enabled=false,readable=false;
@@ -77,11 +77,18 @@ static void Barrier(Device&d,VkCommandBuffer cmd,VkImage image,VkImageLayout bef
 static bool Record(Device&d,Swap&s,Frame&f,uint32_t index){
     if(CALL(vkGetFenceStatus)(d.handle,f.fence)!=VK_SUCCESS)return false;
     if(f.verify&&video){uint32_t actual=*(uint32_t*)f.readMapped;bool rgba=s.format==VK_FORMAT_R8G8B8A8_UNORM;if(rgba)actual=(actual&0xff00ff00)|((actual&255)<<16)|((actual>>16)&255);bool match=true;for(int c=0;c<3;c++)if(abs(int((actual>>(c*8))&255)-int((f.expected>>(c*8))&255))>20)match=false;InterlockedIncrement(match?&video->verified:&video->mismatched);f.verify=false;}
-    if(!TryLock(video))return false;
-    uint32_t w=video->width,h=video->height,seq=video->sequence;float x=video->x,y=video->y,bw=video->w,bh=video->h;
-    bool valid=w&&h&&w<=PIP_WIDTH&&h<=PIP_HEIGHT&&x>=0&&y>=0&&bw>0&&bh>0&&x+bw<=1.001f&&y+bh<=1.001f;
-    bool upload=valid&&(!f.initialized||f.sequence!=seq);bool verify=video->validate&&s.readable;
-    if(upload)memcpy(f.mapped,video->pixels,size_t(w)*h*4);if(valid)f.expected=*(uint32_t*)(video->pixels+(size_t(h/2)*w+w/2)*4);Unlock(video);if(!valid)return false;
+    uint32_t w=f.width,h=f.height,seq=f.sequence;float x=f.x,y=f.y,bw=f.w,bh=f.h;
+    bool valid=f.initialized,upload=false;bool verify=video->validate&&s.readable;
+    // Contention skips the update, never the previously uploaded picture.
+    if(TryLock(video)){
+        w=video->width;h=video->height;seq=video->sequence;x=video->x;y=video->y;bw=video->w;bh=video->h;
+        valid=w&&h&&w<=PIP_WIDTH&&h<=PIP_HEIGHT&&x>=0&&y>=0&&bw>0&&bh>0&&x+bw<=1.001f&&y+bh<=1.001f;
+        upload=valid&&(!f.initialized||f.sequence!=seq);
+        if(upload)memcpy(f.mapped,video->pixels,size_t(w)*h*4);
+        if(valid){f.expected=*(uint32_t*)(video->pixels+(size_t(h/2)*w+w/2)*4);f.width=w;f.height=h;f.x=x;f.y=y;f.w=bw;f.h=bh;}
+        Unlock(video);
+    }
+    if(!valid)return false;
     if(CALL(vkResetCommandPool)(d.handle,f.pool,0)!=VK_SUCCESS)return false;VkCommandBufferBeginInfo begin={VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};begin.flags=VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;if(CALL(vkBeginCommandBuffer)(f.command,&begin)!=VK_SUCCESS)return false;
     if(upload){
         Barrier(d,f.command,f.source,f.initialized?VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:VK_IMAGE_LAYOUT_UNDEFINED,VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,f.initialized?VK_ACCESS_TRANSFER_READ_BIT:0,VK_ACCESS_TRANSFER_WRITE_BIT);

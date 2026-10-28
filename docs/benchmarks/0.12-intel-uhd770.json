@@ -1,0 +1,93 @@
+{
+  "after": {
+    "result": 0,
+    "source": "Synthetic animated WinForms source",
+    "fullscreen": false,
+    "pixelReadbackValidation": false,
+    "phases": [
+      {
+        "mode": "baseline",
+        "seconds": 6.1102855,
+        "hostFps": 59.89900144600445,
+        "p95FrameMs": 17.6388,
+        "producerCpuCorePercent": 20.201592871560585,
+        "hostCpuCorePercent": 5.8814764056442215,
+        "sentFps": 0,
+        "uploadedFps": 0,
+        "meanSubmitMs": 0,
+        "stateErrors": 0
+      },
+      {
+        "mode": "direct3d",
+        "seconds": 6.1238931,
+        "hostFps": 59.92919765369516,
+        "p95FrameMs": 18.4016,
+        "producerCpuCorePercent": 17.094926101828918,
+        "hostCpuCorePercent": 7.909592673980543,
+        "sentFps": 29.556361785609877,
+        "uploadedFps": 29.556361785609877,
+        "meanSubmitMs": 0.3427133333333333,
+        "stateErrors": 0
+      },
+      {
+        "mode": "baseline-final",
+        "seconds": 6.092883,
+        "hostFps": 59.90595913297531,
+        "p95FrameMs": 29.9912,
+        "producerCpuCorePercent": 8.462742514504217,
+        "hostCpuCorePercent": 4.87248811441152,
+        "sentFps": 0,
+        "uploadedFps": 0,
+        "meanSubmitMs": 0,
+        "stateErrors": 0
+      }
+    ]
+  },
+  "before": {
+    "result": 0,
+    "source": "Synthetic animated WinForms source",
+    "fullscreen": false,
+    "pixelReadbackValidation": false,
+    "phases": [
+      {
+        "mode": "baseline",
+        "seconds": 6.1254182,
+        "hostFps": 60.07753070639323,
+        "p95FrameMs": 17.6044,
+        "producerCpuCorePercent": 2.805930866891668,
+        "hostCpuCorePercent": 7.652538727886367,
+        "sentFps": 0,
+        "uploadedFps": 0,
+        "meanSubmitMs": 0,
+        "stateErrors": 0
+      },
+      {
+        "mode": "direct3d",
+        "seconds": 6.117582,
+        "hostFps": 59.991022596836466,
+        "p95FrameMs": 17.9616,
+        "producerCpuCorePercent": 14.558448092726833,
+        "hostCpuCorePercent": 6.640695621243818,
+        "sentFps": 29.423389829511073,
+        "uploadedFps": 29.423389829511073,
+        "meanSubmitMs": 0.40852333333333335,
+        "stateErrors": 0
+      },
+      {
+        "mode": "baseline-final",
+        "seconds": 6.1115713,
+        "hostFps": 60.05002346941449,
+        "p95FrameMs": 17.6189,
+        "producerCpuCorePercent": 3.5792759220529753,
+        "hostCpuCorePercent": 4.3462636196357565,
+        "sentFps": 0,
+        "uploadedFps": 0,
+        "meanSubmitMs": 0,
+        "stateErrors": 0
+      }
+    ]
+  },
+  "scope": "Synthetic D3D9 host, windowed, 30 fps target. Before uses old renderer with current capture/test harness. Short sequential samples, not a game benchmark.",
+  "gpu": "Intel UHD Graphics 770",
+  "driver": "32.0.101.7092"
+}

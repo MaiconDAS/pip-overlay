@@ -9,13 +9,13 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>PipOverlay</AssemblyName>
     <ApplicationIcon>Assets/App.ico</ApplicationIcon>
-    <Version>0.11.1</Version>
+    <Version>0.12.0</Version>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(ProductionBuild)' == 'true'">
     <DefineConstants>$(DefineConstants);PRODUCTION</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(ProductionBuild)' == 'true'">
-    <Compile Remove="QualityTests.cs;MultiApiTests.cs;GeometryTests.cs;AutoConnectTests.cs;HotkeyTests.cs;DemoSource.cs;GpuValidation.cs;ValidationV4.cs;Diagnostics.cs;SelfTest.cs;RtssTest.cs;Overlay.cs;VideoSession.cs;LegacyRtssFrameOutput.cs;RtssFrameOutput.cs;RtssClient.cs" />
+    <Compile Remove="ContentionTest.cs;ImprovementTests.cs;QualityTests.cs;MultiApiTests.cs;GeometryTests.cs;AutoConnectTests.cs;HotkeyTests.cs;DemoSource.cs;GpuValidation.cs;ValidationV4.cs;Diagnostics.cs;SelfTest.cs;RtssTest.cs;Overlay.cs;VideoSession.cs;LegacyRtssFrameOutput.cs;RtssFrameOutput.cs;RtssClient.cs" />
   </ItemGroup>
 </Project>

@@ -29,15 +29,19 @@ struct Producer {
         D3D11_TEXTURE2D_DESC desc;input->GetDesc(&desc);
         double scale=std::min(1.,std::min((double)maxW/desc.Width,(double)maxH/desc.Height));
         UINT nextW=std::max(1u,(UINT)(desc.Width*scale)),nextH=std::max(1u,(UINT)(desc.Height*scale));
-        if(source&&sw==desc.Width&&sh==desc.Height&&format==desc.Format&&w==nextW&&h==nextH)return S_OK;
+        if(staging[0]&&sw==desc.Width&&sh==desc.Height&&format==desc.Format&&w==nextW&&h==nextH)return S_OK;
         ClearTextures();sw=desc.Width;sh=desc.Height;format=desc.Format;
         w=nextW;h=nextH;
         desc.MipLevels=1;desc.ArraySize=1;desc.SampleDesc.Count=1;desc.SampleDesc.Quality=0;desc.Usage=D3D11_USAGE_DEFAULT;desc.BindFlags=D3D11_BIND_SHADER_RESOURCE;desc.CPUAccessFlags=0;desc.MiscFlags=0;
-        HRESULT hr=device->CreateTexture2D(&desc,nullptr,&source);if(FAILED(hr))return hr;
-        hr=device->CreateShaderResourceView(source,nullptr,&srv);if(FAILED(hr))return hr;
-        desc.Width=w;desc.Height=h;desc.Format=DXGI_FORMAT_B8G8R8A8_UNORM;desc.BindFlags=D3D11_BIND_RENDER_TARGET;
-        hr=device->CreateTexture2D(&desc,nullptr,&target);if(FAILED(hr))return hr;
-        hr=device->CreateRenderTargetView(target,nullptr,&rtv);if(FAILED(hr))return hr;
+        HRESULT hr=S_OK;
+        // Native BGRA frames go straight to staging: no redundant source/target allocations.
+        if(w!=sw||h!=sh||format!=DXGI_FORMAT_B8G8R8A8_UNORM){
+            hr=device->CreateTexture2D(&desc,nullptr,&source);if(FAILED(hr))return hr;
+            hr=device->CreateShaderResourceView(source,nullptr,&srv);if(FAILED(hr))return hr;
+            desc.Width=w;desc.Height=h;desc.Format=DXGI_FORMAT_B8G8R8A8_UNORM;desc.BindFlags=D3D11_BIND_RENDER_TARGET;
+            hr=device->CreateTexture2D(&desc,nullptr,&target);if(FAILED(hr))return hr;
+            hr=device->CreateRenderTargetView(target,nullptr,&rtv);if(FAILED(hr))return hr;
+        }
         desc.Usage=D3D11_USAGE_STAGING;desc.BindFlags=0;desc.CPUAccessFlags=D3D11_CPU_ACCESS_READ;
         for(auto& p:staging){hr=device->CreateTexture2D(&desc,nullptr,&p);if(FAILED(hr))return hr;}return S_OK;
     }

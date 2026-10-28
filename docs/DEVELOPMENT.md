@@ -81,3 +81,18 @@ pwsh ./scripts/Test-Package.ps1
 ```
 
 O script compara por SHA-256 todos os arquivos extraídos com o ZIP, verifica a recusa de sobrescrita e procura artefatos internos indevidos. A pasta de teste permanece em `artifacts` para inspeção.
+
+## Testes e manutenção 0.12
+
+`Test.ps1` inclui o controlador adaptativo, isolamento de perfis, privacidade do diagnóstico e seleção segura de releases. `Test-Graphics.ps1` também exerce contenção nas novas APIs. Para o D3D9, após compilar os componentes em `artifacts/tests`, execute:
+
+```powershell
+./artifacts/tests/PipOverlay.exe --contention-test ./artifacts/tests/contention.json
+./artifacts/tests/PipOverlay.exe --gpu-benchmark ./artifacts/tests/benchmark.json
+pwsh ./scripts/Test-SharedGpu.ps1 -ZigPath C:\caminho\zig.exe
+pwsh ./scripts/Test-Upgrade.ps1
+```
+
+O teste de compartilhamento é um experimento D3D11 entre processos próprios, não um modo de captura habilitado no produto. O benchmark registra FPS, p95 do tempo de quadro e CPU em fases sem/com/sem overlay. A importação do instalador é validada exclusivamente em pastas temporárias dentro de artifacts.
+
+Perfis ficam em `data/profiles`; nomes usam hash do executável. A verificação de releases não transmite configurações e pode ser desativada em Ajustes. Sua frequência automática máxima é uma consulta bem-sucedida por dia, ao abrir a ferramenta. A atualização é baixada pelo usuário na página da release; o app não executa um instalador automaticamente.

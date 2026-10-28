@@ -12,6 +12,7 @@ static IDirect3DStateBlock9* state;
 static IDirect3DDevice9* owner;
 static UINT tw,th,sequence;
 static bool valid;
+static float lastX,lastY,lastW,lastH;
 static DWORD centerColor,lastValidation;
 static volatile LONG rendering;
 typedef HRESULT (WINAPI *PresentFn)(IDirect3DDevice9*,const RECT*,const RECT*,HWND,const RGNDATA*);
@@ -29,8 +30,8 @@ static void Draw(IDirect3DDevice9* device) {
     LARGE_INTEGER begin,end;QueryPerformanceCounter(&begin);
     if(owner && owner!=device){InterlockedExchange(&rendering,0);return;}
     owner=device;
-    float x=0,y=0,w=0,h=0;
-    bool draw=false;
+    float x=lastX,y=lastY,w=lastW,h=lastH;
+    bool draw=valid;
     if(TryLock(memory)) {
         x=memory->x;y=memory->y;w=memory->w;h=memory->h;
         UINT width=memory->width,height=memory->height;
@@ -49,7 +50,7 @@ static void Draw(IDirect3DDevice9* device) {
                     texture->UnlockRect(0);sequence=memory->sequence;valid=true;InterlockedIncrement(&memory->uploaded);
                 }else if(hr!=D3DERR_DEVICELOST&&hr!=D3DERR_DEVICENOTRESET)memory->error=hr;
             }
-            draw=valid;
+            lastX=x;lastY=y;lastW=w;lastH=h;draw=valid;
         }
         Unlock(memory);
     }

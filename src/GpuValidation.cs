@@ -10,16 +10,17 @@ internal static class GpuValidation
         demo.Shown+=async (_,_)=>{
             Process? host=null;GpuVideoSession? session=null;var phases=new List<object>();
             try {
+                ShowWindow(demo.Handle,4);await Task.Delay(150);
                 host=Process.Start(new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"PipTest32.exe"),"--timed"){UseShellExecute=false,CreateNoWindow=true})!;
                 await Task.Delay(700);using var map=MemoryMappedFile.OpenExisting($"Local\\PipHost5-{host.Id}",MemoryMappedFileRights.Read);using var view=map.CreateViewAccessor(0,0,MemoryMappedFileAccess.Read);
                 var source=new WindowSource(demo.Handle,(uint)Environment.ProcessId,"Teste","Demonstração",true);
                 using var process=Process.GetCurrentProcess();
                 foreach(string mode in new[]{"baseline","direct3d","baseline-final"}) {
                     if(mode=="direct3d")session=new GpuVideoSession(source,new Settings{FramesPerSecond=30},new Size(1920,1080),new RenderTarget(host.Id,"PipTest32",true));
-                    await Task.Delay(500);var clock=Stopwatch.StartNew();var ownCpu=process.TotalProcessorTime;var hostCpu=host.TotalProcessorTime;int f0=view.ReadInt32(0);long sent=session?.Published??0,shown=session?.Uploaded??0;var costs=new List<double>();
+                    await Task.Delay(500);var clock=Stopwatch.StartNew();var ownCpu=process.TotalProcessorTime;var hostCpu=host.TotalProcessorTime;int f0=view.ReadInt32(0),sample0=view.ReadInt32(16);long sent=session?.Published??0,shown=session?.Uploaded??0;var costs=new List<double>();
                     for(int i=0;i<30;i++){await Task.Delay(200);if(session?.Error is string error)throw new InvalidOperationException(error);if(session!=null)costs.Add(session.PublishMilliseconds);}
-                    double seconds=clock.Elapsed.TotalSeconds;int count=view.ReadInt32(0)-f0;
-                    phases.Add(new{mode,seconds,hostFps=count/seconds,producerCpuCorePercent=(process.TotalProcessorTime-ownCpu).TotalSeconds/seconds*100,hostCpuCorePercent=(host.TotalProcessorTime-hostCpu).TotalSeconds/seconds*100,sentFps=((session?.Published??0)-sent)/seconds,uploadedFps=((session?.Uploaded??0)-shown)/seconds,meanSubmitMs=costs.Count==0?0:costs.Average(),stateErrors=view.ReadInt32(8)});
+                    double seconds=clock.Elapsed.TotalSeconds;int count=view.ReadInt32(0)-f0;var frameTimes=new List<float>();int sampleEnd=view.ReadInt32(16);for(int n=Math.Max(sample0,sampleEnd-4096);n<sampleEnd;n++)frameTimes.Add(view.ReadSingle(20+(n%4096)*4));frameTimes.Sort();
+                    phases.Add(new{mode,seconds,hostFps=count/seconds,p95FrameMs=frameTimes.Count>0?frameTimes[(int)((frameTimes.Count-1)*.95)]:0,producerCpuCorePercent=(process.TotalProcessorTime-ownCpu).TotalSeconds/seconds*100,hostCpuCorePercent=(host.TotalProcessorTime-hostCpu).TotalSeconds/seconds*100,sentFps=((session?.Published??0)-sent)/seconds,uploadedFps=((session?.Uploaded??0)-shown)/seconds,meanSubmitMs=costs.Count==0?0:costs.Average(),stateErrors=view.ReadInt32(8)});
                     session?.Dispose();session=null;
                 }
                 result=view.ReadInt32(8)==0?0:1;

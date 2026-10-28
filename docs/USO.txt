@@ -1,4 +1,4 @@
-PiP Overlay 0.11.1 — um único instalador
+PiP Overlay 0.12 — um único instalador
 
 PARA LEVAR PARA OUTRO COMPUTADOR
 Copie Instalar-PiP-Overlay.exe. Abra, escolha uma pasta nova e clique em Instalar e Concluir. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
@@ -21,3 +21,6 @@ Os renderizadores passaram em aplicativos próprios de teste. Isso não comprova
 O aplicativo não se configura para iniciar com o Windows. Abra PipOverlay.exe na pasta instalada após reiniciar. As preferências ficam em data. Para remover, encerre a ferramenta e os jogos iniciados por ela e exclua a pasta instalada. Nenhuma alteração no Registro, serviços, drivers ou políticas do navegador é necessária.
 
 Código próprio open source sob licença MIT. Consulte LICENSE e THIRD_PARTY_NOTICES.md; componentes de terceiros mantêm suas licenças.
+
+NOVIDADES 0.12
+FPS automático: opcional, mantém a resolução e respeita os limites escolhidos. Perfis de posição e qualidade são lembrados por jogo. Em Ajustes, consulte Atualizações ou exporte Diagnóstico sem imagens, URLs ou caminhos pessoais. Ao instalar uma versão nova, use Importar preferências e selecione a pasta anterior; ela será preservada. O compartilhamento de texturas por GPU permanece experimental e não está ativado.

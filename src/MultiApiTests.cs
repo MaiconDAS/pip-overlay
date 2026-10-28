@@ -23,7 +23,12 @@ internal static class MultiApiTests
                     samples.Add(new{box,ready=view.ReadInt32(60),rendered=view.ReadInt32(48),uploaded=view.ReadInt32(52),verified=view.ReadInt32(tail+4),mismatched=view.ReadInt32(tail+8),width=view.ReadInt32(tail+16),height=view.ReadInt32(tail+20)});
                     if(process.HasExited)throw new IOException("O processo de teste encerrou antes da validação. Consulte ReShade.log e vulkan-loader.txt.");
                 }
-                result=view.ReadInt32(tail+4)>=5&&view.ReadInt32(tail+8)==0&&view.ReadInt32(48)>0?0:1;
+                view.Write(tail,1);await Task.Delay(300);
+                var deadline=Stopwatch.StartNew();while(!ContentionTest.Lock(view)){if(deadline.ElapsedMilliseconds>1000)throw new IOException("Lock timeout");await Task.Delay(10);}
+                int before=view.ReadInt32(48);int during;
+                try{await Task.Delay(1200);during=view.ReadInt32(48)-before;}finally{view.Write(8,0);}
+                samples.Insert(0,new{contentionFrames=during});
+                result=during>10&&view.ReadInt32(tail+4)>=5&&view.ReadInt32(tail+8)==0&&view.ReadInt32(48)>0?0:1;
                 view.Write(12,0);timer.Stop();
                 File.WriteAllText(report,JsonSerializer.Serialize(new{result,samples},new JsonSerializerOptions{WriteIndented=true}));
             }catch(Exception ex){File.WriteAllText(report,JsonSerializer.Serialize(new{error=ex.ToString(),samples}));}

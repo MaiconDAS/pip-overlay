@@ -1,6 +1,6 @@
 # Compatibilidade com Jogos
 
-Estado da versão **0.11.1**, experimental. Suporte ao renderizador não significa que todos os jogos que usam essa API sejam compatíveis.
+Estado da versão **0.12.0**, experimental. Suporte ao renderizador não significa que todos os jogos que usam essa API sejam compatíveis.
 
 | Componente | Suporte e validação |
 | --- | --- |
@@ -33,3 +33,5 @@ Launchers que criam outro processo e proteções do jogo podem impedir a conexã
 - O PiP do navegador continua necessário; a ferramenta não extrai automaticamente o vídeo de uma aba comum.
 
 Veja os [resultados de teste](VALIDATION-0.11.md) e a [arquitetura](ARCHITECTURE.md).
+
+Consulte a [matriz de testes](TEST-MATRIX.md) e a [validação 0.12](VALIDATION-0.12.md) para os novos recursos. As limitações por API continuam aplicáveis.

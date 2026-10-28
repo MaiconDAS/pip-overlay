@@ -9,6 +9,8 @@ internal static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 #if !PRODUCTION
+        if(args.Length>=2&&args[0]=="--contention-test")return ContentionTest.Run(args[1]);
+        if(args.Length>=2&&args[0]=="--improvement-test")return ImprovementTests.Run(args[1]);
         if(args.Length>=2&&args[0]=="--quality-test")return QualityTests.Run(args[1]);
         if(args.Length>=3&&args[0]=="--multi-test")return MultiApiTests.Run(args[1],args[2],args.Length>3?args[3]:"--timed");
         if(args.Length>=2&&args[0]=="--geometry-test")return GeometryTests.Run(args[1]);

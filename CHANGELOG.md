@@ -1,5 +1,16 @@
 # Histórico
 
+## 0.12.0 — estabilidade, perfis e manutenção
+
+- Preserva o último quadro em contenção no D3D9/Vulkan; teste reproduz o defeito anterior e verifica a correção.
+- Evita duas texturas intermediárias na captura BGRA em tamanho nativo.
+- FPS automático opcional, com limites e recuperação gradual, sem alteração da resolução.
+- Perfis por executável para monitor, posição, tamanho, resolução e FPS.
+- Verificação opcional de versões via GitHub, sem instalação automática.
+- Exportação de diagnóstico com campos técnicos permitidos, sem imagens ou dados pessoais do vídeo.
+- Importação de preferências e perfis pelo instalador, preservando a pasta anterior.
+- Matriz de testes e benchmark com FPS e percentil 95 do tempo de quadro.
+- Protótipo de compartilhamento D3D11 entre processos validado em pixels; não ativado no produto por falta de ganho comprovado.
 ## 0.11.1 — resolução e FPS independentes; licença MIT
 
 - Resolução selecionável: até 1080p, 720p, 480p ou adaptação ao tamanho do overlay.

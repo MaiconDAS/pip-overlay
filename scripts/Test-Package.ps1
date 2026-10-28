@@ -19,13 +19,13 @@ try{
             $hash2=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($disk))
             if($hash1 -ne $hash2){throw "Content mismatch: $($entry.FullName)"}
         }finally{$inputStream.Dispose();$disk.Dispose()}
-        if($entry.FullName -match 'PipTest|PipModern|PipVulkanTest|PipCaptureTest|(^|/)data/|\.obj$|\.exp$|\.lib$'){throw "Development or user file leaked: $($entry.FullName)"}
+        if($entry.FullName -match 'PipTest|PipModern|PipVulkanTest|PipCaptureTest|PipSharedProbe|(^|/)data/|\.obj$|\.exp$|\.lib$'){throw "Development or user file leaked: $($entry.FullName)"}
         $count++
     }
 }finally{$zip.Dispose()}
 & $installer --extract $Destination | Out-Null
 if($LASTEXITCODE -eq 0){throw 'Installer did not refuse an existing directory'}
 $assembly=[Text.Encoding]::UTF8.GetString([IO.File]::ReadAllBytes((Join-Path $Destination 'PipOverlay.dll')))
-foreach($name in @('QualityTests','MultiApiTests','GpuValidation','DemoSource','RtssTest')){if($assembly.Contains($name)){throw "Development type leaked: $name"}}
+foreach($name in @('ImprovementTests','ContentionTest','QualityTests','MultiApiTests','GpuValidation','DemoSource','RtssTest')){if($assembly.Contains($name)){throw "Development type leaked: $name"}}
 Write-Output "PASS: $count extracted files match the package; existing destination refused; no developer tools or user settings."
 Write-Output "Isolated test directory: $Destination"

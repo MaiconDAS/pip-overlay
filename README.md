@@ -24,6 +24,16 @@ PiP Overlay é um aplicativo para Windows que leva o Picture-in-Picture do Edge 
 
 Abra o PiP do navegador. Para iniciar Jogos nas novas APIs, use **Iniciar jogo configurado** no menu do ícone da ferramenta perto do relógio; escolha o executável na primeira vez. A ferramenta conecta o vídeo automaticamente e mantém os controles fora da partida.
 
+## Mudanças na versão 0.12
+
+- **Imagem estável sob contenção:** DirectX 9 e Vulkan preservam o último quadro enquanto aguardam o próximo.
+- **Menos memória na captura:** elimina duas texturas intermediárias no caminho BGRA em tamanho nativo.
+- **FPS automático opcional:** ajusta a frequência entre os limites escolhidos, preservando a resolução.
+- **Perfis por jogo:** posição, tamanho, monitor, resolução e FPS são lembrados por executável.
+- **Atualizações e diagnóstico:** aviso de nova versão, importação de preferências no instalador e relatório técnico sem imagens, URLs ou caminhos pessoais.
+- **Tela principal enxuta:** configurações adicionais ficam em Ajustes.
+
+Veja a [validação da 0.12](docs/VALIDATION-0.12.md) e a [matriz de testes](docs/TEST-MATRIX.md). O transporte compartilhado por GPU foi prototipado, mas não está ativado na distribuição: ainda precisa demonstrar ganho e compatibilidade.
 ## Mudanças na versão 0.11.1
 
 - **Resolução e FPS independentes:** escolha até 1080p, 720p, 480p ou adaptação ao tamanho, junto de 60, 30 ou 15 fps. É possível usar 1080p a 30 fps.
@@ -56,6 +66,9 @@ Consulte o [histórico completo](CHANGELOG.md), a [compatibilidade com Jogos](do
 | Suspender o funcionamento | Use **Pausar**; a reconexão também fica suspensa. |
 | Voltar a assistir | Use **Retomar** ou o atalho configurado. |
 | Deixar rodando sem a janela | Feche a janela; o aplicativo fica perto do relógio. |
+| Ajustar consumo automaticamente | Em **Ajustes**, habilite **FPS automático** e escolha o FPS mínimo. O campo FPS define o máximo. |
+| Exportar informações para suporte | Use **Ajustes → Diagnóstico**; nenhum dado é enviado automaticamente. |
+| Verificar versão nova | Use **Ajustes → Atualizações**. O aviso automático pode ser desativado. |
 | Encerrar completamente | Clique em **Sair** no menu do ícone perto do relógio. |
 
 O aplicativo não configura inicialização automática do Windows. Depois de reiniciar o computador, abra `PipOverlay.exe` novamente.
@@ -88,7 +101,7 @@ A posição e o tamanho são proporcionais ao monitor selecionado. A interação
 | DirectX 11 / DirectX 12 / OpenGL | Implementados e testados em hosts próprios, em 32 e 64 bits |
 | Jogos | Inicialização do executável escolhido; launchers que criam outro processo e proteções podem impedir a conexão |
 | Vulkan | Camada própria, testada em 32 e 64 bits; inicialmente SDR RGBA/BGRA UNORM de 8 bits |
-| Distribuição | Projeto experimental, versão 0.11.1 |
+| Distribuição | Projeto experimental, versão 0.12.0 |
 
 Os testes automatizados cobrem lógica de conexão, atalhos e geometria. A renderização também foi exercitada em um aplicativo Direct3D 9 próprio, incluindo fullscreen. Isso **não equivale a uma certificação de compatibilidade com todas as versões do jogo ou drivers**. D3D11, D3D12, OpenGL e Vulkan passaram por verificações de pixels em hosts próprios; a captura nativa preservou os pixels de padrões em 720p e 1080p. Veja [os resultados e limites](docs/VALIDATION-0.11.md).
 

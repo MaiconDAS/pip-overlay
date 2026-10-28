@@ -82,12 +82,15 @@ internal sealed class GpuVideoSession : IDisposable
             device=d;pool=f;capture=s;s.StartCapture();timer=CreateWaitableTimerExW(0,null,2,0x1F0003);worker=Task.Run(Run);
         }catch{s?.Dispose();f?.Dispose();d?.Dispose();PipClose(producer);producer=0;cancel.Dispose();throw;}
     }
+    internal int EffectiveFps {get;private set;}=60;
     async Task Run()
     {
+        var adaptive=new AdaptiveFrameRate();long nextSample=0;double maximumCost=0;
         var poolSize=item.Size;var stats=new uint[8];var size=new uint[2];var textureIid=new Guid("6f15aaf2-d208-4e89-9ab4-489535d34f9c");
         try {
             while(!cancel.IsCancellationRequested) {
                 long started=Environment.TickCount64;Settings current;Size screen;lock(gate){current=settings;screen=monitor;}
+                adaptive.Configure(current.AdaptiveFps,current.MinimumFps,current.FramesPerSecond);
                 // Quantize resize requests to avoid reallocating textures for each mouse pixel.
                 var resolution=current.CaptureResolution;PipResolution(producer,(uint)resolution.Width,(uint)resolution.Height);
                 PipLayout(producer,(float)current.X/screen.Width,(float)current.Y/screen.Height,(float)current.Width/screen.Width,(float)current.Height/screen.Height);
@@ -110,7 +113,9 @@ internal sealed class GpuVideoSession : IDisposable
                 ActualFullscreen=stats[5]!=0;TargetSize=new((int)stats[6],(int)stats[7]);
                 PipFrameSize(producer,size);TransferSize=new((int)size[0],(int)size[1]);
                 if(stats[3]!=0)throw new InvalidOperationException($"Direct3D retornou 0x{stats[3]:X8}.");
-                int delay=(int)Math.Max(1,1000/current.FramesPerSecond-(Environment.TickCount64-started));
+                maximumCost=Math.Max(maximumCost,Environment.TickCount64-started);
+                if(Environment.TickCount64>=nextSample){adaptive.Sample(maximumCost);maximumCost=0;nextSample=Environment.TickCount64+1000;}
+                EffectiveFps=adaptive.Current;int delay=(int)Math.Max(1,1000/EffectiveFps-(Environment.TickCount64-started));
                 if(timer!=0){long due=-delay*10000L;if(SetWaitableTimer(timer,ref due,0,0,0,false))WaitForSingleObject(timer,(uint)delay+100);else await Task.Delay(delay,cancel.Token);}
                 else await Task.Delay(delay,cancel.Token);
             }
