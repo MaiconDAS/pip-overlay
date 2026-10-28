@@ -5,14 +5,14 @@ if(!$Destination){$Destination=Join-Path $root ('artifacts/install-test-'+[Guid]
 $Destination=[IO.Path]::GetFullPath($Destination)
 if(Test-Path -LiteralPath $Destination){throw 'Choose a new isolated test directory'}
 $installer=Join-Path $root 'dist/installer/Instalar-PiP-Overlay.exe'
-& $installer --extract $Destination | Out-Null
+& "$root/.tools/inno/unpacker/innounp.exe" -x -y "-d$Destination" $installer | Out-Null
 if($LASTEXITCODE){throw 'Installer extraction failed'}
 $zip=[IO.Compression.ZipFile]::OpenRead((Join-Path $root 'dist/PiP-Overlay-Windows-x64-portatil.zip'))
 $count=0
 try{
     foreach($entry in $zip.Entries){
         if(!$entry.Name){continue}
-        $path=Join-Path $Destination $entry.FullName
+        $path=Join-Path "$Destination/{app}" $entry.FullName
         $inputStream=$entry.Open();$disk=[IO.File]::OpenRead($path)
         try{
             $hash1=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($inputStream))
@@ -23,9 +23,7 @@ try{
         $count++
     }
 }finally{$zip.Dispose()}
-& $installer --extract $Destination | Out-Null
-if($LASTEXITCODE -eq 0){throw 'Installer did not refuse an existing directory'}
-$assembly=[Text.Encoding]::UTF8.GetString([IO.File]::ReadAllBytes((Join-Path $Destination 'PipOverlay.dll')))
+$assembly=[Text.Encoding]::UTF8.GetString([IO.File]::ReadAllBytes((Join-Path "$Destination/{app}" 'PipOverlay.dll')))
 foreach($name in @('UxTests','SoakTests','ImprovementTests','ContentionTest','QualityTests','MultiApiTests','GpuValidation','DemoSource','RtssTest')){if($assembly.Contains($name)){throw "Development type leaked: $name"}}
-Write-Output "PASS: $count extracted files match the package; existing destination refused; no developer tools or user settings."
+Write-Output "PASS: $count extracted files match the package; no developer tools or user settings."
 Write-Output "Isolated test directory: $Destination"

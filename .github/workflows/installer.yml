@@ -1,0 +1,35 @@
+name: Installer integration (isolated Windows)
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Draft release containing the installer to test
+        required: true
+        default: v0.14.0
+permissions:
+  contents: read
+jobs:
+  install-uninstall:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download candidate
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern Instalar-PiP-Overlay.exe --pattern SHA256SUMS.txt --dir artifacts/candidate
+      - name: Verify checksum
+        shell: pwsh
+        run: |
+          $expected=(Get-Content artifacts/candidate/SHA256SUMS.txt).Split(' ')[0]
+          if((Get-FileHash artifacts/candidate/Instalar-PiP-Overlay.exe).Hash -ne $expected){throw 'Checksum mismatch'}
+      - name: Install, update and uninstall on disposable runner
+        shell: pwsh
+        run: ./scripts/Test-InstallerIntegration.ps1 -Installer artifacts/candidate/Instalar-PiP-Overlay.exe
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: installer-test-logs
+          path: ${{ runner.temp }}/pip-install-*/*.log

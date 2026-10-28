@@ -2,6 +2,7 @@ param([string]$ZigPath)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $dist=Join-Path $root 'dist'
+$compiler=& "$PSScriptRoot/Initialize-Installer.ps1"
 $stage=Join-Path $root ('artifacts/package-'+[Guid]::NewGuid().ToString('N'))
 $native=Join-Path $root 'artifacts/native'
 New-Item -ItemType Directory -Force $dist | Out-Null
@@ -11,6 +12,7 @@ foreach($file in @('PipRender32.dll','PipRender64.dll','PipAttach32.exe','PipAtt
 Copy-Item "$root/docs/USO.txt" "$stage/LEIA-ME.txt"
 Copy-Item "$root/LICENSE" "$stage/LICENSE"
 Copy-Item "$root/THIRD_PARTY_NOTICES.md" "$stage/THIRD_PARTY_NOTICES.md"
+Copy-Item (Join-Path (Split-Path $compiler) "license.txt") "$stage/LICENSE-INNO-SETUP.txt"
 New-Item -ItemType Directory "$stage/graphics" | Out-Null
 foreach($file in @('ReShade32.dll','ReShade64.dll','ReShade32.json','ReShade64.json','PipOverlay.addon32','PipOverlay.addon64','PipVulkan32.dll','PipVulkan64.dll','PipLaunch32.exe','PipLaunch64.exe','LICENSE-RESHADE.md')){Copy-Item "$native/graphics/$file" "$stage/graphics/$file"}
 Copy-Item "$root/vendor/vulkan/LICENSE.md" "$stage/graphics/LICENSE-VULKAN-HEADERS.md"
@@ -24,7 +26,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $zip=Join-Path $dist 'PiP-Overlay-Windows-x64-portatil.zip'
 if(Test-Path -LiteralPath $zip){Remove-Item -LiteralPath $zip}
 [IO.Compression.ZipFile]::CreateFromDirectory($stage,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
-dotnet publish "$root/installer/Installer.csproj" -c Release -r win-x64 --self-contained true --configfile "$root/NuGet.Config" -o "$dist/installer"
+& $compiler "/DStage=$stage" "$root/installer/PipOverlay.iss"
 if($LASTEXITCODE){throw 'Falha na compilação do instalador'}
 Get-FileHash "$dist/installer/Instalar-PiP-Overlay.exe" -Algorithm SHA256 | ForEach-Object {"$($_.Hash.ToLower())  Instalar-PiP-Overlay.exe"} | Set-Content "$dist/SHA256SUMS.txt"
 Write-Output "Instalador pronto em $dist/installer/Instalar-PiP-Overlay.exe"
