@@ -11,6 +11,6 @@ internal static class SupportReport
         session=session==null?null:new {ready=session.Ready,effectiveFps=session.EffectiveFps,
             captureWidth=session.TransferSize.Width,captureHeight=session.TransferSize.Height,
             rendered=session.Rendered,uploaded=session.Uploaded,published=session.Published,
-            lastSubmitMs=session.PublishMilliseconds,hasError=session.Error!=null}
+            processed=session.ProcessedFrames,discarded=session.DiscardedFrames,workerWakeups=session.WorkerWakeups,lastSubmitMs=session.PublishMilliseconds,hasError=session.Error!=null}
     },new JsonSerializerOptions{WriteIndented=true});
 }

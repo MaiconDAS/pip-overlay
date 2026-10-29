@@ -1,4 +1,4 @@
-PiP Overlay 0.14.1 — um único instalador
+PiP Overlay 0.15.0 — um único instalador
 
 PARA LEVAR PARA OUTRO COMPUTADOR
 Copie Instalar-PiP-Overlay.exe. Abra e siga o assistente. O atalho na área de trabalho vem marcado por padrão. O menu Iniciar e a entrada em Aplicativos instalados são criados automaticamente. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
@@ -9,9 +9,9 @@ PARA USAR
 3. A conexão com jogos reconhecidos é automática. Para as novas APIs, clique com o botão direito no ícone PiP Overlay perto do relógio e escolha Iniciar jogo configurado. Selecione o executável na primeira vez.
 4. Arraste o vídeo no editor para ajustar posição e tamanho. A conexão é automática.
 
-A abertura do PiP no navegador continua necessária. Mantenha-o aberto e sem minimizar. Em Ajustes, escolha a resolução (até 1080p, 720p, 480p ou adaptar ao tamanho) e o FPS (60, 30 ou 15) separadamente. Para nitidez com menos atualizações, use Até 1080p e 30 fps. O navegador e o computador podem impor limites menores. A janela de origem é ampliada temporariamente e restaurada ao parar. Reduzir o FPS não reduz automaticamente a resolução.
+A abertura do PiP no navegador continua necessária. Mantenha-o aberto e sem minimizar. Os ajustes abrem na lateral, sem reduzir a altura do editor. Em Imagem, escolha a resolução (até 1080p, 720p, 480p ou adaptar ao tamanho) e o FPS (60, 30 ou 15) separadamente. Para nitidez com menos atualizações, use Até 1080p e 30 fps. O navegador e o computador podem impor limites menores. A janela de origem é ampliada temporariamente e restaurada ao parar. Reduzir o FPS não reduz automaticamente a resolução.
 
-Pausar interrompe também a reconexão automática; Retomar a reativa. Configure atalhos em Ajustes. Para encerrar, escolha Sair no ícone perto do relógio.
+Pausar interrompe também a reconexão automática; Retomar a reativa. Configure atalhos em Ajustes > Mais. Monitor e encaixe ficam em Ajustes > Posição. Para encerrar, escolha Sair no ícone perto do relógio.
 
 COMPATIBILIDADE
 D3D9 legado, DirectX 11/12, OpenGL e Vulkan experimental. Os novos renderizadores precisam que o jogo seja iniciado pela ferramenta. Launchers que abrem outro processo e proteções do jogo podem impedir a conexão. Vulkan inicialmente suporta SDR RGBA/BGRA UNORM de 8 bits e apresentação por fila gráfica; HDR, múltiplas swapchains por apresentação e cadeias de extensão na apresentação não são suportados.

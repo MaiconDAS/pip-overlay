@@ -11,7 +11,7 @@ struct Producer {
     ID3D11Texture2D *source=nullptr,*target=nullptr,*staging[3]={};
     ID3D11ShaderResourceView* srv=nullptr;ID3D11RenderTargetView* rtv=nullptr;
     ID3D11VertexShader* vs=nullptr;ID3D11PixelShader* ps=nullptr;ID3D11SamplerState* sampler=nullptr;
-    UINT sw=0,sh=0,w=0,h=0,index=0,maxW=640,maxH=360;DXGI_FORMAT format=DXGI_FORMAT_UNKNOWN;bool pending[3]={};
+    UINT sw=0,sh=0,w=0,h=0,index=0,maxW=640,maxH=360;DXGI_FORMAT format=DXGI_FORMAT_UNKNOWN;bool pending[3]={};uint64_t order[3]={},serial=0,delivered=0;
     ~Producer(){if(memory){InterlockedExchange(&memory->active,0);UnmapViewOfFile(memory);}if(mapping)CloseHandle(mapping);ClearTextures();Release(sampler);Release(ps);Release(vs);Release(context);Release(device);}
     void ClearTextures(){Release(srv);Release(rtv);Release(source);Release(target);for(auto& p:staging)Release(p);for(auto& p:pending)p=false;index=0;}
     HRESULT Setup(ID3D11Texture2D* input) {
@@ -45,25 +45,36 @@ struct Producer {
         desc.Usage=D3D11_USAGE_STAGING;desc.BindFlags=0;desc.CPUAccessFlags=D3D11_CPU_ACCESS_READ;
         for(auto& p:staging){hr=device->CreateTexture2D(&desc,nullptr,&p);if(FAILED(hr))return hr;}return S_OK;
     }
+    HRESULT Poll() {
+        // Prefer the newest completed readback. Never wait for the GPU or the game.
+        bool tried[3]={};
+        for(int attempt=0;attempt<3;attempt++) {
+            int read=-1;
+            for(int n=0;n<3;n++)if(!tried[n]&&pending[n]&&order[n]>delivered&&(read<0||order[n]>order[read]))read=n;
+            if(read<0)return S_OK;tried[read]=true;
+            D3D11_MAPPED_SUBRESOURCE mapped={};
+            HRESULT hr=context->Map(staging[read],0,D3D11_MAP_READ,D3D11_MAP_FLAG_DO_NOT_WAIT,&mapped);
+            if(hr==DXGI_ERROR_WAS_STILL_DRAWING)continue;
+            if(FAILED(hr))return hr;
+            if(TryLock(memory)) {
+                if(mapped.RowPitch==w*4)memcpy(memory->pixels,mapped.pData,(size_t)w*h*4);
+                else for(UINT row=0;row<h;row++)memcpy(memory->pixels+row*w*4,(char*)mapped.pData+row*mapped.RowPitch,w*4);
+                memory->width=w;memory->height=h;memory->sequence++;memory->heartbeat=GetTickCount();memory->active=1;Unlock(memory);
+                delivered=order[read];
+                for(int n=0;n<3;n++)if(order[n]<=delivered)pending[n]=false;
+            }
+            context->Unmap(staging[read],0);
+            return S_OK;
+        }
+        return S_OK;
+    }
     HRESULT Submit(ID3D11Texture2D* input) {
         HRESULT hr=Setup(input);if(FAILED(hr))return hr;
-        // Never wait for a GPU readback or for the game. Drop a frame instead.
-        UINT read=(index+1)%3;
-        if(pending[read]) {
-            D3D11_MAPPED_SUBRESOURCE mapped={};
-            hr=context->Map(staging[read],0,D3D11_MAP_READ,D3D11_MAP_FLAG_DO_NOT_WAIT,&mapped);
-            if(SUCCEEDED(hr)) {
-                if(TryLock(memory)) {
-                    for(UINT row=0;row<h;row++)memcpy(memory->pixels+row*w*4,(char*)mapped.pData+row*mapped.RowPitch,w*4);
-                    memory->width=w;memory->height=h;memory->sequence++;memory->heartbeat=GetTickCount();memory->active=1;Unlock(memory);
-                }
-                context->Unmap(staging[read],0);pending[read]=false;
-            } else if(hr!=DXGI_ERROR_WAS_STILL_DRAWING)return hr;
-        }
+        hr=Poll();if(FAILED(hr))return hr;
         if(pending[index]) {index=(index+1)%3;return S_FALSE;}
         // Native-size BGRA frames need no sampling pass or intermediate source copy.
         if(w==sw&&h==sh&&format==DXGI_FORMAT_B8G8R8A8_UNORM){
-            context->CopyResource(staging[index],input);context->Flush();pending[index]=true;index=(index+1)%3;return S_OK;
+            context->CopyResource(staging[index],input);context->Flush();pending[index]=true;order[index]=++serial;index=(index+1)%3;return S_OK;
         }
         context->CopyResource(source,input);
         context->IASetInputLayout(nullptr);context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -72,7 +83,7 @@ struct Producer {
         context->OMSetRenderTargets(1,&rtv,nullptr);
         D3D11_VIEWPORT vp={0,0,(float)w,(float)h,0,1};context->RSSetViewports(1,&vp);context->Draw(3,0);
         context->OMSetRenderTargets(0,nullptr,nullptr);ID3D11ShaderResourceView* empty=nullptr;context->PSSetShaderResources(0,1,&empty);
-        context->CopyResource(staging[index],target);context->Flush();pending[index]=true;index=(index+1)%3;return S_OK;
+        context->CopyResource(staging[index],target);context->Flush();pending[index]=true;order[index]=++serial;index=(index+1)%3;return S_OK;
     }
 };
 extern "C" __declspec(dllexport) Producer* __cdecl PipOpen(DWORD pid) {
@@ -85,6 +96,7 @@ extern "C" __declspec(dllexport) Producer* __cdecl PipOpen(DWORD pid) {
     else if(p->memory->magic!=PIP_MAGIC||p->memory->version!=1){delete p;return nullptr;}
     p->memory->active=0;return p;
 }
+extern "C" __declspec(dllexport) HRESULT __cdecl PipPoll(Producer* p) {return p->device?p->Poll():S_OK;}
 extern "C" __declspec(dllexport) HRESULT __cdecl PipSubmit(Producer* p,ID3D11Texture2D* texture) {return p->Submit(texture);}
 extern "C" __declspec(dllexport) void __cdecl PipResolution(Producer* p,UINT width,UINT height) {p->maxW=std::max(1u,std::min((UINT)PIP_WIDTH,width));p->maxH=std::max(1u,std::min((UINT)PIP_HEIGHT,height));}
 extern "C" __declspec(dllexport) void __cdecl PipFrameSize(Producer* p,uint32_t* size) {size[0]=p->memory->width;size[1]=p->memory->height;}

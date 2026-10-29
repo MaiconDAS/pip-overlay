@@ -3,6 +3,7 @@ namespace PipOverlay;
 internal sealed class DemoSource : Form
 {
     internal Color? TestColor {get;set;}
+    internal void PauseAnimation(){timer.Stop();Invalidate();}
     readonly System.Windows.Forms.Timer timer=new() { Interval=10 };
     readonly System.Diagnostics.Stopwatch clock=System.Diagnostics.Stopwatch.StartNew();
     internal DemoSource()

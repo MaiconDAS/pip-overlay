@@ -24,6 +24,20 @@ PiP Overlay é um aplicativo para Windows que leva o Picture-in-Picture do Edge 
 
 Abra o PiP do navegador. Para iniciar Jogos nas novas APIs, use **Iniciar jogo configurado** no menu do ícone da ferramenta perto do relógio; escolha o executável na primeira vez. A ferramenta conecta o vídeo automaticamente e mantém os controles fora da partida.
 
+## 0.15.0 — editor em foco e ajustes modernos
+
+- Ajustes em uma lateral com Imagem, Posição e Mais. Abrir as opções mantém a altura do editor do PiP.
+- Seletores escuros, botões arredondados, interruptores e controle de margem com aparência consistente. Navegação por teclado preservada nos controles padrão.
+- Resolução e FPS continuam independentes. O mínimo de FPS fica disponível apenas com ajuste automático ativado.
+- Captura por chegada de quadro, descarte de imagens antigas e preferência pelo readback concluído mais recente, sem esperar pela GPU.
+- Imagem parada continua visível sem processar quadros repetidos. A busca de fontes é suspensa quando o app está pausado e oculto.
+- Diagnóstico inclui contadores de quadros processados, descartados e despertares da captura.
+- Medições sintéticas documentadas, sem alegar ganho de FPS em jogos reais. O transporte por textura compartilhada permanece experimental.
+
+![Editor com ajustes laterais](docs/assets/workspace-015.png)
+
+[Validação e medições da versão 0.15](docs/VALIDATION-0.15.md).
+
 ## Correção 0.14.1 — instalação automática
 
 - Removida a etapa de importação que bloqueava o avanço com o campo vazio.

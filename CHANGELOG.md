@@ -1,5 +1,15 @@
 # Histórico
 
+## 0.15.0 — editor em foco e ajustes modernos
+
+- Ajustes em uma lateral com Imagem, Posição e Mais. Abrir as opções mantém a altura do editor do PiP.
+- Seletores escuros, botões arredondados, interruptores e controle de margem com aparência consistente. Navegação por teclado preservada nos controles padrão.
+- Resolução e FPS continuam independentes. O mínimo de FPS fica disponível apenas com ajuste automático ativado.
+- Captura por chegada de quadro, descarte de imagens antigas e preferência pelo readback concluído mais recente, sem esperar pela GPU.
+- Imagem parada continua visível sem processar quadros repetidos. A busca de fontes é suspensa quando o app está pausado e oculto.
+- Diagnóstico inclui contadores de quadros processados, descartados e despertares da captura.
+- Medições sintéticas documentadas, sem alegar ganho de FPS em jogos reais. O transporte por textura compartilhada permanece experimental.
+
 ## 0.14.1 — detecção automática da instalação
 
 - Removida a etapa de importação que bloqueava o avanço com o campo vazio.

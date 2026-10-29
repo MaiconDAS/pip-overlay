@@ -1,0 +1,16 @@
+{
+  "result": 0,
+  "results": [
+    "PASS sidebar preserves editor height 506px across all sections, editor width 778px",
+    "PASS minimum-size sections, dropdown selection and automatic-FPS toggle"
+  ],
+  "metrics": {
+    "seconds": 5.0104147,
+    "wakeups": 17,
+    "processed": 0,
+    "rendered": 274,
+    "Published": 1,
+    "Error": null,
+    "cpuCorePercent": 0
+  }
+}

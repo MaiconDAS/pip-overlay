@@ -43,7 +43,7 @@ internal sealed class Hotkeys : IDisposable
 
 internal sealed class ShortcutDialog : Form
 {
-    readonly Button first=new(),second=new();
+    readonly ModernButton first=new(),second=new();
     readonly Label hint=new(){AutoSize=false,Size=new Size(500,65),ForeColor=UiTheme.Muted};
     Shortcut start,stop;
     int recording=-1;
@@ -53,9 +53,9 @@ internal sealed class ShortcutDialog : Form
         panel.Controls.Add(new Label{Text="Controle o vídeo sem sair do jogo",AutoSize=true,Font=new Font("Segoe UI Semibold",15)});
         panel.Controls.Add(Row("Iniciar PiP",first,0));panel.Controls.Add(Row("Parar PiP",second,1));
         hint.Text="Clique em um atalho e pressione a combinação desejada.\nA ferramenta deve permanecer aberta. O vídeo já deve estar em PiP no navegador.";panel.Controls.Add(hint);
-        var buttons=new FlowLayoutPanel{Width=500,Height=50};var save=new Button();UiTheme.Button(save,"Salvar atalhos","play",true);save.Click+=(_,_)=>{recording=-1;RefreshLabels();var error=apply(start,stop);if(error!=null){hint.Text=error;return;}DialogResult=DialogResult.OK;Close();};var cancel=new Button();UiTheme.Button(cancel,"Cancelar","stop");cancel.Click+=(_,_)=>Close();buttons.Controls.Add(save);buttons.Controls.Add(cancel);panel.Controls.Add(buttons);RefreshLabels();
+        var buttons=new FlowLayoutPanel{Width=500,Height=50};var save=new ModernButton();UiTheme.Button(save,"Salvar atalhos","play",true);save.Click+=(_,_)=>{recording=-1;RefreshLabels();var error=apply(start,stop);if(error!=null){hint.Text=error;return;}DialogResult=DialogResult.OK;Close();};var cancel=new ModernButton();UiTheme.Button(cancel,"Cancelar","stop");cancel.Click+=(_,_)=>Close();buttons.Controls.Add(save);buttons.Controls.Add(cancel);panel.Controls.Add(buttons);RefreshLabels();
     }
-    Control Row(string title,Button button,int index){var row=new FlowLayoutPanel{Width=500,Height=58,Padding=new Padding(0,10,0,0)};row.Controls.Add(new Label{Text=title,Width=100,Height=34,TextAlign=ContentAlignment.MiddleLeft});UiTheme.Button(button,"","pip");button.Width=255;button.Height=36;button.Click+=(_,_)=>{recording=index;RefreshLabels();button.Text="Pressione a combinação…";hint.Text="Use Ctrl, Alt ou Shift + letra, número ou F1–F24 (exceto F12). Esc cancela a captura.";};row.Controls.Add(button);var clear=new Button{Text="Limpar",Size=new Size(75,36),FlatStyle=FlatStyle.Flat,ForeColor=UiTheme.Muted};clear.Click+=(_,_)=>{if(index==0)start=new(0);else stop=new(0);recording=-1;RefreshLabels();};row.Controls.Add(clear);return row;}
+    Control Row(string title,Button button,int index){var row=new FlowLayoutPanel{Width=500,Height=58,Padding=new Padding(0,10,0,0)};row.Controls.Add(new Label{Text=title,Width=100,Height=34,TextAlign=ContentAlignment.MiddleLeft});UiTheme.Button(button,"","pip");button.Width=255;button.Height=36;button.Click+=(_,_)=>{recording=index;RefreshLabels();button.Text="Pressione a combinação…";hint.Text="Use Ctrl, Alt ou Shift + letra, número ou F1–F24 (exceto F12). Esc cancela a captura.";};row.Controls.Add(button);var clear=new ModernButton{Text="Limpar",Size=new Size(75,36),FlatStyle=FlatStyle.Flat,ForeColor=UiTheme.Muted};clear.Click+=(_,_)=>{if(index==0)start=new(0);else stop=new(0);recording=-1;RefreshLabels();};row.Controls.Add(clear);return row;}
     void RefreshLabels(){first.Text=start.ToString();second.Text=stop.ToString();}
     internal void ReceiveRegisteredShortcut(Shortcut chord){if(recording<0)return;if(recording==0)start=chord;else stop=chord;recording=-1;RefreshLabels();hint.Text="Clique em Salvar atalhos para aplicar.";}
     protected override bool ProcessCmdKey(ref Message msg,Keys keyData){if(recording<0)return base.ProcessCmdKey(ref msg,keyData);if(keyData==Keys.Escape){recording=-1;RefreshLabels();return true;}var chord=new Shortcut((int)keyData);if(chord.Valid&&chord.Value!=0){if(recording==0)start=chord;else stop=chord;recording=-1;RefreshLabels();hint.Text="Clique em Salvar atalhos para aplicar.";}return true;}

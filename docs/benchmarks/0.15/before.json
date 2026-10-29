@@ -1,0 +1,44 @@
+{
+  "result": 0,
+  "source": "Synthetic animated WinForms source",
+  "fullscreen": false,
+  "pixelReadbackValidation": false,
+  "phases": [
+    {
+      "mode": "baseline",
+      "seconds": 6.1618775,
+      "hostFps": 59.88434531520628,
+      "p95FrameMs": 17.9431,
+      "producerCpuCorePercent": 17.243121110408314,
+      "hostCpuCorePercent": 4.81793089849644,
+      "sentFps": 0,
+      "uploadedFps": 0,
+      "meanSubmitMs": 0,
+      "stateErrors": 0
+    },
+    {
+      "mode": "direct3d",
+      "seconds": 6.1020509,
+      "hostFps": 60.14371332104096,
+      "p95FrameMs": 17.6927,
+      "producerCpuCorePercent": 20.997038880813008,
+      "hostCpuCorePercent": 4.353044646022209,
+      "sentFps": 29.662158340894862,
+      "uploadedFps": 29.662158340894862,
+      "meanSubmitMs": 0.22883666666666663,
+      "stateErrors": 0
+    },
+    {
+      "mode": "baseline-final",
+      "seconds": 6.2005937,
+      "hostFps": 59.671705307832056,
+      "p95FrameMs": 19.6223,
+      "producerCpuCorePercent": 5.039839975323654,
+      "hostCpuCorePercent": 3.2758959839603743,
+      "sentFps": 0,
+      "uploadedFps": 0,
+      "meanSubmitMs": 0,
+      "stateErrors": 0
+    }
+  ]
+}

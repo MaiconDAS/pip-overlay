@@ -34,6 +34,11 @@ internal sealed class GpuVideoSession : IDisposable
     string? error;
     bool disposed;
     nint timer;
+    readonly AutoResetEvent frameAvailable=new(false);
+    long discarded,processed,wakeups;
+    internal long DiscardedFrames=>Interlocked.Read(ref discarded);
+    internal long ProcessedFrames=>Interlocked.Read(ref processed);
+    internal long WorkerWakeups=>Interlocked.Read(ref wakeups);
     long sent,rendered,uploaded;
     uint firstSent,firstRendered,firstUploaded;
     bool ready;
@@ -49,6 +54,7 @@ internal sealed class GpuVideoSession : IDisposable
     internal double PublishMilliseconds {get{lock(gate)return milliseconds;}}
     internal string? Error {get{lock(gate)return error;}}
     [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern nint PipOpen(uint pid);
+    [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern int PipPoll(nint p);
     [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern int PipSubmit(nint p,nint texture);
     [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern void PipResolution(nint p,uint width,uint height);
     [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern void PipFrameSize(nint p,[Out]uint[] size);
@@ -79,30 +85,33 @@ internal sealed class GpuVideoSession : IDisposable
             SourceSize=new(item.Size.Width,item.Size.Height);
             f=Direct3D11CaptureFramePool.CreateFreeThreaded(d,DirectXPixelFormat.B8G8R8A8UIntNormalized,2,item.Size);
             s=f.CreateCaptureSession(item);s.IsCursorCaptureEnabled=false;
-            device=d;pool=f;capture=s;s.StartCapture();timer=CreateWaitableTimerExW(0,null,2,0x1F0003);worker=Task.Run(Run);
-        }catch{s?.Dispose();f?.Dispose();d?.Dispose();PipClose(producer);producer=0;cancel.Dispose();throw;}
+            device=d;pool=f;capture=s;pool.FrameArrived+=OnFrameArrived;s.StartCapture();timer=CreateWaitableTimerExW(0,null,2,0x1F0003);worker=Task.Run(Run);
+        }catch{s?.Dispose();f?.Dispose();d?.Dispose();PipClose(producer);producer=0;frameAvailable.Dispose();cancel.Dispose();throw;}
     }
     internal int EffectiveFps {get;private set;}=60;
+    void OnFrameArrived(Direct3D11CaptureFramePool sender,object args){try{frameAvailable.Set();}catch(ObjectDisposedException){}}
     async Task Run()
     {
-        var adaptive=new AdaptiveFrameRate();long nextSample=0;double maximumCost=0;
+        var adaptive=new AdaptiveFrameRate();long nextSample=0;double maximumCost=0;var waits=new WaitHandle[]{cancel.Token.WaitHandle,frameAvailable};
         var poolSize=item.Size;var stats=new uint[8];var size=new uint[2];var textureIid=new Guid("6f15aaf2-d208-4e89-9ab4-489535d34f9c");
         try {
             while(!cancel.IsCancellationRequested) {
+                if(WaitHandle.WaitAny(waits,250)==0)break;Interlocked.Increment(ref wakeups);
                 long started=Environment.TickCount64;Settings current;Size screen;lock(gate){current=settings;screen=monitor;}
                 adaptive.Configure(current.AdaptiveFps,current.MinimumFps,current.FramesPerSecond);
                 // Quantize resize requests to avoid reallocating textures for each mouse pixel.
                 var resolution=current.CaptureResolution;PipResolution(producer,(uint)resolution.Width,(uint)resolution.Height);
                 PipLayout(producer,(float)current.X/screen.Width,(float)current.Y/screen.Height,(float)current.Width/screen.Width,(float)current.Height/screen.Height);
+                var transferClock=Stopwatch.StartNew();Native.Check(PipPoll(producer));double readbackMs=transferClock.Elapsed.TotalMilliseconds;
                 var next=poolSize;
-                using(var frame=pool.TryGetNextFrame())if(frame!=null) {
-                    next=frame.ContentSize;nint surface=0,access=0,texture=0;
+                using(var frame=TakeLatestFrame())if(frame!=null) {
+                    Interlocked.Increment(ref processed);next=frame.ContentSize;nint surface=0,access=0,texture=0;
                     try {
                         surface=WinRT.MarshalInterface<IDirect3DSurface>.FromManaged(frame.Surface);
                         var accessIid=new Guid("a9b3d012-3df2-4ee3-b8d1-8695f457d3c1");Native.Check(Marshal.QueryInterface(surface,ref accessIid,out access));
                         var get=Marshal.GetDelegateForFunctionPointer<GetInterface>(Marshal.ReadIntPtr(Marshal.ReadIntPtr(access),3*IntPtr.Size));
                         Native.Check(get(access,ref textureIid,out texture));
-                        var clock=Stopwatch.StartNew();Native.Check(PipSubmit(producer,texture));lock(gate)milliseconds=clock.Elapsed.TotalMilliseconds;
+                        var clock=Stopwatch.StartNew();Native.Check(PipSubmit(producer,texture));lock(gate)milliseconds=readbackMs+clock.Elapsed.TotalMilliseconds;
                     }finally{if(texture!=0)Marshal.Release(texture);if(access!=0)Marshal.Release(access);if(surface!=0)Marshal.Release(surface);}
                 }
                 if(next.Width>0&&next.Height>0&&(next.Width!=poolSize.Width||next.Height!=poolSize.Height)) {
@@ -121,8 +130,9 @@ internal sealed class GpuVideoSession : IDisposable
             }
         }catch(OperationCanceledException){}
         catch(Exception ex){lock(gate)error=ex.Message;}
-        finally{capture.Dispose();pool.Dispose();device.Dispose();lock(gate){PipClose(producer);producer=0;}if(timer!=0){CloseHandle(timer);timer=0;}}
+        finally{pool.FrameArrived-=OnFrameArrived;capture.Dispose();pool.Dispose();device.Dispose();lock(gate){PipClose(producer);producer=0;}if(timer!=0){CloseHandle(timer);timer=0;}}
     }
-    internal void Apply(Settings value){lock(gate)settings=value.Validated();}
-    public void Dispose(){if(disposed)return;disposed=true;cancel.Cancel();worker.GetAwaiter().GetResult();cancel.Dispose();}
+    Direct3D11CaptureFrame? TakeLatestFrame(){var latest=pool.TryGetNextFrame();for(int i=0;i<2;i++){var next=pool.TryGetNextFrame();if(next==null)break;if(latest!=null){latest.Dispose();Interlocked.Increment(ref discarded);}latest=next;}return latest;}
+    internal void Apply(Settings value){lock(gate)settings=value.Validated();frameAvailable.Set();}
+    public void Dispose(){if(disposed)return;disposed=true;cancel.Cancel();worker.GetAwaiter().GetResult();frameAvailable.Dispose();cancel.Dispose();}
 }

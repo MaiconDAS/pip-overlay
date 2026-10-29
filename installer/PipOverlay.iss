@@ -1,7 +1,7 @@
 #ifndef Stage
   #error Stage is required
 #endif
-#define AppVersion "0.14.1"
+#define AppVersion "0.15.0"
 [Setup]
 AppId={{BFAFEE61-6519-4912-B741-389AC78FA812}
 AppName=PiP Overlay

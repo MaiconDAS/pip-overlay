@@ -1,18 +1,18 @@
 namespace PipOverlay;
 
-internal sealed class MainForm : Form
+internal sealed partial class MainForm : Form
 {
-    readonly ComboBox sources=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=360};
-    readonly ComboBox monitors=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=220};
-    readonly ComboBox quality=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=180};
-    readonly ComboBox frameRate=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=90};
-    readonly ComboBox targets=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=260};
+    readonly ModernComboBox sources=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=360};
+    readonly ModernComboBox monitors=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=220};
+    readonly ModernComboBox quality=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=180};
+    readonly ModernComboBox frameRate=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=90};
+    readonly ModernComboBox targets=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=260};
     readonly LayoutEditor editor=new(){Dock=DockStyle.Fill};
     readonly Label status=new(){AutoSize=true,ForeColor=Color.Silver},dimensions=new(){AutoSize=true,ForeColor=Color.Silver};
-    readonly Button start=new(),stop=new(),pickVideo=new(),undoLayout=new(),centerLayout=new();
+    readonly ModernButton start=new(),stop=new(),pickVideo=new(),undoLayout=new(),centerLayout=new();
     readonly Label profileLabel=new(){Text="Perfil: Geral",AutoEllipsis=true,TextAlign=ContentAlignment.MiddleLeft,Width=420,Height=42,ForeColor=UiTheme.Muted};
-    readonly CheckBox snapBox=new(){Text="Encaixar nas bordas",AutoSize=true};
-    readonly TrackBar margin=new(){Minimum=0,Maximum=96,TickFrequency=24,Width=150,Height=45};
+    readonly ModernToggle snapBox=new(){Text="Encaixar nas bordas",AutoSize=true};
+    readonly ModernSlider margin=new(){Minimum=0,Maximum=96,TickFrequency=24,Width=150,Height=45};
     readonly Label marginLabel=new(){Width=110,Height=40};
     bool pickingVideo;long lastVideoRefresh;
     readonly System.Windows.Forms.Timer pulse=new(){Interval=200};
@@ -21,10 +21,10 @@ internal sealed class MainForm : Form
     readonly AutoConnect automatic=new();
     readonly NotifyIcon tray=new();
     bool refreshing,exiting,connectionFailed,syncing;
-    readonly CheckBox adaptiveBox=new(){Text="FPS automático",AutoSize=true};
-    readonly ComboBox minimumFps=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=80};
-    readonly CheckBox updateChecks=new(){Text="Avisar atualizações",AutoSize=true};
-    readonly Button updates=new(),diagnostic=new();
+    readonly ModernToggle adaptiveBox=new(){Text="FPS automático",AutoSize=true};
+    readonly ModernComboBox minimumFps=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=80};
+    readonly ModernToggle updateChecks=new(){Text="Avisar atualizações",AutoSize=true};
+    readonly ModernButton updates=new(),diagnostic=new();
     readonly ProfileStore profiles=new(Path.Combine(AppContext.BaseDirectory,"data","profiles"));
     string? profileKey;AppRelease? availableRelease;bool checkingUpdate;
     readonly bool designPreviewMode;
@@ -56,7 +56,7 @@ internal sealed class MainForm : Form
         var heading=new FlowLayoutPanel{Dock=DockStyle.Fill,FlowDirection=FlowDirection.TopDown,WrapContents=false};heading.Controls.Add(new Label{Text="PiP Overlay",AutoSize=true,Font=new Font("Segoe UI Semibold",24),Margin=Padding.Empty});heading.Controls.Add(new Label{Text="Seu vídeo por perto. Seu jogo em foco.",AutoSize=true,ForeColor=UiTheme.Muted,Margin=new Padding(0,5,0,0)});header.Controls.Add(heading);layout.Controls.Add(header,0,0);
         foreach(var box in new[]{sources,targets,monitors,quality,frameRate})UiTheme.Combo(box);
         var toolbar=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false};toolbar.Controls.Add(UiTheme.Field("VÍDEO DO NAVEGADOR",sources,360));toolbar.Controls.Add(UiTheme.Field("JOGO",targets,300));
-        var refresh=new Button{AccessibleName="Atualizar vídeos e jogos"};UiTheme.Button(refresh,"Atualizar","refresh");refresh.Margin=new Padding(0,25,0,0);refresh.Click+=(_,_)=>{automatic.Reset();Discover();};toolbar.Controls.Add(refresh);layout.Controls.Add(toolbar,0,1);
+        var refresh=new ModernButton{AccessibleName="Atualizar vídeos e jogos"};UiTheme.Button(refresh,"Atualizar","refresh");refresh.Margin=new Padding(0,25,0,0);refresh.Click+=(_,_)=>{automatic.Reset();Discover();};toolbar.Controls.Add(refresh);layout.Controls.Add(toolbar,0,1);
         quality.Items.AddRange(new object[]{"Até 1080p","Até 720p","Até 480p","Adaptar ao tamanho"});quality.SelectedIndex=settings.Validated().Resolution switch{"720p"=>1,"480p"=>2,"auto"=>3,_=>0};
         frameRate.Items.AddRange(new object[]{"60 fps","30 fps","15 fps"});frameRate.SelectedIndex=settings.FramesPerSecond==15?2:settings.FramesPerSecond==30?1:0;
         var options=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false};options.Controls.Add(UiTheme.Field("MONITOR",monitors,230));options.Controls.Add(UiTheme.Field("RESOLUÇÃO",quality,205));options.Controls.Add(UiTheme.Field("FPS",frameRate,110));dimensions.Margin=new Padding(10,31,0,0);dimensions.ForeColor=UiTheme.Muted;options.Controls.Add(dimensions);layout.Controls.Add(options,0,2);
@@ -75,8 +75,8 @@ internal sealed class MainForm : Form
         var profileOptions=new FlowLayoutPanel{Width=1000,Height=54,WrapContents=false};
         snapBox.Checked=settings.SnapEnabled;snapBox.Margin=new Padding(0,12,12,0);profileOptions.Controls.Add(snapBox);
         margin.Value=settings.Validated().SnapMargin;marginLabel.Text=$"Margem: {margin.Value} px";marginLabel.Margin=new Padding(0,12,0,0);profileOptions.Controls.Add(marginLabel);profileOptions.Controls.Add(margin);
-        var resetProfile=new Button();UiTheme.Button(resetProfile,"Restaurar padrão","refresh");resetProfile.Width=180;profileOptions.Controls.Add(resetProfile);
-        var copyProfile=new Button();UiTheme.Button(copyProfile,"Copiar para jogo…","pip");copyProfile.Width=190;profileOptions.Controls.Add(copyProfile);extras.Controls.Add(profileOptions);
+        var resetProfile=new ModernButton();UiTheme.Button(resetProfile,"Restaurar padrão","refresh");resetProfile.Width=180;profileOptions.Controls.Add(resetProfile);
+        var copyProfile=new ModernButton();UiTheme.Button(copyProfile,"Copiar para jogo…","pip");copyProfile.Width=190;profileOptions.Controls.Add(copyProfile);extras.Controls.Add(profileOptions);
         snapBox.CheckedChanged+=(_,_)=>{if(syncing)return;settings.SnapEnabled=snapBox.Checked;Apply();};
         margin.ValueChanged+=(_,_)=>{marginLabel.Text=$"Margem: {margin.Value} px";if(syncing)return;settings.SnapMargin=margin.Value;Apply();};
         resetProfile.Click+=(_,_)=>{LoadProfile(GameProfile.From(new Settings{Monitor=SelectedScreen.DeviceName}));Save();status.Text="Perfil restaurado para o padrão.";};
@@ -88,8 +88,8 @@ internal sealed class MainForm : Form
         updates.Click+=async (_,_)=>{if(availableRelease!=null)System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(availableRelease.Url){UseShellExecute=true});else await CheckUpdates(true);};
         diagnostic.Click+=(_,_)=>{using var picker=new SaveFileDialog{Filter="Diagnóstico JSON (*.json)|*.json",FileName="PiP-diagnostico.json"};if(picker.ShowDialog(this)==DialogResult.OK)try{File.WriteAllText(picker.FileName,SupportReport.Create(settings,session));status.Text="Diagnóstico salvo, sem imagens, URLs ou caminhos pessoais.";}catch(Exception ex)when(ex is IOException or UnauthorizedAccessException){status.Text="Não foi possível salvar o diagnóstico.";}};
         toolbar.Visible=options.Visible=false;layout.RowStyles[1].Height=0;layout.RowStyles[2].Height=0;
-        var advanced=new Button{AccessibleName="Mostrar ou ocultar ajustes avançados"};UiTheme.Button(advanced,"Ajustes","pip");advanced.Margin=new Padding(0,8,0,0);header.ColumnCount=3;header.ColumnStyles.Add(new(SizeType.Absolute,160));header.Controls.Add(advanced,2,0);
-        advanced.Click+=(_,_)=>{bool show=!toolbar.Visible;toolbar.Visible=options.Visible=extras.Visible=show;layout.RowStyles[3].Height=show?130:0;layout.RowStyles[1].Height=show?82:0;layout.RowStyles[2].Height=show?78:0;advanced.Text=show?"Ocultar":"Ajustes";};
+        var advanced=new ModernButton{AccessibleName="Mostrar ou ocultar ajustes avançados"};UiTheme.Button(advanced,"Ajustes","pip");advanced.Margin=new Padding(0,8,0,0);header.ColumnCount=3;header.ColumnStyles.Add(new(SizeType.Absolute,160));header.Controls.Add(advanced,2,0);
+
         foreach(var screen in Screen.AllScreens)monitors.Items.Add(new MonitorItem(screen));monitors.SelectedIndex=0;
         for(int i=0;i<monitors.Items.Count;i++)if(((MonitorItem)monitors.Items[i]!).Screen.DeviceName==settings.Monitor)monitors.SelectedIndex=i;
         UpdateCanvas();if(!designPreview){RefreshSources();RefreshTargets();}
@@ -109,8 +109,9 @@ internal sealed class MainForm : Form
         var menu=new ContextMenuStrip();menu.Items.Add("Ajustar posição e tamanho",null,(_,_)=>ShowEditor());menu.Items.Add("Retomar",null,(_,_)=>ResumeAutomatic());menu.Items.Add("Pausar",null,(_,_)=>PauseAutomatic());menu.Items.Add("Sair",null,(_,_)=>{exiting=true;Close();});tray.ContextMenuStrip=menu;tray.DoubleClick+=(_,_)=>ShowEditor();
         var launchGame=new ToolStripMenuItem("Iniciar jogo configurado");menu.Items.Insert(0,launchGame);
         launchGame.Click+=async (_,_)=>{try{if(!File.Exists(settings.GameExecutable)){ShowEditor();using var picker=new OpenFileDialog{Filter="Jogo Windows (*.exe)|*.exe",Title="Escolha o executável do seu jogo"};if(picker.ShowDialog(this)!=DialogResult.OK)return;settings.GameExecutable=picker.FileName;Save();}launchGame.Enabled=false;status.Text="Preparando seu jogo…";await GameLauncher.Launch(settings.GameExecutable);automatic.Reset();Discover();}catch(Exception ex){ShowEditor();status.Text=ex.Message;}finally{launchGame.Enabled=true;}};
-        var chooseGame=new Button();UiTheme.Button(chooseGame,"Trocar jogo","pip");chooseGame.Width=150;chooseGame.Margin=new Padding(12,25,0,0);options.Controls.Add(chooseGame);chooseGame.Click+=(_,_)=>{using var picker=new OpenFileDialog{Filter="Jogo Windows (*.exe)|*.exe"};if(picker.ShowDialog(this)==DialogResult.OK){settings.GameExecutable=picker.FileName;Save();status.Text="Jogo selecionado. A opção de iniciar fica no ícone perto do relógio.";}};
-        var shortcuts=new Button{AccessibleName="Configurar atalhos de teclado"};UiTheme.Button(shortcuts,"Atalhos","keyboard");shortcuts.Margin=new Padding(12,25,0,0);toolbar.Controls.Add(shortcuts);shortcuts.Click+=(_,_)=>ConfigureShortcuts();
+        var chooseGame=new ModernButton();UiTheme.Button(chooseGame,"Trocar jogo","pip");chooseGame.Width=150;chooseGame.Margin=new Padding(12,25,0,0);options.Controls.Add(chooseGame);chooseGame.Click+=(_,_)=>{using var picker=new OpenFileDialog{Filter="Jogo Windows (*.exe)|*.exe"};if(picker.ShowDialog(this)==DialogResult.OK){settings.GameExecutable=picker.FileName;Save();status.Text="Jogo selecionado. A opção de iniciar fica no ícone perto do relógio.";}};
+        var shortcuts=new ModernButton{AccessibleName="Configurar atalhos de teclado"};UiTheme.Button(shortcuts,"Atalhos","keyboard");shortcuts.Margin=new Padding(12,25,0,0);toolbar.Controls.Add(shortcuts);shortcuts.Click+=(_,_)=>ConfigureShortcuts();
+        ConfigureWorkspace(layout,header,footer,advanced,refresh,chooseGame,shortcuts,resetProfile,copyProfile);
         Shown+=async (_,_)=>{if(designPreview)return;hotkeys=new Hotkeys(Handle);Discover();if(!hotkeys.Apply(new(settings.StartShortcut),new(settings.StopShortcut),out var error))status.Text=error;if(settings.CheckForUpdates)await CheckUpdates(false);};
         if(designPreview){save.Stop();exiting=true;ShowInTaskbar=false;StartPosition=FormStartPosition.Manual;Location=new Point(-20000,-20000);}
     }
@@ -157,6 +158,8 @@ internal sealed class MainForm : Form
     void ResumeAutomatic(){automatic.Resume();connectionFailed=false;settings.AutomaticEnabled=true;Save();Discover();}
     void Fail(string message){connectionFailed=true;Stop(message);}
     void Discover(){
+        discovery.Interval=!automatic.Enabled&&!Visible?5000:1500;
+        if(!automatic.Enabled&&!Visible)return;
         if(configuringShortcuts||refreshing||pickingVideo)return;
         if(session!=null){if(activeTarget is int pid){try{using var p=System.Diagnostics.Process.GetProcessById(pid);if(!p.HasExited){if(Visible&&Environment.TickCount64-lastVideoRefresh>5000)RefreshVideoChoices();return;}}catch(ArgumentException){}}Stop("Aguardando o jogo abrir…");}
         refreshing=true;
