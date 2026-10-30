@@ -1,14 +1,14 @@
-name: Feature / Sugerir melhoria
-description: Suggest a usability or functionality improvement / Proponha uma melhoria de uso ou funcionamento.
-title: '[Idea] '
+name: Português — Sugerir melhoria
+description: Proponha uma melhoria de uso ou funcionamento.
+title: '[Ideia] '
 body:
   - type: textarea
     id: problem
     attributes:
-      label: Problem to solve / Problema a resolver
+      label: Problema a resolver
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Desired behavior / Comportamento desejado
+      label: Comportamento desejado

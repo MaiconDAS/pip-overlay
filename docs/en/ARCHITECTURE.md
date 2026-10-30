@@ -14,7 +14,7 @@ The D3D11 shared-GPU transport uses a separate versioned control mapping and a t
 
 ## Rendering and input
 
-D3D9 uses the legacy recognized-process renderer. D3D11, D3D12 and OpenGL use ReShade 6.8.0 with a custom add-on; the effect draws only the video rectangle and no interactive overlay. Vulkan uses a custom transfer/blit layer with per-swapchain-image commands, upload resources, fences and semaphores. Composition waits on the original presentation semaphores, then presentation waits for composition. Synchronization resources are reused only when the swapchain image is available again.
+D3D9 uses a per-process renderer discovered by window and graphics module without game-name filters. D3D11, D3D12 and OpenGL use ReShade 6.8.0 with a custom add-on; the effect draws only the video rectangle and no interactive overlay. Vulkan uses a custom transfer/blit layer with per-swapchain-image commands, upload resources, fences and semaphores. Composition waits on the original presentation semaphores, then presentation waits for composition. Synchronization resources are reused only when the swapchain image is available again.
 
 The video has a small six-pixel corner radius. D3D9 uses rounded geometry, the ReShade APIs use a rounded mask, and Vulkan uses a bounded set of clipped blit regions. The visual editor provides all mouse interaction; game input is not consumed. Exact screen-edge positions are valid even with margin snapping enabled.
 
@@ -27,3 +27,5 @@ Pausing makes renderers passive; libraries remain loaded until the game exits. C
 ## Limits
 
 Secondary launchers, protected games/video, driver differences and unsupported Vulkan presentation modes can prevent operation. Vulkan currently targets SDR 8-bit RGBA/BGRA, a graphics presentation queue and a single swapchain; HDR/device groups are unsupported. Shared D3D11 resources may not open across incompatible adapters, so the compatibility path remains necessary. API support does not guarantee every game or 60 fps. See [validation](VALIDATION.md).
+
+The CPU compatibility capture uses three readback buffers. Increasing resolution can increase memory and bandwidth usage. Shared-GPU activation releases CPU readback buffers. ReShade input hooks and gamepad navigation are disabled and its internal overlay is blocked. Vulkan does not wait for the entire GPU each frame; full waiting occurs during resource destruction. Presentation extension chains pass through without composition. PiP discovery runs every 1.5 seconds without an active session; failure does not cause infinite connection retries. Selecting the actual renderer executable may be necessary when a launcher starts another process.

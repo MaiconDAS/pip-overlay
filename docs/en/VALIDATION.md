@@ -2,7 +2,7 @@
 
 [Português](../VALIDATION-0.16.md) · [English index](README.md)
 
-## Current build: 0.16
+## Rendering baseline: 0.16 (unchanged in 0.16.1)
 
 Intel UHD Graphics 770, driver 32.0.101.7092, Windows x64. Dedicated synthetic sources/renderers were used; no global Windows settings were changed.
 

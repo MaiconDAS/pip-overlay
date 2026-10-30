@@ -1,0 +1,94 @@
+[
+  {
+    "en": "README.en.md",
+    "pt": "README.md"
+  },
+  {
+    "en": "docs/en/README.md",
+    "pt": "docs/README.md"
+  },
+  {
+    "en": "docs/en/USAGE.md",
+    "pt": "docs/pt-BR/USAGE.md"
+  },
+  {
+    "en": "PRIVACY.md",
+    "pt": "docs/pt-BR/PRIVACY.md"
+  },
+  {
+    "en": "SECURITY.md",
+    "pt": "docs/pt-BR/SECURITY.md"
+  },
+  {
+    "en": "docs/en/CONTRIBUTING.md",
+    "pt": "CONTRIBUTING.md"
+  },
+  {
+    "en": "docs/en/THIRD_PARTY_NOTICES.md",
+    "pt": "THIRD_PARTY_NOTICES.md"
+  },
+  {
+    "en": "docs/en/CHANGELOG.md",
+    "pt": "CHANGELOG.md"
+  },
+  {
+    "en": "docs/en/VALIDATION.md",
+    "pt": "docs/VALIDATION-0.16.md"
+  },
+  {
+    "en": "docs/en/REPOSITORY-AUDIT.md",
+    "pt": "docs/REPOSITORY-AUDIT-0.16.md"
+  },
+  {
+    "en": "docs/en/ARCHITECTURE.md",
+    "pt": "docs/ARCHITECTURE.md"
+  },
+  {
+    "en": "docs/en/BRAND.md",
+    "pt": "docs/BRAND.md"
+  },
+  {
+    "en": "docs/en/COMPATIBILITY.md",
+    "pt": "docs/COMPATIBILITY.md"
+  },
+  {
+    "en": "docs/en/DEVELOPMENT.md",
+    "pt": "docs/DEVELOPMENT.md"
+  },
+  {
+    "en": "docs/en/SIGNING.md",
+    "pt": "docs/SIGNING.md"
+  },
+  {
+    "en": "docs/en/TEST-MATRIX.md",
+    "pt": "docs/TEST-MATRIX.md"
+  },
+  {
+    "en": "docs/en/PERFORMANCE-2026-10-29.md",
+    "pt": "docs/PERFORMANCE-2026-10-29.md"
+  },
+  {
+    "en": "docs/en/VALIDATION-0.11.md",
+    "pt": "docs/VALIDATION-0.11.md"
+  },
+  {
+    "en": "docs/en/VALIDATION-0.11.1.md",
+    "pt": "docs/VALIDATION-0.11.1.md"
+  },
+  {
+    "en": "docs/en/VALIDATION-0.12.md",
+    "pt": "docs/VALIDATION-0.12.md"
+  },
+  {
+    "en": "docs/en/VALIDATION-0.13.md",
+    "pt": "docs/VALIDATION-0.13.md"
+  },
+  {
+    "en": "docs/en/VALIDATION-0.14.md",
+    "pt": "docs/VALIDATION-0.14.md"
+  },
+  {
+    "en": "docs/en/VALIDATION-0.15.md",
+    "pt": "docs/VALIDATION-0.15.md"
+  }
+]

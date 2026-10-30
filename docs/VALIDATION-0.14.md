@@ -1,3 +1,5 @@
+[English](en/VALIDATION-0.14.md)
+
 > Registro histórico da versão indicada. Para a build atual, consulte [VALIDATION-0.16.md](VALIDATION-0.16.md).
 
 # Validação 0.14.0

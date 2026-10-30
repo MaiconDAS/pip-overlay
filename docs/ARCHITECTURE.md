@@ -12,7 +12,7 @@ Alterar apenas o FPS mantém o limite de resolução e o tamanho solicitado à j
 
 ## Renderizadores
 
-- D3D9 mantém o renderizador legado para os processos reconhecidos.
+- D3D9 usa o renderizador por processo, detectado por janela e módulo gráfico, sem filtro por nome de jogo.
 - D3D11, D3D12 e OpenGL usam ReShade 6.8.0 e um add-on próprio. O efeito desenha somente o retângulo do vídeo. A interface interna do motor é bloqueada; hooks de entrada e navegação por controle são desativados.
 - Vulkan usa uma camada própria de transferência/blit, sem shaders de storage image. Cada imagem da swapchain possui comandos, textura, upload, fence e semáforo próprios. A submissão espera os semáforos originais e a apresentação espera a composição. O semáforo só é reutilizado quando sua imagem retorna ao aplicativo. A GPU não é bloqueada a cada quadro; espera completa só ocorre na destruição dos recursos.
 
@@ -30,10 +30,12 @@ Pausar torna os renderizadores passivos; bibliotecas permanecem carregadas até 
 - Suporte à API não garante compatibilidade com todos os jogos e drivers.
 - Fonte, resolução disponibilizada pelo navegador e capacidade da máquina continuam limitando qualidade e fps.
 
-Veja [VALIDATION-0.11.md](VALIDATION-0.11.md).
+Veja [VALIDATION-0.16.md](VALIDATION-0.16.md).
 
 ## Transporte compartilhado no DirectX 11
 
 Uma memória de controle separada e versionada negocia três texturas RGBA com mutexes por chave. O produtor escreve numa textura livre; o consumidor copia a imagem concluída mais recente para a textura do efeito e libera quadros antigos. A aquisição não espera pelo outro processo. Falhas ou incompatibilidade retornam ao caminho CPU; uma origem retida permite esse retorno mesmo com vídeo parado. Buffers de leitura da CPU são liberados quando o caminho GPU entra em uso. O diagnóstico identifica o transporte ativo. DirectX 9/12, OpenGL e Vulkan mantêm o caminho de compatibilidade.
 
 O vídeo tem cantos discretos de seis pixels: geometria no D3D9, máscara nas APIs ReShade e um conjunto limitado de regiões de blit no Vulkan. O editor permite coordenadas exatas de borda mesmo com margem de encaixe ativa.
+
+A captura prioriza quadros recentes e usa manutenção periódica para manter a origem ativa. Fechar a interface mantém o app na bandeja; quando pausado e oculto, a descoberta evita trabalho. Recursos D3D11 compartilhados podem ser incompatíveis entre adaptadores, por isso o fallback é necessário. A instalação, separadamente, gerencia atalhos e registro de desinstalação por usuário.

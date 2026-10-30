@@ -6,7 +6,8 @@ param(
 )
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
-$installer=Join-Path $root 'dist/installer/Instalar-PiP-Overlay.exe'
+$installerName=& "$PSScriptRoot/Get-InstallerName.ps1"
+$installer=Join-Path $root ("dist/installer/"+$installerName)
 if(!(Test-Path -LiteralPath $installer)){throw 'Build the installer first.'}
 if($CheckOnly){
     $signature=Get-AuthenticodeSignature -LiteralPath $installer
@@ -21,7 +22,7 @@ if('1.3.6.1.5.5.7.3.3' -notin @($certificate.EnhancedKeyUsageList | ForEach-Obje
 # Work on a separate copy; never replace the unsigned release on failure.
 $output=Join-Path $root ('artifacts/signed-'+[Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $output | Out-Null
-$signed=Join-Path $output 'Instalar-PiP-Overlay.exe'
+$signed=Join-Path $output $installerName
 Copy-Item -LiteralPath $installer -Destination $signed
 & $SignTool sign /s My /sha1 $Thumbprint /fd SHA256 /tr $TimestampUrl.AbsoluteUri /td SHA256 $signed
 if($LASTEXITCODE){throw "Signing failed. Do not publish $output"}
@@ -30,5 +31,5 @@ if($LASTEXITCODE){throw "Signature verification failed. Do not publish $output"}
 $signature=Get-AuthenticodeSignature -LiteralPath $signed
 if($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Thumbprint -ne $Thumbprint -or !$signature.TimeStamperCertificate){throw 'Signature, publisher or timestamp verification failed. Do not publish this copy.'}
 $hash=(Get-FileHash -LiteralPath $signed -Algorithm SHA256).Hash.ToLowerInvariant()
-"$hash  Instalar-PiP-Overlay.exe" | Set-Content (Join-Path $output 'SHA256SUMS.txt')
+"$hash  $installerName" | Set-Content (Join-Path $output 'SHA256SUMS.txt')
 Write-Output "Verified signed release: $output"

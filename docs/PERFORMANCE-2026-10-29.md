@@ -1,3 +1,5 @@
+[English](en/PERFORMANCE-2026-10-29.md)
+
 > Investigação exploratória anterior à integração da 0.16. Resultados integrados atuais: [VALIDATION-0.16.md](VALIDATION-0.16.md).
 
 # Investigação de desempenho — 29/10/2026

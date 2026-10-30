@@ -1,10 +1,11 @@
 param([string]$Destination)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
+$installerName=& "$PSScriptRoot/Get-InstallerName.ps1"
 if(!$Destination){$Destination=Join-Path $root ('artifacts/install-test-'+[Guid]::NewGuid().ToString('N'))}
 $Destination=[IO.Path]::GetFullPath($Destination)
 if(Test-Path -LiteralPath $Destination){throw 'Choose a new isolated test directory'}
-$installer=Join-Path $root 'dist/installer/Instalar-PiP-Overlay.exe'
+$installer=Join-Path $root ("dist/installer/"+$installerName)
 & "$root/.tools/inno/unpacker/innounp.exe" -x -y "-d$Destination" $installer | Out-Null
 if($LASTEXITCODE){throw 'Installer extraction failed'}
 $zip=[IO.Compression.ZipFile]::OpenRead((Join-Path $root 'dist/PiP-Overlay-Windows-x64-portatil.zip'))

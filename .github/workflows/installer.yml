@@ -3,34 +3,40 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Draft release containing the installer to test
+        description: Draft release containing the installer / Release em rascunho
         required: true
-        default: v0.16.0
+        default: v0.16.1
 permissions:
-  contents: write # Required by GitHub to download assets from a draft release.
+  contents: write # Required to download assets from a draft release.
 jobs:
   install-uninstall:
     runs-on: windows-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Download candidate
+      - name: Download candidate / Baixar candidato
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.tag }}
-        run: gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern Instalar-PiP-Overlay.exe --pattern SHA256SUMS.txt --dir artifacts/candidate
-      - name: Verify checksum
+        run: |
+          $name=./scripts/Get-InstallerName.ps1 -Version $env:RELEASE_TAG.TrimStart('v')
+          gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern $name --pattern SHA256SUMS.txt --dir artifacts/candidate
+          if($LASTEXITCODE){throw 'Candidate download failed'}
+          "INSTALLER_PATH=artifacts/candidate/$name" >> $env:GITHUB_ENV
+      - name: Verify checksum / Verificar checksum
         shell: pwsh
         run: |
-          $expected=(Get-Content artifacts/candidate/SHA256SUMS.txt).Split(' ')[0]
-          if((Get-FileHash artifacts/candidate/Instalar-PiP-Overlay.exe).Hash -ne $expected){throw 'Checksum mismatch'}
-      - name: Test the interactive wizard before installing
+          $line=(Get-Content artifacts/candidate/SHA256SUMS.txt).Trim()
+          $parts=$line -split '  ',2
+          if($parts.Count -ne 2 -or $parts[1] -ne (Split-Path $env:INSTALLER_PATH -Leaf)){throw 'Checksum filename mismatch'}
+          if((Get-FileHash -LiteralPath $env:INSTALLER_PATH).Hash -ne $parts[0]){throw 'Checksum mismatch'}
+      - name: Test wizard / Testar assistente
         shell: pwsh
-        run: ./scripts/Test-InstallerWizard.ps1 -Installer (Resolve-Path artifacts/candidate/Instalar-PiP-Overlay.exe)
-      - name: Install, update and uninstall on disposable runner
+        run: ./scripts/Test-InstallerWizard.ps1 -Installer (Resolve-Path -LiteralPath $env:INSTALLER_PATH)
+      - name: Install, update and uninstall / Instalar, atualizar e desinstalar
         shell: pwsh
-        run: ./scripts/Test-InstallerIntegration.ps1 -Installer artifacts/candidate/Instalar-PiP-Overlay.exe
+        run: ./scripts/Test-InstallerIntegration.ps1 -Installer $env:INSTALLER_PATH
       - uses: actions/upload-artifact@v4
         if: always()
         with:

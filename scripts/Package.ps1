@@ -1,6 +1,7 @@
 param([string]$ZigPath)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
+$installerName=& "$PSScriptRoot/Get-InstallerName.ps1"
 $dist=Join-Path $root 'dist'
 $compiler=& "$PSScriptRoot/Initialize-Installer.ps1"
 $stage=Join-Path $root ('artifacts/package-'+[Guid]::NewGuid().ToString('N'))
@@ -10,7 +11,7 @@ New-Item -ItemType Directory -Force $dist | Out-Null
 & "$PSScriptRoot/Build-Native.ps1" -Destination $native -ZigPath $ZigPath
 foreach($file in @('PipRender32.dll','PipRender64.dll','PipAttach32.exe','PipAttach64.exe','PipProbe32.exe','PipProbe64.exe','PipGpu.dll','LICENSE-MINHOOK.txt')){Copy-Item (Join-Path $native $file) $stage}
 Copy-Item "$root/docs/USO.txt" "$stage/LEIA-ME.txt"
-(Get-Content "$root/docs/en/USAGE.md" -Raw).Replace("](../USO.txt)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/USO.txt)").Replace("](README.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/en/README.md)").Replace("](../../PRIVACY.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/PRIVACY.md)").Replace("](COMPATIBILITY.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/en/COMPATIBILITY.md)").Replace("](SIGNING.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/en/SIGNING.md)") | Set-Content "$stage/READ-ME.md"
+(Get-Content "$root/docs/en/USAGE.md" -Raw).Replace("](../pt-BR/USAGE.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/pt-BR/USAGE.md)").Replace("](../USO.txt)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/USO.txt)").Replace("](README.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/en/README.md)").Replace("](../../PRIVACY.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/PRIVACY.md)").Replace("](COMPATIBILITY.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/en/COMPATIBILITY.md)").Replace("](SIGNING.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/en/SIGNING.md)") | Set-Content "$stage/READ-ME.md"
 Copy-Item "$root/LICENSE" "$stage/LICENSE"
 (Get-Content "$root/PRIVACY.md" -Raw).Replace("](docs/", "](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/").Replace("](SECURITY.md)", "](https://github.com/MaiconDAS/pip-overlay/blob/main/SECURITY.md)") | Set-Content "$stage/PRIVACY-en.md"
 (Get-Content "$root/docs/pt-BR/PRIVACY.md" -Raw).Replace("](../../PRIVACY.md)", "](https://github.com/MaiconDAS/pip-overlay/blob/main/PRIVACY.md)").Replace("](../README.md)", "](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/README.md)").Replace("](SECURITY.md)", "](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/pt-BR/SECURITY.md)") | Set-Content "$stage/PRIVACY-pt-BR.md"
@@ -31,5 +32,5 @@ if(Test-Path -LiteralPath $zip){Remove-Item -LiteralPath $zip}
 [IO.Compression.ZipFile]::CreateFromDirectory($stage,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
 & $compiler "/DStage=$stage" "$root/installer/PipOverlay.iss"
 if($LASTEXITCODE){throw 'Falha na compilação do instalador'}
-Get-FileHash "$dist/installer/Instalar-PiP-Overlay.exe" -Algorithm SHA256 | ForEach-Object {"$($_.Hash.ToLower())  Instalar-PiP-Overlay.exe"} | Set-Content "$dist/SHA256SUMS.txt"
-Write-Output "Instalador pronto em $dist/installer/Instalar-PiP-Overlay.exe"
+Get-FileHash "$dist/installer/$installerName" -Algorithm SHA256 | ForEach-Object {"$($_.Hash.ToLower())  $installerName"} | Set-Content "$dist/SHA256SUMS.txt"
+Write-Output "Instalador pronto em $dist/installer/$installerName"

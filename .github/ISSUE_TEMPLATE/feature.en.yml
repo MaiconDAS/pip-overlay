@@ -1,0 +1,14 @@
+name: English — Feature request
+description: Suggest a usability or functionality improvement.
+title: '[Idea] '
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Desired behavior

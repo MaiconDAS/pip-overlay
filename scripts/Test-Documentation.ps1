@@ -19,8 +19,27 @@ foreach($required in @('README.md','README.en.md','PRIVACY.md','SECURITY.md','do
 [xml]$project=Get-Content "$root/src/PipOverlay.csproj"
 $version=[string]($project.Project.PropertyGroup.Version | Where-Object {$_} | Select-Object -First 1)
 if(!$version){throw 'Missing project version'}
+$pairs=Get-Content "$root/docs/languages.json" -Raw | ConvertFrom-Json
+$covered=@()
+foreach($pair in $pairs){
+    foreach($language in @('pt','en')){
+        $path=$pair.$language
+        $covered+=$path
+        if(!(Test-Path -LiteralPath "$root/$path")){$errors+="Missing language edition: $path";continue}
+        $other=if($language -eq 'pt'){$pair.en}else{$pair.pt}
+        $relative=[IO.Path]::GetRelativePath((Split-Path "$root/$path"),"$root/$other").Replace('\','/')
+        if(!(Get-Content "$root/$path" -Raw).Contains("]($relative)")){$errors+="Missing language switch: $path -> $other"}
+    }
+}
+foreach($file in Get-ChildItem "$root/docs" -Recurse -File -Filter '*.md'){
+    $relative=[IO.Path]::GetRelativePath($root,$file.FullName).Replace('\','/')
+    if($relative -notin $covered){$errors+="Document without a language pair: $relative"}
+}
+$installerName=& "$PSScriptRoot/Get-InstallerName.ps1"
+if($installerName -ne "PiP-Overlay v$version.exe"){$errors+='Installer filename does not match app version'}
+if(!(Get-Content "$root/installer/PipOverlay.iss" -Raw).Contains('OutputBaseFilename=PiP-Overlay v{#AppVersion}')){$errors+='Inno output filename is not versioned'}
 foreach($path in @('installer/PipOverlay.iss','scripts/Test-InstallerIntegration.ps1','.github/workflows/installer.yml')){
     if(!(Get-Content "$root/$path" -Raw).Contains($version)){$errors+="Version mismatch: $path vs $version"}
 }
 if($errors.Count){throw ($errors -join "`n")}
-Write-Output "PASS documentation: $($files.Count) Markdown files, $links local links, required translations and version $version"
+Write-Output "PASS documentation: $($files.Count) Markdown files, $links local links, $($pairs.Count) language pairs and version $version"

@@ -1,11 +1,12 @@
 #ifndef Stage
   #error Stage is required
 #endif
-#define AppVersion "0.16.0"
+#define AppVersion "0.16.1"
 [Setup]
 AppId={{BFAFEE61-6519-4912-B741-389AC78FA812}
 AppName=PiP Overlay
 AppVersion={#AppVersion}
+AppVerName=PiP Overlay v{#AppVersion}
 AppPublisher=MaiconDAS
 AppPublisherURL=https://github.com/MaiconDAS/pip-overlay
 AppSupportURL=https://github.com/MaiconDAS/pip-overlay/issues
@@ -27,7 +28,7 @@ SetupIconFile=..\src\Assets\App.ico
 UninstallDisplayIcon={app}\PipOverlay.exe
 UninstallDisplayName=PiP Overlay
 OutputDir=..\dist\installer
-OutputBaseFilename=Instalar-PiP-Overlay
+OutputBaseFilename=PiP-Overlay v{#AppVersion}
 Compression=lzma2
 SolidCompression=yes
 AppMutex=Local\PipOverlay-Portable-0.1
@@ -36,7 +37,7 @@ RestartApplications=no
 Uninstallable=yes
 CreateUninstallRegKey=yes
 VersionInfoVersion={#AppVersion}
-VersionInfoDescription=Instalador do PiP Overlay
+VersionInfoDescription=PiP Overlay v{#AppVersion}
 
 [Languages]
 Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"

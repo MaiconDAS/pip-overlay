@@ -1,4 +1,4 @@
-# Revisão do repositório — 0.16
+# Revisão do repositório — 0.16 / 0.16.1
 
 [English](en/REPOSITORY-AUDIT.md)
 
@@ -7,7 +7,7 @@ A revisão confrontou documentação principal, manifestos de versão, instruç�
 Correções realizadas:
 
 - README deixou de misturar instruções atuais com listas antigas de recursos. Botões removidos, importação manual e a afirmação de que o transporte GPU estava desativado não aparecem como orientação atual.
-- Versões do aplicativo, Inno Setup, teste do instalador e workflow de candidato estão alinhadas em 0.16.0.
+- Versões do aplicativo, Inno Setup, teste do instalador e workflow de candidato estão alinhadas em 0.16.1.
 - Compatibilidade diferencia API de renderização, transporte GPU D3D11, validação sintética e jogos reais. Fullscreen das novas APIs não é declarado certificado.
 - Arquitetura distingue mudanças do instalador (atalhos e registro de desinstalação por usuário) do funcionamento normal do overlay, que não altera configurações globais.
 - Política de privacidade descreve consulta ao GitHub e dados locais; não afirma que o app nunca faz conexões de rede. Diagnóstico exportado e logs técnicos de terceiros são diferenciados.
@@ -18,3 +18,5 @@ Correções realizadas:
 Arquivos históricos RTSS permanecem no código de desenvolvimento, excluídos da build de produção. A assinatura pública permanece pendente; não foi anunciada como concluída.
 
 A revisão adicional removeu filtros de nome de jogo do editor e do carregador DirectX 9. Identificadores específicos restantes pertencem a diagnósticos históricos excluídos da produção. Detecção por janela/renderizador não é apresentada como certificação de compatibilidade.
+
+Na 0.16.1, as páginas iniciais foram reorganizadas com novidades e download no topo. O índice reúne 23 pares de documentos, incluindo traduções completas dos relatórios históricos. O instalador recebe a versão no nome; o workflow verifica o nome no checksum. As duas edições têm links recíprocos verificados automaticamente.

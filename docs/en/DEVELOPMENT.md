@@ -35,7 +35,7 @@ pwsh ./scripts/Package.ps1 -ZigPath C:\tools\zig.exe
 pwsh ./scripts/Test-Package.ps1
 ```
 
-Outputs include `dist/installer/Instalar-PiP-Overlay.exe`, `dist/SHA256SUMS.txt` and a portable ZIP. Production packages exclude test hosts, development commands, personal settings and machine-specific catalogs. Inno Setup 7.1.0 is extracted locally after hash verification; its installer is not run on the development machine.
+Outputs include `dist/installer/PiP-Overlay v0.16.1.exe`, `dist/SHA256SUMS.txt` and a portable ZIP. Production packages exclude test hosts, development commands, personal settings and machine-specific catalogs. Inno Setup 7.1.0 is extracted locally after hash verification; its installer is not run on the development machine.
 
 `Test-Package.ps1` extracts and compares files without installing. `Test-InstallerWizard.ps1` and `Test-InstallerIntegration.ps1` only run on disposable GitHub-hosted Windows runners. They check the wizard, installation, shortcuts, uninstall registration, update/relocation and data preservation. Never use the user's Windows installation as the first test. Public signing is [pending](SIGNING.md).
 
@@ -44,3 +44,14 @@ Outputs include `dist/installer/Instalar-PiP-Overlay.exe`, `dist/SHA256SUMS.txt`
 `src` contains WinForms code and development tests; `native` contains capture, transport, renderers and helpers; `effects` holds the ReShade effect; `installer` holds Inno setup; `scripts` covers builds and verification; `vendor` preserves dependency source/licenses. `Rtss*` and old V4 classes are historical development references excluded from production.
 
 Profiles live in `data/profiles`, identified by a hash of the executable path. Local game launch data lives in `data/games`. Update checks can be disabled; the app opens release pages instead of silently running an installer. Do not commit binaries, tokens, personal logs or `PipD3D9-*.bin` catalogs. Keep both documentation language editions current.
+
+
+## Additional reproducible checks
+
+With the development build and native files in artifacts/tests, run --contention-test report.json or --gpu-benchmark report.json for D3D9 contention and no-overlay/overlay/no-overlay FPS, frame-time p95 and CPU measurements. Test-Upgrade.ps1 exercises preference import only in temporary artifacts folders. The --soak-test mode runs 30 capture cycles using PipTest32.exe; --shared-test report.json reconnect 64 runs eight integrated-GPU session recreations. These development modes are excluded from distribution.
+
+Render-AppIcon.ps1 reproduces the icon; versioned final assets do not need regeneration for normal builds. MSVC is needed for ReShade SDK ABI compatibility; Zig builds the other native components. Native downloads are hash-verified and kept locally. Test-Package.ps1 also rejects an existing extraction destination and leaves the isolated test directory available for inspection.
+
+Update checks run at most once per successful day on application startup and do not transmit preferences. They open the release page for the user to download the installer. Executable-path hashes identify profiles; global shortcuts remain separate.
+
+Run scripts/Test-Documentation.ps1 to verify local links, language pairs and version alignment. scripts/Get-InstallerName.ps1 derives the installer filename from the project version. Update both documentation editions and the version manifests for each release.

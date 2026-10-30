@@ -1,26 +1,26 @@
-name: Bug / Relatar problema
-description: Report unexpected behavior / Algo não funcionou como esperado.
+name: Português — Relatar problema
+description: Algo não funcionou como esperado.
 title: '[Bug] '
 body:
   - type: input
     id: version
     attributes:
-      label: App version / Versão do aplicativo
+      label: Versão do aplicativo
     validations:
       required: true
   - type: textarea
     id: environment
     attributes:
-      label: Environment / Ambiente
-      description: Windows, browser/navegador, GPU, driver, fullscreen/borderless/windowed. No personal data / Sem dados pessoais.
+      label: Ambiente
+      description: Windows, navegador, GPU, driver e modo de exibição do jogo. Não inclua dados pessoais.
     validations:
       required: true
   - type: dropdown
     id: api
     attributes:
-      label: Graphics API / API gráfica
+      label: API gráfica
       options:
-        - Unknown / Não sei
+        - Não sei
         - DirectX 9
         - DirectX 11
         - DirectX 12
@@ -29,11 +29,11 @@ body:
   - type: input
     id: quality
     attributes:
-      label: Resolution and FPS / Resolução e FPS
+      label: Resolução e FPS
   - type: textarea
     id: reproduce
     attributes:
-      label: Reproduction and expected result / Reprodução e resultado esperado
-      description: Include steps and observed behavior. Review logs before sharing. / Informe os passos e o comportamento observado. Revise logs antes de compartilhar.
+      label: Reprodução e resultado esperado
+      description: Informe os passos e o comportamento observado. Revise logs antes de compartilhar.
     validations:
       required: true

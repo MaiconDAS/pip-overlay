@@ -22,3 +22,5 @@ Tipografia: Segoe UI, com fallback para Arial e sans-serif. O símbolo represent
 - `assets/workspace-016.png`: renderização atual da interface, sem conteúdo pessoal. `editor.png` e `workspace-015.png` são imagens históricas.
 
 Prefira linguagem direta: descreva o que o aplicativo faz e identifique limites. Não use promessas de custo zero, suporte universal ou aprovação pelos fornecedores do jogo/navegador.
+
+A versão inglesa do cabeçalho está em [banner.en.svg](assets/banner.en.svg). As capturas do aplicativo preservam os rótulos reais em português.

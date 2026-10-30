@@ -1,0 +1,39 @@
+name: English — Bug report
+description: Report unexpected behavior.
+title: '[Bug] '
+body:
+  - type: input
+    id: version
+    attributes:
+      label: App version
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Windows, browser, GPU, driver, fullscreen/borderless/windowed. Do not include personal data.
+    validations:
+      required: true
+  - type: dropdown
+    id: api
+    attributes:
+      label: Graphics API
+      options:
+        - Unknown
+        - DirectX 9
+        - DirectX 11
+        - DirectX 12
+        - OpenGL
+        - Vulkan
+  - type: input
+    id: quality
+    attributes:
+      label: Resolution and FPS
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction and expected result
+      description: Include steps and observed behavior. Review logs before sharing.
+    validations:
+      required: true

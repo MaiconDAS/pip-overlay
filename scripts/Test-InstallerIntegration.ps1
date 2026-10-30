@@ -24,7 +24,7 @@ function RunSetup([switch]$UseRegisteredPath) {
 }
 RunSetup
 $entry=Get-ItemProperty $registry
-if($entry.DisplayName -ne 'PiP Overlay' -or $entry.DisplayVersion -ne '0.16.0'){throw 'Wrong installed apps entry'}
+if($entry.DisplayName -ne 'PiP Overlay' -or $entry.DisplayVersion -ne '0.16.1'){throw 'Wrong installed apps entry'}
 if($entry.InstallLocation.TrimEnd('\') -ne $target){throw 'Wrong install location'}
 $shell=New-Object -ComObject WScript.Shell
 foreach($link in @($desktop,(Join-Path $menu 'PiP Overlay.lnk'))){

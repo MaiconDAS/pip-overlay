@@ -12,3 +12,5 @@ Original PiP Overlay code is [MIT licensed](../../LICENSE). This does not replac
 - **Zig 0.14.1**: portable build tool from the official distribution, not shipped inside the application installer.
 - **Microsoft Visual C++ Build Tools / Windows SDK**: downloaded and extracted locally for development with hashes pinned in `scripts/msvc-packages.json`. Microsoft terms apply. Build tools are not shipped; the add-on statically links the C++ runtime, so users do not need a separate Visual Studio installation.
 - **Innounp**: development-only extraction tool, not distributed with the app.
+
+Official sources: [MinHook 1.3.4](https://github.com/TsudaKageyu/minhook/tree/v1.3.4), [ReShade 6.8.0](https://github.com/crosire/reshade/tree/v6.8.0), [Vulkan-Headers 1.3.290](https://github.com/KhronosGroup/Vulkan-Headers/tree/v1.3.290), [Zig 0.14.1](https://ziglang.org/download/0.14.1/).

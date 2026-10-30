@@ -1,7 +1,7 @@
-PiP Overlay 0.16.0 — um único instalador
+PiP Overlay 0.16.1 — um único instalador
 
 PARA LEVAR PARA OUTRO COMPUTADOR
-Copie Instalar-PiP-Overlay.exe. Abra e siga o assistente. O atalho na área de trabalho vem marcado por padrão. O menu Iniciar e a entrada em Aplicativos instalados são criados automaticamente. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
+Copie PiP-Overlay v0.16.1.exe. Abra e siga o assistente. O atalho na área de trabalho vem marcado por padrão. O menu Iniciar e a entrada em Aplicativos instalados são criados automaticamente. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
 
 PARA USAR
 1. Deixe PiP Overlay aberto; fechar a janela mantém a ferramenta junto ao relógio.

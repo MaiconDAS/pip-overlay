@@ -6,7 +6,7 @@
 | --- | --- |
 | Windows | Windows 10 2004 or later, Windows 11; x64 OS |
 | Browser source | Native PiP from Edge or Chrome; keep it open and not minimized |
-| DirectX 9 | Legacy recognized processes; not generic detection for every D3D9 game |
+| DirectX 9 | Window/D3D9-module discovery without game-name filters; dedicated-host tests including fullscreen |
 | DirectX 11 / 12 | Included engine and custom add-on; pixel tests in dedicated x86/x64 hosts |
 | OpenGL | Included engine and custom add-on; pixel tests in dedicated x86/x64 hosts |
 | Vulkan | Custom experimental layer; SDR 8-bit RGBA/BGRA UNORM and graphics queue presentation |
