@@ -5,4 +5,4 @@ if(!$Version){
     $Version=[string]($project.Project.PropertyGroup.Version | Where-Object {$_} | Select-Object -First 1)
 }
 if($Version -notmatch '^\d+\.\d+\.\d+$'){throw 'Expected a three-part numeric release version.'}
-"PiP-Overlay v$Version.exe"
+"PiP-Overlay-v$Version.exe"

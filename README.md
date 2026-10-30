@@ -10,7 +10,7 @@ Windows x64 · Código aberto / MIT · Sem RTSS ou extensão
 
 ## Novidades da versão atual
 
-A **0.16.1** organiza a documentação em português e inglês e identifica a versão no nome do instalador: `PiP-Overlay v0.16.1.exe`. Ela mantém as melhorias da **0.16**:
+A **0.16.1** organiza a documentação em português e inglês e identifica a versão no nome do instalador: `PiP-Overlay-v0.16.1.exe`. Ela mantém as melhorias da **0.16**:
 
 - **Detecção de jogos:** identifica janelas e renderizadores sem depender do nome de um jogo específico. Processos ainda não preparados aparecem como **não conectado**.
 - **Transporte GPU em DirectX 11:** três texturas compartilhadas, com retorno ao caminho CPU quando necessário.

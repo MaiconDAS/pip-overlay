@@ -36,8 +36,8 @@ foreach($file in Get-ChildItem "$root/docs" -Recurse -File -Filter '*.md'){
     if($relative -notin $covered){$errors+="Document without a language pair: $relative"}
 }
 $installerName=& "$PSScriptRoot/Get-InstallerName.ps1"
-if($installerName -ne "PiP-Overlay v$version.exe"){$errors+='Installer filename does not match app version'}
-if(!(Get-Content "$root/installer/PipOverlay.iss" -Raw).Contains('OutputBaseFilename=PiP-Overlay v{#AppVersion}')){$errors+='Inno output filename is not versioned'}
+if($installerName -ne "PiP-Overlay-v$version.exe"){$errors+='Installer filename does not match app version'}
+if(!(Get-Content "$root/installer/PipOverlay.iss" -Raw).Contains('OutputBaseFilename=PiP-Overlay-v{#AppVersion}')){$errors+='Inno output filename is not versioned'}
 foreach($path in @('installer/PipOverlay.iss','scripts/Test-InstallerIntegration.ps1','.github/workflows/installer.yml')){
     if(!(Get-Content "$root/$path" -Raw).Contains($version)){$errors+="Version mismatch: $path vs $version"}
 }

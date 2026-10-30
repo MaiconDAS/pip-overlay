@@ -43,7 +43,7 @@ Esses testes abrem janelas próprias e o segundo ocupa a tela em fullscreen temp
 pwsh ./scripts/Package.ps1
 ```
 
-Saídas: `dist/installer/PiP-Overlay v0.16.1.exe`, `dist/SHA256SUMS.txt` e o ZIP intermediário. O instalador inclui .NET, componentes nativos e os avisos de licença. Não inclui ferramentas de desenvolvimento, hosts de teste, extensão ou preferências do usuário.
+Saídas: `dist/installer/PiP-Overlay-v0.16.1.exe`, `dist/SHA256SUMS.txt` e o ZIP intermediário. O instalador inclui .NET, componentes nativos e os avisos de licença. Não inclui ferramentas de desenvolvimento, hosts de teste, extensão ou preferências do usuário.
 
 O instalador é compilado com Inno Setup 7.1.0. `Initialize-Installer.ps1` baixa arquivos fixados por SHA256 e extrai o compilador em `.tools`, sem executar seu instalador. O motor de distribuição gerencia atalhos, registro de desinstalação por usuário e atualização.
 

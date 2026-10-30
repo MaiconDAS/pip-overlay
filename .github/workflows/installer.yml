@@ -23,6 +23,7 @@ jobs:
           $name=./scripts/Get-InstallerName.ps1 -Version $env:RELEASE_TAG.TrimStart('v')
           gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern $name --pattern SHA256SUMS.txt --dir artifacts/candidate
           if($LASTEXITCODE){throw 'Candidate download failed'}
+          if(!(Test-Path -LiteralPath ("artifacts/candidate/"+$name))){throw 'Expected versioned installer was not downloaded'}
           "INSTALLER_PATH=artifacts/candidate/$name" >> $env:GITHUB_ENV
       - name: Verify checksum / Verificar checksum
         shell: pwsh

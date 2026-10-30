@@ -4,7 +4,7 @@
 
 ## Instalar ou levar para outro computador
 
-Copie `PiP-Overlay v0.16.1.exe` e execute-o. O atalho na área de trabalho é opcional e vem marcado por padrão. Atalhos no menu Iniciar e a entrada em Aplicativos instalados / Programas e Recursos são criados automaticamente. Runtime e renderizadores estão incluídos; não precisa de extensão, RTSS ou download separado de runtime.
+Copie `PiP-Overlay-v0.16.1.exe` e execute-o. O atalho na área de trabalho é opcional e vem marcado por padrão. Atalhos no menu Iniciar e a entrada em Aplicativos instalados / Programas e Recursos são criados automaticamente. Runtime e renderizadores estão incluídos; não precisa de extensão, RTSS ou download separado de runtime.
 
 A instalação registrada é detectada automaticamente. Atualizar na mesma pasta preserva preferências. Escolher outro destino importa as preferências da instalação registrada sem sobrescrever ajustes existentes no destino. Para uma cópia portátil antiga, selecione a própria pasta dela. Não há etapa manual de importação nem varredura indiscriminada do disco.
 

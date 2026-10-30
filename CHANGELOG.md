@@ -7,7 +7,7 @@
 - READMEs reorganizados: download e novidades no topo, seguidos de uso, editor, compatibilidade e contribuição.
 - Edições completas em inglês dos relatórios históricos, investigação de desempenho e histórico de versões, com navegação entre idiomas e índice de documentação.
 - Correção de descrições antigas da detecção de jogos e separação entre instruções atuais e registros históricos.
-- Instalador com nome `PiP-Overlay v0.16.1.exe`. Empacotamento, checksum, assinatura e testes isolados usam o mesmo nome derivado da versão.
+- Instalador com nome `PiP-Overlay-v0.16.1.exe`. Empacotamento, checksum, assinatura e testes isolados usam o mesmo nome derivado da versão.
 - Nenhuma alteração de captura ou renderização nesta atualização.
 
 ## 0.16.0 — transporte GPU, bordas e documentação

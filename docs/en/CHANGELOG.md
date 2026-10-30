@@ -7,7 +7,7 @@
 - Reorganized both READMEs: download and current changes first; usage, editor, compatibility and contribution follow.
 - Full English editions of historical validation reports, performance investigation and changelog, with reciprocal language links and a documentation index.
 - Corrected outdated game-discovery descriptions and grouped current instructions separately from historical reports.
-- Versioned installer filename: `PiP-Overlay v0.16.1.exe`. Packaging, checksum, signing and isolated installer tests use the same version-derived name.
+- Versioned installer filename: `PiP-Overlay-v0.16.1.exe`. Packaging, checksum, signing and isolated installer tests use the same version-derived name.
 - No capture or rendering changes in this patch.
 
 ## 0.16.0 — GPU transport, edges and documentation

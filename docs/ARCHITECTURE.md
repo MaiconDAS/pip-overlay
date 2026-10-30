@@ -2,7 +2,7 @@
 
 # Arquitetura e validação
 
-A captura usa Windows Graphics Capture e D3D11, com três buffers de leitura e memória compartilhada. Não há recodificação nem gravação. O caminho de compatibilidade usa cópia pela CPU. O DirectX 11 pode usar transporte por textura compartilhada na GPU; ainda há cópias na GPU, portanto não é zero-copy.
+A captura usa Windows Graphics Capture e D3D11, com três buffers de leitura e memória compartilhada. Não há recodificação nem gravação. A captura prioriza quadros recentes e usa manutenção periódica. O caminho de compatibilidade usa cópia pela CPU. O DirectX 11 pode usar transporte por textura compartilhada na GPU; ainda há cópias na GPU, portanto não é zero-copy.
 
 ## Qualidade
 
@@ -20,7 +20,7 @@ Alterar apenas o FPS mantém o limite de resolução e o tamanho solicitado à j
 
 **Iniciar jogo configurado**, no menu do ícone perto do relógio, inicia o executável escolhido. O auxiliar da mesma arquitetura prepara esse processo antes do ponto de entrada. Arquivos e configurações ficam em `data/games` na instalação. Não são escritos arquivos na pasta do jogo, Registro, serviços ou variáveis globais. A camada Vulkan é habilitada somente no ambiente do processo filho.
 
-Pausar torna os renderizadores passivos; bibliotecas permanecem carregadas até o jogo terminar. A descoberta do PiP ocorre a cada 1,5 segundo quando não há sessão. Uma falha não gera tentativas infinitas.
+Pausar torna os renderizadores passivos; bibliotecas permanecem carregadas até o jogo terminar. A descoberta do PiP ocorre a cada 1,5 segundo quando não há sessão. Uma falha não gera tentativas infinitas. Fechar a interface mantém o app na bandeja; quando pausado e oculto, a descoberta evita trabalho. A instalação, separadamente, gerencia atalhos e registro de desinstalação por usuário.
 
 ## Limites
 
@@ -34,8 +34,8 @@ Veja [VALIDATION-0.16.md](VALIDATION-0.16.md).
 
 ## Transporte compartilhado no DirectX 11
 
-Uma memória de controle separada e versionada negocia três texturas RGBA com mutexes por chave. O produtor escreve numa textura livre; o consumidor copia a imagem concluída mais recente para a textura do efeito e libera quadros antigos. A aquisição não espera pelo outro processo. Falhas ou incompatibilidade retornam ao caminho CPU; uma origem retida permite esse retorno mesmo com vídeo parado. Buffers de leitura da CPU são liberados quando o caminho GPU entra em uso. O diagnóstico identifica o transporte ativo. DirectX 9/12, OpenGL e Vulkan mantêm o caminho de compatibilidade.
+Uma memória de controle separada e versionada negocia três texturas RGBA com mutexes por chave. O produtor escreve numa textura livre; o consumidor copia a imagem concluída mais recente para a textura do efeito e libera quadros antigos. A aquisição não espera pelo outro processo. Falhas ou incompatibilidade retornam ao caminho CPU; uma origem retida permite esse retorno mesmo com vídeo parado. Buffers de leitura da CPU são liberados quando o caminho GPU entra em uso. O diagnóstico identifica o transporte ativo. DirectX 9/12, OpenGL e Vulkan mantêm o caminho de compatibilidade. Recursos D3D11 compartilhados podem ser incompatíveis entre adaptadores, por isso o fallback é necessário.
+
+## Cantos e posicionamento
 
 O vídeo tem cantos discretos de seis pixels: geometria no D3D9, máscara nas APIs ReShade e um conjunto limitado de regiões de blit no Vulkan. O editor permite coordenadas exatas de borda mesmo com margem de encaixe ativa.
-
-A captura prioriza quadros recentes e usa manutenção periódica para manter a origem ativa. Fechar a interface mantém o app na bandeja; quando pausado e oculto, a descoberta evita trabalho. Recursos D3D11 compartilhados podem ser incompatíveis entre adaptadores, por isso o fallback é necessário. A instalação, separadamente, gerencia atalhos e registro de desinstalação por usuário.

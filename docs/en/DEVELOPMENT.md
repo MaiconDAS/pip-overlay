@@ -35,7 +35,7 @@ pwsh ./scripts/Package.ps1 -ZigPath C:\tools\zig.exe
 pwsh ./scripts/Test-Package.ps1
 ```
 
-Outputs include `dist/installer/PiP-Overlay v0.16.1.exe`, `dist/SHA256SUMS.txt` and a portable ZIP. Production packages exclude test hosts, development commands, personal settings and machine-specific catalogs. Inno Setup 7.1.0 is extracted locally after hash verification; its installer is not run on the development machine.
+Outputs include `dist/installer/PiP-Overlay-v0.16.1.exe`, `dist/SHA256SUMS.txt` and a portable ZIP. Production packages exclude test hosts, development commands, personal settings and machine-specific catalogs. Inno Setup 7.1.0 is extracted locally after hash verification; its installer is not run on the development machine.
 
 `Test-Package.ps1` extracts and compares files without installing. `Test-InstallerWizard.ps1` and `Test-InstallerIntegration.ps1` only run on disposable GitHub-hosted Windows runners. They check the wizard, installation, shortcuts, uninstall registration, update/relocation and data preservation. Never use the user's Windows installation as the first test. Public signing is [pending](SIGNING.md).
 

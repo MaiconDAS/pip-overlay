@@ -10,7 +10,7 @@ Windows x64 · Open source / MIT · No RTSS or extension
 
 ## What's new
 
-**0.16.1** organizes Portuguese and English documentation and puts the version in the installer filename: `PiP-Overlay v0.16.1.exe`. It retains the improvements introduced in **0.16**:
+**0.16.1** organizes Portuguese and English documentation and puts the version in the installer filename: `PiP-Overlay-v0.16.1.exe`. It retains the improvements introduced in **0.16**:
 
 - **Game discovery:** identifies windows and renderers without depending on a particular game name. Unprepared processes appear as **não conectado** (not connected).
 - **D3D11 GPU transport:** three shared textures with CPU fallback when needed.
