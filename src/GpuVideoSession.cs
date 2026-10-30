@@ -6,21 +6,18 @@ using Windows.Graphics.DirectX.Direct3D11;
 
 namespace PipOverlay;
 
-internal sealed record RenderTarget(int Pid,string Name,bool Is32Bit,bool MultiApi=false)
+internal sealed record RenderTarget(int Pid,string Name,bool Is32Bit,bool MultiApi=false,string? UnavailableReason=null)
 {
-    public override string ToString()=>$"{Name} · PID {Pid}";
-    [DllImport("kernel32.dll",SetLastError=true)] static extern bool IsWow64Process(nint process,out bool wow);
-    internal static RenderTarget[] Find()=>Process.GetProcesses().Select(p=>{
-        using(p)try{
-            if(p.ProcessName is not ("DigimonMasters" or "PipTest32" or "PipTest64"))return null;
-            if(!IsWow64Process(p.Handle,out var wow))return null;
-            return new RenderTarget(p.Id,p.ProcessName,wow);
-        }catch{return null;}
-    }).OfType<RenderTarget>().ToArray();
+    public override string ToString()=>$"{Name} · PID {Pid}"+(UnavailableReason==null?"":" · não conectado");
+    internal static RenderTarget[] Find()=>GameDiscovery.Find();
 }
 
 internal sealed class GpuVideoSession : IDisposable
 {
+    #if !PRODUCTION
+    internal static bool BenchmarkUnpaced;
+    internal static bool BenchmarkCpuTransport;
+#endif
     readonly object gate=new();
     readonly CancellationTokenSource cancel=new();
     readonly Task worker;
@@ -43,6 +40,7 @@ internal sealed class GpuVideoSession : IDisposable
     uint firstSent,firstRendered,firstUploaded;
     bool ready;
     double milliseconds;
+    internal int SharedTransport {get;private set;}
     internal Size SourceSize {get;private set;}
     internal bool ActualFullscreen {get;private set;}
     internal Size TargetSize {get;private set;}
@@ -55,6 +53,8 @@ internal sealed class GpuVideoSession : IDisposable
     internal string? Error {get{lock(gate)return error;}}
     [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern nint PipOpen(uint pid);
     [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern int PipPoll(nint p);
+    [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern void PipAllowShared(nint p,int enabled);
+    [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern int PipSharedState(nint p);
     [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern int PipSubmit(nint p,nint texture);
     [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern void PipResolution(nint p,uint width,uint height);
     [DllImport("PipGpu.dll",CallingConvention=CallingConvention.Cdecl)] static extern void PipFrameSize(nint p,[Out]uint[] size);
@@ -73,6 +73,9 @@ internal sealed class GpuVideoSession : IDisposable
         if(!target.MultiApi)PortableSetup.Ensure(target.Is32Bit?32:64);
         settings=initial.Validated();monitor=screen;
         producer=PipOpen((uint)target.Pid);if(producer==0)throw new InvalidOperationException("Não foi possível abrir o transporte em memória.");
+        #if !PRODUCTION
+        if(BenchmarkCpuTransport)PipAllowShared(producer,0);
+#endif
         var initialStats=new uint[8];PipStats(producer,initialStats);firstSent=initialStats[0];firstRendered=initialStats[1];firstUploaded=initialStats[2];
         IDirect3DDevice? d=null;Direct3D11CaptureFramePool? f=null;GraphicsCaptureSession? s=null;
         try {
@@ -117,13 +120,16 @@ internal sealed class GpuVideoSession : IDisposable
                 if(next.Width>0&&next.Height>0&&(next.Width!=poolSize.Width||next.Height!=poolSize.Height)) {
                     poolSize=next;SourceSize=new(next.Width,next.Height);pool.Recreate(device,DirectXPixelFormat.B8G8R8A8UIntNormalized,2,poolSize);
                 }
-                PipStats(producer,stats);Interlocked.Exchange(ref sent,unchecked(stats[0]-firstSent));Interlocked.Exchange(ref rendered,unchecked(stats[1]-firstRendered));Interlocked.Exchange(ref uploaded,unchecked(stats[2]-firstUploaded));
+                SharedTransport=PipSharedState(producer);PipStats(producer,stats);Interlocked.Exchange(ref sent,unchecked(stats[0]-firstSent));Interlocked.Exchange(ref rendered,unchecked(stats[1]-firstRendered));Interlocked.Exchange(ref uploaded,unchecked(stats[2]-firstUploaded));
                 lock(gate)ready=stats[4]!=0;
                 ActualFullscreen=stats[5]!=0;TargetSize=new((int)stats[6],(int)stats[7]);
                 PipFrameSize(producer,size);TransferSize=new((int)size[0],(int)size[1]);
                 if(stats[3]!=0)throw new InvalidOperationException($"Direct3D retornou 0x{stats[3]:X8}.");
                 maximumCost=Math.Max(maximumCost,Environment.TickCount64-started);
                 if(Environment.TickCount64>=nextSample){adaptive.Sample(maximumCost);maximumCost=0;nextSample=Environment.TickCount64+1000;}
+                #if !PRODUCTION
+                if(BenchmarkUnpaced)continue;
+#endif
                 EffectiveFps=adaptive.Current;int delay=(int)Math.Max(1,1000/EffectiveFps-(Environment.TickCount64-started));
                 if(timer!=0){long due=-delay*10000L;if(SetWaitableTimer(timer,ref due,0,0,0,false))WaitForSingleObject(timer,(uint)delay+100);else await Task.Delay(delay,cancel.Token);}
                 else await Task.Delay(delay,cancel.Token);

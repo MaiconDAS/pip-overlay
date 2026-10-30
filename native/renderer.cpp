@@ -82,8 +82,15 @@ static void Draw(IDirect3DDevice9* device) {
                 device->SetSamplerState(0,D3DSAMP_ADDRESSU,D3DTADDRESS_CLAMP);device->SetSamplerState(0,D3DSAMP_ADDRESSV,D3DTADDRESS_CLAMP);
                 device->SetSamplerState(0,D3DSAMP_SRGBTEXTURE,FALSE);
                 float l=x*desc.Width-.5f,t=y*desc.Height-.5f,r=(x+w)*desc.Width-.5f,b=(y+h)*desc.Height-.5f;
-                Vertex vertices[]={{l,t,0,1,0,0},{r,t,0,1,1,0},{l,b,0,1,0,1},{r,b,0,1,1,1}};
-                HRESULT hr=device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,2,vertices,sizeof(Vertex));
+                const float radius=((r-l)<12.f||(b-t)<12.f)?((r-l)<(b-t)?(r-l):(b-t))*.5f:6.f;const float c[]={1.f,.9238795f,.7071068f,.3826834f,0.f},s[]={0.f,.3826834f,.7071068f,.9238795f,1.f};
+                Vertex vertices[22];vertices[0]={(l+r)*.5f,(t+b)*.5f,0,1,.5f,.5f};int count=1;
+                for(int corner=0;corner<4;corner++)for(int i=0;i<5;i++){
+                    float cx=corner<2?r-radius:l+radius,cy=(corner==0||corner==3)?t+radius:b-radius;
+                    float dx=corner==0?s[i]:corner==1?c[i]:corner==2?-s[i]:-c[i];
+                    float dy=corner==0?-c[i]:corner==1?s[i]:corner==2?c[i]:-s[i];
+                    float px=cx+radius*dx,py=cy+radius*dy;vertices[count++]={px,py,0,1,(px-l)/(r-l),(py-t)/(b-t)};
+                }
+                vertices[count++]=vertices[1];HRESULT hr=device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN,count-2,vertices,sizeof(Vertex));
                 device->EndScene();if(SUCCEEDED(hr))InterlockedIncrement(&memory->rendered);else memory->error=hr;
                 // Expensive readback is enabled only by the test harness, never by the editor.
                 if(memory->validate && GetTickCount()-lastValidation>500) {
@@ -94,6 +101,7 @@ static void Draw(IDirect3DDevice9* device) {
                                 UINT px=(UINT)((x+w*.5f)*desc.Width),py=(UINT)((y+h*.5f)*desc.Height);
                                 DWORD actual=*(DWORD*)((char*)read.pBits+py*read.Pitch+px*4);bool match=true;
                                 for(int c=0;c<3;c++){int a=(actual>>(c*8))&255,b=(centerColor>>(c*8))&255;if(abs(a-b)>40)match=false;}
+                                if(memory->validate==2){UINT cx=(UINT)(x*desc.Width),cy=(UINT)(y*desc.Height);DWORD corner=*(DWORD*)((char*)read.pBits+cy*read.Pitch+cx*4);bool filled=true;for(int c=0;c<3;c++)if(abs(int((corner>>(c*8))&255)-int((centerColor>>(c*8))&255))>40)filled=false;match=match&&!filled;}
                                 InterlockedIncrement(match?&memory->verified:&memory->mismatched);system->UnlockRect();
                             }
                         }system->Release();

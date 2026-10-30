@@ -1,3 +1,5 @@
+**Português** · [English](en/TEST-MATRIX.md)
+
 # Matriz de testes
 
 A matriz distingue suporte implementado de validação efetiva. Ambiente Intel UHD Graphics 770, driver 32.0.101.7092. Resultados de hosts próprios não equivalem a jogos certificados.
@@ -18,4 +20,6 @@ A matriz distingue suporte implementado de validação efetiva. Ambiente Intel U
 4. Testar quatro cantos, centro, redimensionamento, pausa, retomada, troca de resolução, perda de foco e cliques no jogo.
 5. Não registrar imagens, títulos ou URLs no diagnóstico compartilhado. Anexar somente os dados técnicos que o usuário revisar.
 
-Para desenvolvimento local: `scripts/Test-Graphics.ps1`, `--contention-test`, `--gpu-benchmark`, `scripts/Test-SharedGpu.ps1` e `scripts/Test-Upgrade.ps1`. O benchmark de host tem duração reduzida e serve como smoke test; não substitui as três rodadas de jogo real.
+Para desenvolvimento local: `scripts/Test-Graphics.ps1`, `--contention-test`, `--gpu-benchmark`, `scripts/Test-SharedGpu.ps1` e `scripts/Test-InstallerIntegration.ps1` (somente em runner descartável). O benchmark de host tem duração reduzida e serve como smoke test; não substitui as três rodadas de jogo real.
+
+A 0.16 inclui testes do transporte D3D11 compartilhado em 32/64 bits, mudança de resolução, posição, retorno forçado à CPU e verificação de cantos arredondados. Os resultados atuais estão em [VALIDATION-0.16.md](VALIDATION-0.16.md).

@@ -5,7 +5,7 @@ internal static class LayoutMath
 {
     internal static Rectangle Snap(Rectangle box,Size screen,int margin,int threshold){
         int Axis(int value,int length,int available){int free=Math.Max(0,available-length);int inset=Math.Clamp(margin,0,free/2);
-            int candidate=new[]{inset,free/2,free-inset}.MinBy(x=>Math.Abs(x-value));return Math.Abs(candidate-value)<=threshold?candidate:value;}
+            int candidate=new[]{0,inset,free/2,free-inset,free}.MinBy(x=>Math.Abs(x-value));return Math.Abs(candidate-value)<=threshold?candidate:value;}
         return new(Axis(box.X,box.Width,screen.Width),Axis(box.Y,box.Height,screen.Height),box.Width,box.Height);
     }
     internal static Rectangle Constrain(Rectangle box,Size screen,double aspect)
@@ -96,8 +96,8 @@ internal sealed class LayoutEditor : Control
     protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);if(Width<50||Height<50)return;
         var c=Canvas;using var bg=new SolidBrush(Color.FromArgb(9,13,20));e.Graphics.FillRectangle(bg,c);
         using var grid=new Pen(Color.FromArgb(34,44,58));for(int i=1;i<4;i++){e.Graphics.DrawLine(grid,c.Left+c.Width*i/4,c.Top,c.Left+c.Width*i/4,c.Bottom);e.Graphics.DrawLine(grid,c.Left,c.Top+c.Height*i/4,c.Right,c.Top+c.Height*i/4);}e.Graphics.DrawRectangle(grid,c);
-        RefreshThumbnail();var box=ToPreview(Video);if(preview!=null)e.Graphics.DrawImage(preview,box);else {using var fill=new SolidBrush(Color.FromArgb(30,70,77));e.Graphics.FillRectangle(fill,box);TextRenderer.DrawText(e.Graphics,"PiP",Font,box,Color.White,TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter);}
-        using var pen=new Pen(Color.FromArgb(79,220,182),2);e.Graphics.DrawRectangle(pen,box);
+        RefreshThumbnail();var box=ToPreview(Video);using var rounded=new System.Drawing.Drawing2D.GraphicsPath();float d=(float)Math.Max(2,12d*c.Width/MonitorSize.Width);rounded.AddArc(box.Left,box.Top,d,d,180,90);rounded.AddArc(box.Right-d,box.Top,d,d,270,90);rounded.AddArc(box.Right-d,box.Bottom-d,d,d,0,90);rounded.AddArc(box.Left,box.Bottom-d,d,d,90,90);rounded.CloseFigure();e.Graphics.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.AntiAlias;var saved=e.Graphics.Save();e.Graphics.SetClip(rounded);if(preview!=null)e.Graphics.DrawImage(preview,box);else {using var fill=new SolidBrush(Color.FromArgb(30,70,77));e.Graphics.FillPath(fill,rounded);TextRenderer.DrawText(e.Graphics,"PiP",Font,box,Color.White,TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter);}e.Graphics.Restore(saved);
+        using var pen=new Pen(Color.FromArgb(79,220,182),2);e.Graphics.DrawPath(pen,rounded);
         foreach(var p in new[]{new Point(box.Left,box.Top),new Point(box.Right,box.Top),new Point(box.Left,box.Bottom),new Point(box.Right,box.Bottom),new Point(box.Left+box.Width/2,box.Top),new Point(box.Left+box.Width/2,box.Bottom),new Point(box.Left,box.Top+box.Height/2),new Point(box.Right,box.Top+box.Height/2)})e.Graphics.FillRectangle(Brushes.White,p.X-3,p.Y-3,6,6);
     }
     protected override void OnResize(EventArgs e){base.OnResize(e);Invalidate();}

@@ -1,0 +1,24 @@
+{
+  "result": 0,
+  "mode": "cpu",
+  "bits": 64,
+  "observations": [
+    {
+      "seconds": 8.2148493,
+      "sourceFps": 63.5434663421032,
+      "sentFps": 41.51019544570343,
+      "uploadedFps": 41.51019544570343,
+      "baseCpu": 68.54097470191006,
+      "baseHost": 8.100223683813844,
+      "producerCpu": 88.63522304663582,
+      "hostCpu": 25.297177393138547,
+      "submitMs": 2.317230000000001,
+      "SharedTransport": 0,
+      "TransferSize": {
+        "IsEmpty": false,
+        "Width": 1920,
+        "Height": 1080
+      }
+    }
+  ]
+}

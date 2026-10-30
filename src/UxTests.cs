@@ -6,6 +6,7 @@ internal static class UxTests
         var lines=new List<string>();int failures=0;void Check(string name,bool ok){lines.Add($"{(ok?"PASS":"FAIL")} {name}");if(!ok)failures++;}
         var screen=new Size(1920,1080);var a=new Rectangle(29,30,420,236);
         Check("Snap to margin",LayoutMath.Snap(a,screen,24,12).Location==new Point(24,24));
+        foreach(var corner in new[]{new Point(0,0),new Point(1500,0),new Point(0,844),new Point(1500,844)})Check("Reach exact screen edge "+corner,LayoutMath.Snap(new Rectangle(corner,new Size(420,236)),screen,24,40).Location==corner);
         Check("Snap center",LayoutMath.Snap(new(745,420,420,236),screen,24,12).Location==new Point(750,422));
         Check("Outside threshold stays free",LayoutMath.Snap(new(200,200,420,236),screen,24,12).Location==new Point(200,200));
         Check("Large overlay stays in screen",LayoutMath.Snap(new(0,0,1920,1080),screen,96,12)==new Rectangle(0,0,1920,1080));

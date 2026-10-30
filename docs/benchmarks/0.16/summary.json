@@ -1,0 +1,22 @@
+[
+  {
+    "mode": "cpu",
+    "runs": 3,
+    "sourceFps": 58.831,
+    "sentFps": 36.58,
+    "uploadedFps": 34.832,
+    "producerCpu": 111.399,
+    "hostCpu": 31.672,
+    "submitMs": 3.499
+  },
+  {
+    "mode": "gpu",
+    "runs": 3,
+    "sourceFps": 63.243,
+    "sentFps": 48.677,
+    "uploadedFps": 48.677,
+    "producerCpu": 72.281,
+    "hostCpu": 10.052,
+    "submitMs": 0.291
+  }
+]

@@ -1,3 +1,5 @@
+> Registro histórico da versão indicada. Para a build atual, consulte [VALIDATION-0.16.md](VALIDATION-0.16.md).
+
 # Validação 0.13.0
 
 Ambiente local: Windows, Intel UHD Graphics 770. Esta versão altera a interface, os perfis e as mensagens; não modifica os renderizadores de produção.

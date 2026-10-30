@@ -1,0 +1,29 @@
+[
+  {
+    "mode": "1080p/30",
+    "sent": 28.763,
+    "submit": 2.86,
+    "hostCpu": 21.836,
+    "extraHostCpu": 14.235,
+    "p95": 18.966,
+    "hostFps": 59.989
+  },
+  {
+    "mode": "1080p/60",
+    "sent": 34.367,
+    "submit": 2.091,
+    "hostCpu": 22.437,
+    "extraHostCpu": 15.415,
+    "p95": 18.7,
+    "hostFps": 60.012
+  },
+  {
+    "mode": "720p/60",
+    "sent": 40.986,
+    "submit": 1.3,
+    "hostCpu": 17.193,
+    "extraHostCpu": 10.479,
+    "p95": 18.78,
+    "hostFps": 60.035
+  }
+]

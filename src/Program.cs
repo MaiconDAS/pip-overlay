@@ -21,6 +21,8 @@ internal static class Program
         if(args.Length>=2&&args[0]=="--auto-test")return AutoConnectTests.Run(args[1]);
         if(args.Length>=2&&args[0]=="--hotkey-test")return HotkeyTests.Run(args[1],args.Contains("--native"));
         if(args.Length>=2 && args[0]=="--gpu-test") return GpuValidation.Run(args[1],args.Contains("--fullscreen"),args.Contains("--browser"));
+        if(args.Length>=4 && args[0]=="--shared-test")return SharedTransportTests.Run(args[1],args[2],int.Parse(args[3]));
+        if(args.Length>=4 && args[0]=="--performance-test"){GpuVideoSession.BenchmarkUnpaced=args.Contains("--unpaced");return GpuValidation.Benchmark(args[1],int.Parse(args[2]),args[3],true);}
         if(args.Length>=2 && args[0]=="--gpu-benchmark") return GpuValidation.Benchmark(args[1]);
         if(args.Length>=2 && args[0]=="--v4-test") return ValidationV4.Run(args[1]);
         if(args.Length>=2 && args[0]=="--position-probe") return ValidationV4.PositionProbe(args[1]);

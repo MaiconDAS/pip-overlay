@@ -5,7 +5,7 @@ on:
       tag:
         description: Draft release containing the installer to test
         required: true
-        default: v0.15.0
+        default: v0.16.0
 permissions:
   contents: write # Required by GitHub to download assets from a draft release.
 jobs:

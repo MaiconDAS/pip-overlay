@@ -1,3 +1,5 @@
+**Português** · [English](en/DEVELOPMENT.md)
+
 # Desenvolvimento
 
 ## Requisitos

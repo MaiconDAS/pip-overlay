@@ -1,0 +1,60 @@
+{
+  "result": 0,
+  "source": "Synthetic animated WinForms source",
+  "requestedFps": 30,
+  "resolution": "1080p",
+  "sourceWidth": 1920,
+  "sourceHeight": 1080,
+  "fullscreen": false,
+  "pixelReadbackValidation": false,
+  "phases": [
+    {
+      "mode": "baseline",
+      "seconds": 6.1883133,
+      "hostFps": 59.95171576073888,
+      "p95FrameMs": 17.8336,
+      "producerCpuCorePercent": 72.21273040587651,
+      "hostCpuCorePercent": 7.069777801973924,
+      "sentFps": 0,
+      "uploadedFps": 0,
+      "meanSubmitMs": 0,
+      "transferWidth": null,
+      "transferHeight": null,
+      "processed": null,
+      "discarded": null,
+      "stateErrors": 0
+    },
+    {
+      "mode": "direct3d",
+      "seconds": 6.1678386,
+      "hostFps": 59.98859957197973,
+      "p95FrameMs": 19.0593,
+      "producerCpuCorePercent": 69.9191447713953,
+      "hostCpuCorePercent": 23.053051355786128,
+      "sentFps": 28.210854933849923,
+      "uploadedFps": 28.210854933849923,
+      "meanSubmitMs": 2.8596033333333324,
+      "transferWidth": 1920,
+      "transferHeight": 1080,
+      "processed": 193,
+      "discarded": 90,
+      "stateErrors": 0
+    },
+    {
+      "mode": "baseline-final",
+      "seconds": 6.1549441,
+      "hostFps": 60.114274636547876,
+      "p95FrameMs": 17.9238,
+      "producerCpuCorePercent": 59.91118587088386,
+      "hostCpuCorePercent": 5.5849410557603605,
+      "sentFps": 0,
+      "uploadedFps": 0,
+      "meanSubmitMs": 0,
+      "transferWidth": null,
+      "transferHeight": null,
+      "processed": null,
+      "discarded": null,
+      "stateErrors": 0
+    }
+  ]
+}

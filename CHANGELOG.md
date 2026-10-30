@@ -1,4 +1,16 @@
+**Português** · [English](docs/en/CHANGELOG.md)
+
 # Histórico
+
+## 0.16.0 — transporte GPU, bordas e documentação
+
+- DirectX 11 usa uma fila de três texturas compartilhadas quando compatível; falhas retornam ao transporte CPU, inclusive com a fonte parada.
+- Comparação integrada com o mesmo renderizador e resolução; resultados publicados sem generalizar para todos os jogos ou outras APIs.
+- O PiP alcança as quatro bordas da tela sem ser afastado pela margem de encaixe.
+- Cantos discretamente arredondados no editor e nos renderizadores.
+- Política de privacidade, segurança e documentação principal em português e inglês; políticas de privacidade também acompanham o instalador.
+- Revisão das instruções atuais, versões, links e limites de compatibilidade. Relatórios antigos permanecem identificados como históricos.
+- Detecção por janelas e renderizadores, sem filtros por nome de jogo; processos ainda não preparados aparecem como não conectados.
 
 ## 0.15.0 — editor em foco e ajustes modernos
 

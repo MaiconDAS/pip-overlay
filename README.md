@@ -1,183 +1,78 @@
-<p align="center">
-  <img src="docs/assets/banner.svg" alt="PiP Overlay — Seu vídeo. Seu jogo. Seu espaço." width="100%" />
-</p>
+![PiP Overlay](docs/assets/banner.svg)
 
-<p align="center">
-  <a href="https://github.com/MaiconDAS/pip-overlay/releases"><img alt="Versão" src="https://img.shields.io/github/v/release/MaiconDAS/pip-overlay?include_prereleases&amp;style=flat-square&amp;color=6ce7c4&amp;label=vers%C3%A3o" /></a>
-  <img alt="Windows 10 e 11, x64" src="https://img.shields.io/badge/Windows-10%20%2F%2011%20%C2%B7%20x64-233448?style=flat-square" />
-  <img alt="DirectX, OpenGL e Vulkan" src="https://img.shields.io/badge/renderiza%C3%A7%C3%A3o-DirectX%20%2F%20OpenGL%20%2F%20Vulkan-233448?style=flat-square" />
-  <a href="LICENSE"><img alt="Licença MIT" src="https://img.shields.io/badge/licen%C3%A7a-MIT-6ce7c4?style=flat-square" /></a>
-  <img alt="Sem RTSS ou extensão" src="https://img.shields.io/badge/sem-RTSS%20ou%20extens%C3%A3o-233448?style=flat-square" />
-</p>
+**Português** · [English](README.en.md) · [Documentação](docs/README.md) · [Privacidade](docs/pt-BR/PRIVACY.md)
 
-<p align="center"><strong>Assista ao seu vídeo enquanto joga. Os cliques continuam no jogo.</strong></p>
-<p align="center">
-  <a href="https://github.com/MaiconDAS/pip-overlay/releases"><strong>Baixar instalador</strong></a> ·
-  <a href="#como-usar">Como usar</a> ·
-  <a href="docs/DEVELOPMENT.md">Compilar</a> ·
-  <a href="https://github.com/MaiconDAS/pip-overlay/issues/new/choose">Relatar problema</a>
-</p>
+**Seu vídeo por perto. Seu jogo em foco.**
 
-## O que é
+PiP Overlay leva o Picture-in-Picture do Edge ou Chrome para jogos compatíveis no Windows. Posicione e redimensione o vídeo no editor visual; dentro do jogo, o overlay não recebe cliques nem foco do teclado. Sem RTSS, extensão de navegador, conta ou instalação separada de runtime.
 
-PiP Overlay é um aplicativo para Windows que leva o Picture-in-Picture do Edge ou Chrome para dentro de jogos DirectX, OpenGL e Vulkan. Use o PiP sobre **seu jogo em fullscreen**, quando compatível com o renderizador. A imagem é desenhada pelo renderizador nativo, sem uma janela interativa sobre o jogo.
+[**Baixar instalador**](https://github.com/MaiconDAS/pip-overlay/releases) · [Relatar problema](https://github.com/MaiconDAS/pip-overlay/issues/new/choose) · [Histórico](CHANGELOG.md)
 
-Abra o PiP do navegador. Para iniciar Jogos nas novas APIs, use **Iniciar jogo configurado** no menu do ícone da ferramenta perto do relógio; escolha o executável na primeira vez. A ferramenta conecta o vídeo automaticamente e mantém os controles fora da partida.
+## Novidades da 0.16
 
-## 0.15.0 — editor em foco e ajustes modernos
+- Transporte automático por texturas compartilhadas na GPU para **DirectX 11**, com três buffers e retorno ao caminho CPU quando necessário.
+- PiP pode encostar nas quatro bordas da tela, mesmo com margem de encaixe ativa.
+- Cantos do vídeo levemente arredondados, mantendo a interação somente no editor.
+- Política de privacidade e documentação principal em português e inglês.
 
-- Ajustes em uma lateral com Imagem, Posição e Mais. Abrir as opções mantém a altura do editor do PiP.
-- Seletores escuros, botões arredondados, interruptores e controle de margem com aparência consistente. Navegação por teclado preservada nos controles padrão.
-- Resolução e FPS continuam independentes. O mínimo de FPS fica disponível apenas com ajuste automático ativado.
-- Captura por chegada de quadro, descarte de imagens antigas e preferência pelo readback concluído mais recente, sem esperar pela GPU.
-- Imagem parada continua visível sem processar quadros repetidos. A busca de fontes é suspensa quando o app está pausado e oculto.
-- Diagnóstico inclui contadores de quadros processados, descartados e despertares da captura.
-- Medições sintéticas documentadas, sem alegar ganho de FPS em jogos reais. O transporte por textura compartilhada permanece experimental.
-
-![Editor com ajustes laterais](docs/assets/workspace-015.png)
-
-[Validação e medições da versão 0.15](docs/VALIDATION-0.15.md).
-
-## Correção 0.14.1 — instalação automática
-
-- Removida a etapa de importação que bloqueava o avanço com o campo vazio.
-- O instalador reutiliza automaticamente a pasta da instalação registrada.
-- Uma pasta existente pode ser escolhida diretamente, sem aviso intermediário de pasta existente; preferências e perfis nessa pasta são preservados.
-- Ao escolher outro destino, as preferências da instalação registrada são copiadas automaticamente, sem substituir ajustes que já existam no destino.
-- Instalações portáteis são atualizadas escolhendo sua própria pasta. Não há busca indiscriminada no disco.
-- Teste novo percorre o assistente interativo até a confirmação, além dos testes de instalação limpa e atualização.
-
-## Mudanças na versão 0.14
-
-- **Instalador completo:** atalho na área de trabalho (opcional e marcado por padrão), menu Iniciar e entrada em Aplicativos instalados / Programas e Recursos.
-- **Desinstalação:** pelo Windows, pelo menu Iniciar ou pelo atalho na pasta do app. Preferências e arquivos pessoais são preservados.
-- **Atualização na mesma pasta:** mantém os ajustes. Instalação por usuário em AppData, sem administrador, serviço ou inicialização automática.
-- **Ícone novo:** símbolo arredondado em azul profundo e verde-menta, com nove tamanhos de 16 a 256 pixels para o executável, atalhos e bandeja.
-
-![Novo ícone do PiP Overlay](docs/assets/app-icon.png)
-
-[Resultados dos testes de instalação e desinstalação](docs/VALIDATION-0.14.md).
-
-## Mudanças na versão 0.13
-
-- **Escolha visual do vídeo:** quando há vários PiPs, o botão Vídeos abre miniaturas para selecionar a origem com um clique.
-- **Posicionamento mais fácil:** encaixe nas bordas e no centro, margem ajustável, centralização e desfazer a última posição. Segure Alt para arrastar livremente; Ctrl+Z funciona somente no editor.
-- **Perfil visível:** nome do jogo, restauração dos padrões e cópia dos ajustes para outro executável.
-- **Status mais claros:** diferencia espera por vídeo, espera por jogo, captura interrompida e conexão não confirmada.
-- **Assinatura preparada:** fluxo de assinatura e verificação disponível; o instalador continua sem assinatura pública enquanto não houver certificado.
-
-Veja a [validação da 0.13](docs/VALIDATION-0.13.md) e o [fluxo de assinatura](docs/SIGNING.md).
-
-## Mudanças na versão 0.12
-
-- **Imagem estável sob contenção:** DirectX 9 e Vulkan preservam o último quadro enquanto aguardam o próximo.
-- **Menos memória na captura:** elimina duas texturas intermediárias no caminho BGRA em tamanho nativo.
-- **FPS automático opcional:** ajusta a frequência entre os limites escolhidos, preservando a resolução.
-- **Perfis por jogo:** posição, tamanho, monitor, resolução e FPS são lembrados por executável.
-- **Atualizações e diagnóstico:** aviso de nova versão, importação de preferências no instalador e relatório técnico sem imagens, URLs ou caminhos pessoais.
-- **Tela principal enxuta:** configurações adicionais ficam em Ajustes.
-
-Veja a [validação da 0.12](docs/VALIDATION-0.12.md) e a [matriz de testes](docs/TEST-MATRIX.md). O transporte compartilhado por GPU foi prototipado, mas não está ativado na distribuição: ainda precisa demonstrar ganho e compatibilidade.
-## Mudanças na versão 0.11.1
-
-- **Resolução e FPS independentes:** escolha até 1080p, 720p, 480p ou adaptação ao tamanho, junto de 60, 30 ou 15 fps. É possível usar 1080p a 30 fps.
-- **Tela principal mais simples:** botão Abrir jogo removido. A conexão automática continua; a inicialização necessária às novas APIs fica no menu do ícone perto do relógio.
-- **Open source:** código próprio publicado sob licença MIT, mantendo as licenças das dependências.
-
-## Mudanças na versão 0.11
-
-- **Mais nitidez:** captura em resolução nativa até 1080p no modo Até 1080p, evitando redução intermediária quando a fonte permite.
-- **Mais renderizadores:** DirectX 11, DirectX 12 e OpenGL com motor incluído; Vulkan com camada própria, em 32 e 64 bits.
-- **Abertura de Jogos:** botão **Abrir jogo**, seleção salva e reconexão ao mesmo processo após reabrir a ferramenta.
-- **Controle de consumo:** opções de até 60, 30 e 15 fps; resolução e taxa efetiva no status.
-- **Distribuição:** um instalador com dependências incluídas e interface sem ferramentas internas de teste.
-
-Consulte o [histórico completo](CHANGELOG.md), a [compatibilidade com Jogos](docs/COMPATIBILITY.md) e os [resultados dos testes](docs/VALIDATION-0.11.md).
+A otimização de transporte é específica de DirectX 11. DirectX 9/12, OpenGL e Vulkan mantêm o transporte de compatibilidade. Medições e limites estão na [validação da versão](docs/VALIDATION-0.16.md); não há promessa de ganho de FPS em todos os jogos.
 
 ## Como usar
 
-1. Baixe **`Instalar-PiP-Overlay.exe`** em [Releases](https://github.com/MaiconDAS/pip-overlay/releases).
-2. Execute o instalador e conclua a instalação. O atalho na área de trabalho vem marcado por padrão; o menu Iniciar e a opção de desinstalar são criados automaticamente. O .NET já está incluído.
-3. Deixe o aplicativo aberto e abra o vídeo em PiP no **Microsoft Edge** ou **Google Chrome**.
-4. A conexão com jogos reconhecidos é automática. Para as novas APIs, clique com o botão direito no ícone PiP Overlay perto do relógio e escolha **Iniciar jogo configurado**. Na primeira vez, selecione o executável.
+1. Execute `Instalar-PiP-Overlay.exe`. O instalador cria atalhos no menu Iniciar, uma entrada de desinstalação no Windows e, se selecionado, um atalho na área de trabalho. Atualizações preservam preferências.
+2. Abra o aplicativo e coloque o vídeo no PiP nativo do Edge ou Chrome. Mantenha essa janela aberta, sem minimizar.
+3. Para as APIs mais novas, use **Iniciar jogo configurado** no menu do ícone da ferramenta perto do relógio. Escolha o executável real do jogo na primeira vez. A conexão com fontes compatíveis é automática.
+4. Arraste o PiP no editor e use bordas ou cantos para redimensionar proporcionalmente.
 
-**Não é necessário instalar extensão, RTSS ou criar uma conta de desenvolvedor.** O PiP normal do navegador continua sendo a fonte de vídeo e precisa permanecer aberto, sem minimizar.
-
-| Você quer… | Faça assim |
+| Ação | Onde encontrar |
 | --- | --- |
-| Mover ou redimensionar | Arraste o vídeo ou as bordas no editor. |
-| Escolher monitor, qualidade ou atalhos | Abra **Ajustes**. |
-| Suspender o funcionamento | Use **Pausar**; a reconexão também fica suspensa. |
-| Voltar a assistir | Use **Retomar** ou o atalho configurado. |
-| Deixar rodando sem a janela | Feche a janela; o aplicativo fica perto do relógio. |
-| Ajustar consumo automaticamente | Em **Ajustes**, habilite **FPS automático** e escolha o FPS mínimo. O campo FPS define o máximo. |
-| Exportar informações para suporte | Use **Ajustes → Diagnóstico**; nenhum dado é enviado automaticamente. |
-| Verificar versão nova | Use **Ajustes → Atualizações**. O aviso automático pode ser desativado. |
-| Encerrar completamente | Clique em **Sair** no menu do ícone perto do relógio. |
+| Resolução, FPS e FPS automático | Ajustes → Imagem |
+| Monitor, encaixe e margem | Ajustes → Posição |
+| Atalhos, fontes, atualizações e diagnóstico | Ajustes → Mais |
+| Centralizar ou desfazer | Barra do editor; Ctrl+Z também funciona no editor |
+| Pausar e impedir reconexão | Pausar |
+| Voltar a conectar | Retomar ou o atalho configurado |
+| Manter na bandeja | Fechar a janela principal |
+| Encerrar completamente | Sair no menu da bandeja |
 
-O aplicativo não configura inicialização automática do Windows. Depois de reiniciar o computador, abra `PipOverlay.exe` novamente.
+Resolução e FPS são independentes: até 1080p a 30 fps mantém a resolução solicitada com menos atualizações que 60 fps. A qualidade selecionada no site não garante as dimensões reais da janela PiP. A ferramenta pode ampliá-la temporariamente e restaura seu tamanho ao parar. O navegador e a máquina podem impor limites menores.
 
-## Um editor que representa sua tela
+[Guia completo de instalação e uso](docs/USO.txt)
 
-<p align="center"><img src="docs/assets/editor.png" alt="Editor do PiP Overlay com área proporcional ao monitor, controles de redimensionamento e botão Pausar" width="960" /></p>
+## Editor visual
 
-Em **Ajustes**, escolha **Resolução: Até 1080p** e **FPS: 30 fps** para priorizar nitidez com menos atualizações. Os controles são independentes: alterar o FPS não muda a resolução. A ferramenta amplia temporariamente o PiP de origem e restaura seu tamanho ao parar. O navegador pode impor um limite menor; a resolução real aparece no status.
+![Editor com ajustes laterais](docs/assets/workspace-016.png)
 
-A posição e o tamanho são proporcionais ao monitor selecionado. A interação com mouse e teclado fica no aplicativo; o renderizador não cria controles clicáveis dentro do jogo.
+A área representa o monitor proporcionalmente. Os ajustes ficam na lateral, em Imagem, Posição e Mais, sem reduzir a altura do editor. O encaixe ajuda a alinhar, mas permite coordenadas exatas nas bordas. Segure Alt para mover sem encaixe.
 
-## Recursos
+## Compatibilidade e limites
 
-- **Conexão automática** quando o PiP e o jogo estão disponíveis.
-- **Pausa persistente**, sem reiniciar a overlay contra a escolha do usuário.
-- **Editor visual** com arraste e redimensionamento proporcional.
-- **Atalhos configuráveis** para retomar e pausar.
-- **Captura até 1920 × 1080**, sem redução intermediária no modo Até 1080p, limitada pela fonte.
-- **Até 60 fps**, com alternativas de 30 e 15 fps.
-- **Um instalador independente**, sem downloads extras durante a instalação.
+Windows 10 2004 ou superior e Windows 11, sistema x64. PiP nativo do Edge e Chrome. Caminho legado para processos D3D9 reconhecidos; renderizadores DirectX 11/12, OpenGL e Vulkan experimental, com testes em hosts próprios de 32/64 bits.
 
-## Compatibilidade com Jogos
+Suporte a uma API não certifica todos os jogos. Proteções de jogos/vídeos, launchers que criam outro processo e certas configurações gráficas podem impedir a conexão. O aplicativo não contorna essas proteções. D3D9 fullscreen tem validação em host próprio; fullscreen nas APIs mais novas ainda exige validação específica. Resultados em janela sintética não garantem desempenho em jogos reais.
 
-| Item | Estado |
-| --- | --- |
-| Sistema | Windows 10 a partir da versão 2004 / Windows 11, x64 |
-| Navegadores de origem | Edge e Chrome, usando o PiP nativo |
-| DirectX 9 | Legado para processos reconhecidos; não é suporte genérico a todos os jogos D3D9 |
-| DirectX 11 / DirectX 12 / OpenGL | Implementados e testados em hosts próprios, em 32 e 64 bits |
-| Jogos | Inicialização do executável escolhido; launchers que criam outro processo e proteções podem impedir a conexão |
-| Vulkan | Camada própria, testada em 32 e 64 bits; inicialmente SDR RGBA/BGRA UNORM de 8 bits |
-| Distribuição | Projeto experimental, versão 0.14.1 |
+Vulkan atualmente compõe SDR RGBA/BGRA UNORM de 8 bits, usando fila gráfica e uma swapchain por apresentação. HDR, device groups e outros modos avançados permanecem fora do suporte. Alvos de 15/30/60 fps não são garantias de entrega.
 
-Os testes automatizados cobrem lógica de conexão, atalhos e geometria. A renderização também foi exercitada em um aplicativo Direct3D 9 próprio, incluindo fullscreen. Isso **não equivale a uma certificação de compatibilidade com todas as versões do jogo ou drivers**. D3D11, D3D12, OpenGL e Vulkan passaram por verificações de pixels em hosts próprios; a captura nativa preservou os pixels de padrões em 720p e 1080p. Veja [os resultados e limites](docs/VALIDATION-0.11.md).
+[Compatibilidade detalhada](docs/COMPATIBILITY.md) · [Matriz de testes](docs/TEST-MATRIX.md) · [Arquitetura](docs/ARCHITECTURE.md)
 
-A tabela detalhada de [compatibilidade com Jogos](docs/COMPATIBILITY.md) diferencia implementação, testes em janela/fullscreen e casos ainda não validados. Não há lista de jogos certificados para as novas APIs.
+## Privacidade e instalação
 
-Vídeos protegidos podem não ser capturáveis. O projeto não altera proteções do jogo nem tenta contorná-las.
+O vídeo é processado localmente; o aplicativo não grava nem envia seu vídeo. A consulta de atualizações acessa o GitHub e pode ser desativada. Preferências e logs técnicos ficam no computador. O diagnóstico JSON é exportado por escolha do usuário, sem envio automático. Consulte a [política de privacidade](docs/pt-BR/PRIVACY.md).
 
-## Desempenho, sem promessas de custo zero
+O instalador é por usuário e inclui .NET e renderizadores. Não instala drivers/serviços nem configura inicialização com o Windows. Ele cria os atalhos e o registro de desinstalação do usuário. A assinatura digital pública ainda está pendente; SHA-256 confere integridade, mas não identifica o editor como uma assinatura. Veja [assinatura](docs/SIGNING.md).
 
-O navegador continua decodificando o vídeo. O limite de resolução controla o tamanho capturado; o FPS controla a frequência das atualizações. Resoluções menores são reduzidas na GPU. Os quadros seguem por leitura assíncrona e memória compartilhada. Não há codificação nem gravação de imagens por quadro.
+Atualizações reutilizam a pasta registrada e preservam preferências. Ao escolher outro destino, a importação automática não sobrescreve configurações já existentes. Desinstalar pelo Windows ou pelos atalhos preserva dados pessoais; a política explica como removê-los quando desejado.
 
-Ainda existe transferência pela CPU e consumo de GPU. Um overlay maior custa mais. O modo Até 1080p custa mais que os modos reduzidos. **Ainda não há comparação controlada do impacto desta versão em jogos reais**. Em repouso, a busca ocorre a cada 1,5 segundo; seu consumo ainda não foi medido separadamente.
+## Desenvolvimento e licença
 
-Para uma máquina mais limitada, comece com um vídeo pequeno e **30 fps**, ajustando a resolução separadamente. Saiba mais em [arquitetura e validação](docs/ARCHITECTURE.md).
+C# / WinForms / .NET 8 e C++ / Direct3D, com ferramentas locais ao projeto. Veja [desenvolvimento](docs/DEVELOPMENT.md), [contribuição](CONTRIBUTING.md) e [segurança](docs/pt-BR/SECURITY.md). Mudanças de instalação são testadas primeiro em Windows descartável. Ferramentas de teste são excluídas da build final.
 
-## Desenvolvimento
+Código próprio sob a [licença MIT](LICENSE). Dependências mantêm suas [licenças e atribuições](THIRD_PARTY_NOTICES.md). Projeto independente de [MaiconDAS](https://github.com/MaiconDAS), sem afiliação com fabricantes de navegadores, APIs ou jogos. Relatórios de versões anteriores são registros históricos, disponíveis no [histórico](CHANGELOG.md).
 
-O projeto usa **C# / WinForms / .NET 8** na interface e **C++ / Direct3D** na captura e renderização. O compilador nativo portátil é Zig 0.14.1; MinHook 1.3.4 está incluído com sua licença. O add-on usa MSVC portátil, e o pacote inclui ReShade 6.8.0; nada disso exige instalação manual pelo usuário.
+### Detecção de jogos (0.16)
 
-```powershell
-pwsh ./scripts/Initialize-Tools.ps1
-pwsh ./scripts/Package.ps1
-```
+A lista consulta janelas abertas e módulos gráficos, sem restringir o nome do executável a um jogo. A consulta é somente leitura, tem cache de cinco segundos e deixa de ser repetida enquanto a sessão está conectada e o editor está oculto. Aplicativos gráficos também podem aparecer: detectar um renderizador não prova que seja um jogo compatível.
 
-O instalador é gerado em `dist/installer/`. Consulte [DEVELOPMENT.md](docs/DEVELOPMENT.md) para requisitos, testes e compilação individual.
+DirectX 9 usa a conexão existente por processo. DirectX 11/12, OpenGL e Vulkan encontrados sem uma integração preparada aparecem como **não conectado**. Em **Ajustes → Mais**, selecione o executável real em **Trocar jogo**; a inicialização preparada continua no menu do ícone perto do relógio. A seleção do executável também permite incluir uma janela cujo renderizador não foi identificado. Launchers que abrem outro processo e jogos protegidos podem impedir essa integração. Não há tentativa de contornar a proteção ou elevar privilégios.
 
-## Contribuir
-
-Encontrou um problema? Abra uma [issue](https://github.com/MaiconDAS/pip-overlay/issues/new/choose) com a versão do aplicativo, navegador, Windows e passos para reproduzir. As orientações estão em [CONTRIBUTING.md](CONTRIBUTING.md).
-
-O código próprio do projeto é **open source sob a [licença MIT](LICENSE)**. Você pode usar, modificar e redistribuir, inclusive comercialmente, preservando o aviso de copyright e a licença. As licenças e atribuições das dependências estão em [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-
----
-
-<p align="center">Criado por <a href="https://github.com/MaiconDAS">MaiconDAS</a> · Projeto independente, sem afiliação com Microsoft, Google, MSI ou desenvolvedores de jogos.</p>
+Black Desert Online não foi testado nesta versão. Sua presença na lista e a autorização da integração pelo jogo são verificações diferentes; não é declarado compatível só porque a detecção foi ampliada.

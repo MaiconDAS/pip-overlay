@@ -1,3 +1,5 @@
+> Registro histórico da versão indicada. Para a build atual, consulte [VALIDATION-0.16.md](VALIDATION-0.16.md).
+
 # Validação 0.15.0 — interface e captura
 
 Testes locais em 29/10/2026, com janelas e renderizadores sintéticos do próprio projeto. Nenhuma configuração global do Windows foi modificada.

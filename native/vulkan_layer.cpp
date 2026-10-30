@@ -7,6 +7,7 @@
 #include <mutex>
 #include <memory>
 #include <algorithm>
+#include <cmath>
 
 #define EXPORT extern "C" __declspec(dllexport)
 EXPORT PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInstance,const char*);
@@ -15,7 +16,7 @@ struct Instance{VkInstance handle;PFN_vkGetInstanceProcAddr next;};
 struct Frame{
     VkCommandPool pool{};VkCommandBuffer command{};VkFence fence{};VkSemaphore done{};
     VkImage source{};VkDeviceMemory imageMemory{},uploadMemory{},readMemory{};VkBuffer upload{},read{};void* mapped{};void* readMapped{};
-    uint32_t sequence=0,expected=0,width=0,height=0;float x=0,y=0,w=0,h=0;bool initialized=false,pending=false,verify=false;
+    uint32_t sequence=0,expected=0,width=0,height=0;float x=0,y=0,w=0,h=0;bool initialized=false,pending=false,verify=false,verifyCorner=false;
 };
 struct Swap{
     VkSwapchainKHR handle{};VkExtent2D size{};VkFormat format{};bool enabled=false,readable=false;
@@ -68,7 +69,7 @@ static bool InitFrame(Device&d,Frame&f,uint32_t family){
     VkMemoryRequirements req;CALL(vkGetImageMemoryRequirements)(d.handle,f.source,&req);uint32_t type=MemoryType(d,req.memoryTypeBits,VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);if(type==UINT32_MAX)return false;
     VkMemoryAllocateInfo allocate={VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO};allocate.allocationSize=req.size;allocate.memoryTypeIndex=type;
     if(CALL(vkAllocateMemory)(d.handle,&allocate,nullptr,&f.imageMemory)!=VK_SUCCESS||CALL(vkBindImageMemory)(d.handle,f.source,f.imageMemory,0)!=VK_SUCCESS)return false;
-    return Buffer(d,PIP_WIDTH*PIP_HEIGHT*4,VK_BUFFER_USAGE_TRANSFER_SRC_BIT,f.upload,f.uploadMemory,f.mapped)&&Buffer(d,4,VK_BUFFER_USAGE_TRANSFER_DST_BIT,f.read,f.readMemory,f.readMapped);
+    return Buffer(d,PIP_WIDTH*PIP_HEIGHT*4,VK_BUFFER_USAGE_TRANSFER_SRC_BIT,f.upload,f.uploadMemory,f.mapped)&&Buffer(d,8,VK_BUFFER_USAGE_TRANSFER_DST_BIT,f.read,f.readMemory,f.readMapped);
 }
 static void Barrier(Device&d,VkCommandBuffer cmd,VkImage image,VkImageLayout before,VkImageLayout after,VkAccessFlags src,VkAccessFlags dst){
     VkImageMemoryBarrier b={VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER};b.srcAccessMask=src;b.dstAccessMask=dst;b.oldLayout=before;b.newLayout=after;b.srcQueueFamilyIndex=b.dstQueueFamilyIndex=VK_QUEUE_FAMILY_IGNORED;b.image=image;b.subresourceRange={VK_IMAGE_ASPECT_COLOR_BIT,0,1,0,1};
@@ -76,7 +77,7 @@ static void Barrier(Device&d,VkCommandBuffer cmd,VkImage image,VkImageLayout bef
 }
 static bool Record(Device&d,Swap&s,Frame&f,uint32_t index){
     if(CALL(vkGetFenceStatus)(d.handle,f.fence)!=VK_SUCCESS)return false;
-    if(f.verify&&video){uint32_t actual=*(uint32_t*)f.readMapped;bool rgba=s.format==VK_FORMAT_R8G8B8A8_UNORM;if(rgba)actual=(actual&0xff00ff00)|((actual&255)<<16)|((actual>>16)&255);bool match=true;for(int c=0;c<3;c++)if(abs(int((actual>>(c*8))&255)-int((f.expected>>(c*8))&255))>20)match=false;InterlockedIncrement(match?&video->verified:&video->mismatched);f.verify=false;}
+    if(f.verify&&video){uint32_t actual=*(uint32_t*)f.readMapped;bool rgba=s.format==VK_FORMAT_R8G8B8A8_UNORM;if(rgba)actual=(actual&0xff00ff00)|((actual&255)<<16)|((actual>>16)&255);bool match=true;for(int c=0;c<3;c++)if(abs(int((actual>>(c*8))&255)-int((f.expected>>(c*8))&255))>20)match=false;if(f.verifyCorner){uint32_t corner=((uint32_t*)f.readMapped)[1];if(rgba)corner=(corner&0xff00ff00)|((corner&255)<<16)|((corner>>16)&255);bool filled=true;for(int c=0;c<3;c++)if(abs(int((corner>>(c*8))&255)-int((f.expected>>(c*8))&255))>20)filled=false;match=match&&!filled;}InterlockedIncrement(match?&video->verified:&video->mismatched);f.verify=false;}
     uint32_t w=f.width,h=f.height,seq=f.sequence;float x=f.x,y=f.y,bw=f.w,bh=f.h;
     bool valid=f.initialized,upload=false;bool verify=video->validate&&s.readable;
     // Contention skips the update, never the previously uploaded picture.
@@ -97,10 +98,25 @@ static bool Record(Device&d,Swap&s,Frame&f,uint32_t index){
     }
     Barrier(d,f.command,s.images[index],VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,0,VK_ACCESS_TRANSFER_WRITE_BIT);
     VkImageBlit blit={};blit.srcSubresource=blit.dstSubresource={VK_IMAGE_ASPECT_COLOR_BIT,0,0,1};blit.srcOffsets[1]={(int)w,(int)h,1};blit.dstOffsets[0]={(int)(x*s.size.width),(int)(y*s.size.height),0};blit.dstOffsets[1]={std::min((int)s.size.width,(int)((x+bw)*s.size.width)),std::min((int)s.size.height,(int)((y+bh)*s.size.height)),1};
-    CALL(vkCmdBlitImage)(f.command,f.source,VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,s.images[index],VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,1,&blit,VK_FILTER_LINEAR);
+    // Small rounded corners without introducing a shader pipeline into the Vulkan renderer.
+    VkImageBlit regions[13];uint32_t regionCount=0;
+    int dw=blit.dstOffsets[1].x-blit.dstOffsets[0].x,dh=blit.dstOffsets[1].y-blit.dstOffsets[0].y;
+    int radius=std::min(6,std::min(dw,dh)/2);
+    auto strip=[&](int top,int bottom,int inset){
+        if(bottom<=top||dw<=2*inset)return;
+        auto part=blit;part.dstOffsets[0].x+=inset;part.dstOffsets[1].x-=inset;
+        part.dstOffsets[0].y=blit.dstOffsets[0].y+top;part.dstOffsets[1].y=blit.dstOffsets[0].y+bottom;
+        part.srcOffsets[0].x=(int)std::lround(double(inset)*w/dw);part.srcOffsets[1].x=(int)std::lround(double(dw-inset)*w/dw);
+        part.srcOffsets[0].y=(int)std::lround(double(top)*h/dh);part.srcOffsets[1].y=(int)std::lround(double(bottom)*h/dh);
+        regions[regionCount++]=part;
+    };
+    for(int row=0;row<radius;row++){double dy=radius-row-.5;int inset=(int)std::ceil(radius-std::sqrt(radius*radius-dy*dy));strip(row,row+1,inset);strip(dh-row-1,dh-row,inset);}
+    strip(radius,dh-radius,0);
+    if(regionCount)CALL(vkCmdBlitImage)(f.command,f.source,VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,s.images[index],VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,regionCount,regions,VK_FILTER_LINEAR);
     if(verify){
         Barrier(d,f.command,s.images[index],VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,VK_ACCESS_TRANSFER_WRITE_BIT,VK_ACCESS_TRANSFER_READ_BIT);
         VkBufferImageCopy copy={};copy.imageSubresource={VK_IMAGE_ASPECT_COLOR_BIT,0,0,1};copy.imageOffset={(blit.dstOffsets[0].x+blit.dstOffsets[1].x)/2,(blit.dstOffsets[0].y+blit.dstOffsets[1].y)/2,0};copy.imageExtent={1,1,1};CALL(vkCmdCopyImageToBuffer)(f.command,s.images[index],VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,f.read,1,&copy);
+        f.verifyCorner=video->validate==2;if(f.verifyCorner){copy.bufferOffset=4;copy.imageOffset={blit.dstOffsets[0].x,blit.dstOffsets[0].y,0};CALL(vkCmdCopyImageToBuffer)(f.command,s.images[index],VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,f.read,1,&copy);}
         Barrier(d,f.command,s.images[index],VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,VK_ACCESS_TRANSFER_READ_BIT,0);
     }else Barrier(d,f.command,s.images[index],VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,VK_ACCESS_TRANSFER_WRITE_BIT,0);
     if(CALL(vkEndCommandBuffer)(f.command)!=VK_SUCCESS)return false;

@@ -1,4 +1,4 @@
-PiP Overlay 0.15.0 — um único instalador
+PiP Overlay 0.16.0 — um único instalador
 
 PARA LEVAR PARA OUTRO COMPUTADOR
 Copie Instalar-PiP-Overlay.exe. Abra e siga o assistente. O atalho na área de trabalho vem marcado por padrão. O menu Iniciar e a entrada em Aplicativos instalados são criados automaticamente. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
@@ -16,14 +16,16 @@ Pausar interrompe também a reconexão automática; Retomar a reativa. Configure
 COMPATIBILIDADE
 D3D9 legado, DirectX 11/12, OpenGL e Vulkan experimental. Os novos renderizadores precisam que o jogo seja iniciado pela ferramenta. Launchers que abrem outro processo e proteções do jogo podem impedir a conexão. Vulkan inicialmente suporta SDR RGBA/BGRA UNORM de 8 bits e apresentação por fila gráfica; HDR, múltiplas swapchains por apresentação e cadeias de extensão na apresentação não são suportados.
 
-Os renderizadores passaram em aplicativos próprios de teste. Isso não comprova funcionamento em todos os jogos. Não há medição controlada do impacto em jogos reais desta versão nem garantia de 60 fps. Resultados: https://github.com/MaiconDAS/pip-overlay/blob/main/docs/VALIDATION-0.11.md
+Os renderizadores passaram em aplicativos próprios de teste. Isso não comprova funcionamento em todos os jogos. Não há medição controlada do impacto em jogos reais desta versão nem garantia de 60 fps. Resultados: https://github.com/MaiconDAS/pip-overlay/blob/main/docs/VALIDATION-0.16.md
 
 O aplicativo não se configura para iniciar com o Windows. Abra pelo atalho na área de trabalho ou pelo menu Iniciar após reiniciar. As preferências ficam em data. Para remover, encerre a ferramenta e os jogos iniciados por ela e use Aplicativos instalados, Desinstalar PiP Overlay no menu Iniciar ou o atalho na pasta instalada. Preferências e arquivos pessoais são preservados. O instalador registra somente a entrada de desinstalação do usuário; não instala serviços, drivers nem políticas do navegador.
 
 Código próprio open source sob licença MIT. Consulte LICENSE e THIRD_PARTY_NOTICES.md; componentes de terceiros mantêm suas licenças.
 
-NOVIDADES 0.12
-FPS automático: opcional, mantém a resolução e respeita os limites escolhidos. Perfis de posição e qualidade são lembrados por jogo. Em Ajustes, consulte Atualizações ou exporte Diagnóstico sem imagens, URLs ou caminhos pessoais. Atualizações podem usar a mesma pasta e preservam preferências. O instalador detecta a instalação registrada automaticamente. Para atualizar uma versão portátil, escolha a própria pasta existente; seus ajustes serão preservados. Não há etapa de importação. O compartilhamento de texturas por GPU permanece experimental e não está ativado.
+EDIÇÃO E QUALIDADE NA VERSÃO ATUAL
+Com vários PiPs, escolha Vídeos e clique na miniatura desejada. Arraste para encaixar nas bordas, margem ou centro; segure Alt para movimento livre. Mesmo com margem ativa, o vídeo pode encostar exatamente nas extremidades. Os cantos são levemente arredondados. Centralizar e Desfazer ficam acima do editor; Ctrl+Z funciona somente nele. Perfis guardam posição e qualidade por jogo.
 
-NOVIDADES 0.13
-Com vários PiPs abertos, escolha Vídeos e clique na miniatura desejada. Arraste no editor para encaixar nas bordas ou no centro; segure Alt para movimento livre. Ajuste a margem em Ajustes. Centralizar e Desfazer posição ficam acima do editor; Ctrl+Z funciona somente nele. O perfil do jogo fica visível e pode ser restaurado ou copiado em Ajustes. O instalador permanece sem assinatura pública; o fluxo para um certificado futuro está preparado.
+TRANSPORTE E PRIVACIDADE
+O transporte por texturas compartilhadas é automático quando compatível com DirectX 11, com retorno à CPU se necessário. DirectX 9/12, OpenGL e Vulkan mantêm o caminho de compatibilidade. Não há opção técnica adicional que você precise configurar. A assinatura pública do instalador continua pendente.
+Consulte PRIVACY-pt-BR.md ou PRIVACY-en.md no pacote. Documentação: https://github.com/MaiconDAS/pip-overlay/blob/main/docs/README.md
+English documentation: https://github.com/MaiconDAS/pip-overlay/blob/main/README.en.md

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security report / Relato de segurança
+    url: https://github.com/MaiconDAS/pip-overlay/security/advisories/new
+    about: Send sensitive vulnerability details privately / Envie detalhes sensíveis de vulnerabilidades de forma privada.
+  - name: Privacy / Privacidade
+    url: https://github.com/MaiconDAS/pip-overlay/blob/main/PRIVACY.md
+    about: Local data, update checks and diagnostics; English and Portuguese / Dados locais, atualizações e diagnóstico; inglês e português.

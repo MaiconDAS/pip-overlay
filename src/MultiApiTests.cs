@@ -19,11 +19,11 @@ internal static class MultiApiTests
                 timer.Tick+=(_,_)=>view.Write(28,unchecked((uint)Environment.TickCount));timer.Start();
                 foreach(var box in new[]{new Rectangle(24,24,480,270),new Rectangle(1416,24,480,270),new Rectangle(1416,786,480,270),new Rectangle(24,786,480,270),new Rectangle(480,270,960,540)}){
                     view.Write(tail,0);view.Write(8,1);view.Write(32,box.X/1920f);view.Write(36,box.Y/1080f);view.Write(40,box.Width/1920f);view.Write(44,box.Height/1080f);view.Write(8,0);
-                    await Task.Delay(2200);view.Write(tail,1);await Task.Delay(1700);
+                    await Task.Delay(2200);view.Write(tail,2);await Task.Delay(1700);
                     samples.Add(new{box,ready=view.ReadInt32(60),rendered=view.ReadInt32(48),uploaded=view.ReadInt32(52),verified=view.ReadInt32(tail+4),mismatched=view.ReadInt32(tail+8),width=view.ReadInt32(tail+16),height=view.ReadInt32(tail+20)});
                     if(process.HasExited)throw new IOException("O processo de teste encerrou antes da validação. Consulte ReShade.log e vulkan-loader.txt.");
                 }
-                view.Write(tail,1);await Task.Delay(300);
+                view.Write(tail,2);await Task.Delay(300);
                 var deadline=Stopwatch.StartNew();while(!ContentionTest.Lock(view)){if(deadline.ElapsedMilliseconds>1000)throw new IOException("Lock timeout");await Task.Delay(10);}
                 int before=view.ReadInt32(48);int during;
                 try{await Task.Delay(1200);during=view.ReadInt32(48)-before;}finally{view.Write(8,0);}
@@ -32,7 +32,7 @@ internal static class MultiApiTests
                 view.Write(12,0);timer.Stop();
                 File.WriteAllText(report,JsonSerializer.Serialize(new{result,samples},new JsonSerializerOptions{WriteIndented=true}));
             }catch(Exception ex){File.WriteAllText(report,JsonSerializer.Serialize(new{error=ex.ToString(),samples}));}
-            finally{timer.Stop();if(process!=null){if(!process.HasExited)process.CloseMainWindow();process.Dispose();}form.Close();}
+            finally{timer.Stop();if(process!=null){if(!process.HasExited){process.CloseMainWindow();if(!process.WaitForExit(3000)){process.Kill();process.WaitForExit();}}process.Dispose();}form.Close();}
         };
         Application.Run(form);return result;
     }

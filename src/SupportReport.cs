@@ -9,6 +9,7 @@ internal static class SupportReport
         resolution=settings.Validated().Resolution,requestedFps=settings.FramesPerSecond,
         adaptive=settings.AdaptiveFps,minimumFps=settings.MinimumFps,
         session=session==null?null:new {ready=session.Ready,effectiveFps=session.EffectiveFps,
+            transport=session.SharedTransport==1?"shared-gpu-d3d11":session.SharedTransport<0?"cpu-fallback":"cpu",
             captureWidth=session.TransferSize.Width,captureHeight=session.TransferSize.Height,
             rendered=session.Rendered,uploaded=session.Uploaded,published=session.Published,
             processed=session.ProcessedFrames,discarded=session.DiscardedFrames,workerWakeups=session.WorkerWakeups,lastSubmitMs=session.PublishMilliseconds,hasError=session.Error!=null}

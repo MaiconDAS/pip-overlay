@@ -1,3 +1,5 @@
+> Registro histórico da versão indicada. Para a build atual, consulte [VALIDATION-0.16.md](VALIDATION-0.16.md).
+
 # Validação 0.11
 
 Testes locais em Windows com Intel UHD Graphics 770. Hosts próprios; não equivalem a validação em jogos de terceiros.

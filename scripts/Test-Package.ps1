@@ -24,6 +24,7 @@ try{
     }
 }finally{$zip.Dispose()}
 $assembly=[Text.Encoding]::UTF8.GetString([IO.File]::ReadAllBytes((Join-Path "$Destination/{app}" 'PipOverlay.dll')))
-foreach($name in @('WorkspaceTests','UxTests','SoakTests','ImprovementTests','ContentionTest','QualityTests','MultiApiTests','GpuValidation','DemoSource','RtssTest')){if($assembly.Contains($name)){throw "Development type leaked: $name"}}
+foreach($name in @('SharedTransportTests','WorkspaceTests','UxTests','SoakTests','ImprovementTests','ContentionTest','QualityTests','MultiApiTests','GpuValidation','DemoSource','RtssTest')){if($assembly.Contains($name)){throw "Development type leaked: $name"}}
+foreach($file in @("PRIVACY-en.md","PRIVACY-pt-BR.md","READ-ME.md")){if(!(Test-Path (Join-Path "$Destination/{app}" $file))){throw "Missing bilingual documentation: $file"}}
 Write-Output "PASS: $count extracted files match the package; no developer tools or user settings."
 Write-Output "Isolated test directory: $Destination"

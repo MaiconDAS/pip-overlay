@@ -1,0 +1,94 @@
+{
+  "result": 0,
+  "mode": "pixels",
+  "bits": 9,
+  "observations": [
+    {
+      "rect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 24,
+          "Y": 24
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 480,
+          "Height": 270
+        },
+        "X": 24,
+        "Y": 24,
+        "Width": 480,
+        "Height": 270,
+        "Left": 24,
+        "Top": 24,
+        "Right": 504,
+        "Bottom": 294,
+        "IsEmpty": false
+      },
+      "SharedTransport": 0,
+      "Published": 122,
+      "Uploaded": 116,
+      "verified": 3,
+      "mismatched": 0,
+      "Error": null
+    },
+    {
+      "rect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1416,
+          "Y": 786
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 480,
+          "Height": 270
+        },
+        "X": 1416,
+        "Y": 786,
+        "Width": 480,
+        "Height": 270,
+        "Left": 1416,
+        "Top": 786,
+        "Right": 1896,
+        "Bottom": 1056,
+        "IsEmpty": false
+      },
+      "SharedTransport": 0,
+      "Published": 178,
+      "Uploaded": 170,
+      "verified": 6,
+      "mismatched": 0,
+      "Error": null
+    },
+    {
+      "rect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 480,
+          "Y": 270
+        },
+        "Size": {
+          "IsEmpty": false,
+          "Width": 960,
+          "Height": 540
+        },
+        "X": 480,
+        "Y": 270,
+        "Width": 960,
+        "Height": 540,
+        "Left": 480,
+        "Top": 270,
+        "Right": 1440,
+        "Bottom": 810,
+        "IsEmpty": false
+      },
+      "SharedTransport": 0,
+      "Published": 234,
+      "Uploaded": 224,
+      "verified": 9,
+      "mismatched": 0,
+      "Error": null
+    }
+  ]
+}

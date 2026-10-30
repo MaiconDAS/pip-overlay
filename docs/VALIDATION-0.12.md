@@ -1,3 +1,5 @@
+> Registro histórico da versão indicada. Para a build atual, consulte [VALIDATION-0.16.md](VALIDATION-0.16.md).
+
 # Validação 0.12 — estabilidade e desempenho
 
 Ambiente disponível: Intel UHD Graphics 770, driver 32.0.101.7092, Windows x64. Os testes usam aplicativos próprios; não são certificação de jogos.

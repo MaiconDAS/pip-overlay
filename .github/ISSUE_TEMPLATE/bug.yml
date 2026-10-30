@@ -1,24 +1,39 @@
-name: Relatar problema
-description: Algo não funcionou como esperado.
+name: Bug / Relatar problema
+description: Report unexpected behavior / Algo não funcionou como esperado.
 title: '[Bug] '
 body:
   - type: input
     id: version
     attributes:
-      label: Versão do PiP Overlay
+      label: App version / Versão do aplicativo
     validations:
       required: true
   - type: textarea
     id: environment
     attributes:
-      label: Ambiente
-      description: Windows, navegador, GPU e modo de exibição do jogo. Não inclua dados pessoais.
+      label: Environment / Ambiente
+      description: Windows, browser/navegador, GPU, driver, fullscreen/borderless/windowed. No personal data / Sem dados pessoais.
     validations:
       required: true
+  - type: dropdown
+    id: api
+    attributes:
+      label: Graphics API / API gráfica
+      options:
+        - Unknown / Não sei
+        - DirectX 9
+        - DirectX 11
+        - DirectX 12
+        - OpenGL
+        - Vulkan
+  - type: input
+    id: quality
+    attributes:
+      label: Resolution and FPS / Resolução e FPS
   - type: textarea
     id: reproduce
     attributes:
-      label: O que aconteceu e como reproduzir
-      description: Informe o resultado esperado, o observado e os passos para chegar ao problema.
+      label: Reproduction and expected result / Reprodução e resultado esperado
+      description: Include steps and observed behavior. Review logs before sharing. / Informe os passos e o comportamento observado. Revise logs antes de compartilhar.
     validations:
       required: true

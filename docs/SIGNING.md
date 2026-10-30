@@ -1,6 +1,8 @@
+**Português** · [English](en/SIGNING.md)
+
 # Assinatura do instalador
 
-A versão 0.14.0 permanece **sem assinatura digital pública**. O responsável pelo projeto ainda não possui certificado ou serviço de assinatura verificado. O SHA256 publicado verifica a integridade do download, mas não substitui a assinatura de identidade.
+A versão distribuída permanece **sem assinatura digital pública**. O responsável pelo projeto ainda não possui certificado ou serviço de assinatura verificado. O SHA256 publicado verifica a integridade do download, mas não substitui a assinatura de identidade.
 
 O fluxo está preparado em `scripts/Sign-Release.ps1`. A consulta abaixo não altera arquivos nem o armazenamento de certificados:
 

@@ -1,6 +1,8 @@
+**Português** · [English](en/ARCHITECTURE.md)
+
 # Arquitetura e validação
 
-A captura usa Windows Graphics Capture e D3D11, com três buffers de leitura e memória compartilhada. Não há recodificação nem gravação. Ainda existe cópia pela CPU; não é zero-copy.
+A captura usa Windows Graphics Capture e D3D11, com três buffers de leitura e memória compartilhada. Não há recodificação nem gravação. O caminho de compatibilidade usa cópia pela CPU. O DirectX 11 pode usar transporte por textura compartilhada na GPU; ainda há cópias na GPU, portanto não é zero-copy.
 
 ## Qualidade
 
@@ -29,3 +31,9 @@ Pausar torna os renderizadores passivos; bibliotecas permanecem carregadas até 
 - Fonte, resolução disponibilizada pelo navegador e capacidade da máquina continuam limitando qualidade e fps.
 
 Veja [VALIDATION-0.11.md](VALIDATION-0.11.md).
+
+## Transporte compartilhado no DirectX 11
+
+Uma memória de controle separada e versionada negocia três texturas RGBA com mutexes por chave. O produtor escreve numa textura livre; o consumidor copia a imagem concluída mais recente para a textura do efeito e libera quadros antigos. A aquisição não espera pelo outro processo. Falhas ou incompatibilidade retornam ao caminho CPU; uma origem retida permite esse retorno mesmo com vídeo parado. Buffers de leitura da CPU são liberados quando o caminho GPU entra em uso. O diagnóstico identifica o transporte ativo. DirectX 9/12, OpenGL e Vulkan mantêm o caminho de compatibilidade.
+
+O vídeo tem cantos discretos de seis pixels: geometria no D3D9, máscara nas APIs ReShade e um conjunto limitado de regiões de blit no Vulkan. O editor permite coordenadas exatas de borda mesmo com margem de encaixe ativa.

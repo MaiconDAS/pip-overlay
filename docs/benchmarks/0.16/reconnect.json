@@ -1,0 +1,12 @@
+{
+  "result": 0,
+  "mode": "reconnect",
+  "bits": 64,
+  "observations": [
+    {
+      "cycles": 8,
+      "privateGrowthBytes": 60649472,
+      "SharedTransport": 1
+    }
+  ]
+}

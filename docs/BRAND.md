@@ -1,3 +1,5 @@
+**Português** · [English](en/BRAND.md)
+
 # Identidade visual
 
 **Nome:** PiP Overlay
@@ -17,6 +19,6 @@ Tipografia: Segoe UI, com fallback para Arial e sans-serif. O símbolo represent
 - `assets/logo.svg`: símbolo vetorial.
 - `assets/banner.svg`: cabeçalho do README.
 - `assets/social-preview.png`: imagem 1280 × 640 preparada para compartilhamento social.
-- `assets/editor.png`: renderização da interface do aplicativo, sem conteúdo pessoal.
+- `assets/workspace-016.png`: renderização atual da interface, sem conteúdo pessoal. `editor.png` e `workspace-015.png` são imagens históricas.
 
 Prefira linguagem direta: descreva o que o aplicativo faz e identifique limites. Não use promessas de custo zero, suporte universal ou aprovação pelos fornecedores do jogo/navegador.

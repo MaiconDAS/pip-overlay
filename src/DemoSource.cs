@@ -2,6 +2,7 @@ namespace PipOverlay;
 
 internal sealed class DemoSource : Form
 {
+    internal long PaintedFrames {get;private set;}
     internal Color? TestColor {get;set;}
     internal void PauseAnimation(){timer.Stop();Invalidate();}
     readonly System.Windows.Forms.Timer timer=new() { Interval=10 };
@@ -15,7 +16,7 @@ internal sealed class DemoSource : Form
     }
     protected override void OnPaint(PaintEventArgs e)
     {
-        base.OnPaint(e);var g=e.Graphics;g.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        PaintedFrames++;base.OnPaint(e);var g=e.Graphics;g.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
         if(TestColor is Color testColor) {g.Clear(testColor);return;}
         using var background=new System.Drawing.Drawing2D.LinearGradientBrush(ClientRectangle,Color.FromArgb(10,90,100),Color.FromArgb(60,25,100),30);
         g.FillRectangle(background,ClientRectangle);

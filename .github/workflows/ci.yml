@@ -16,6 +16,9 @@ jobs:
       - name: Test connection, shortcuts and geometry
         shell: pwsh
         run: ./scripts/Test.ps1
+      - name: Check documentation links and version alignment
+        shell: pwsh
+        run: ./scripts/Test-Documentation.ps1
       - name: Build production application
         shell: pwsh
         run: ./scripts/Build.ps1 -Production -Portable -Destination ./artifacts/production

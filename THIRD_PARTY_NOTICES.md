@@ -1,3 +1,5 @@
+**Português** · [English](docs/en/THIRD_PARTY_NOTICES.md)
+
 # Dependências e atribuições
 
 - **MinHook 1.3.4**, de Tsuda Kageyu e contribuidores. Fontes em `vendor/minhook`, com os avisos originais em [LICENSE.txt](vendor/minhook/LICENSE.txt). Origem: https://github.com/TsudaKageyu/minhook/tree/v1.3.4
