@@ -40,11 +40,18 @@ int WINAPI WinMain(HINSTANCE instance,HINSTANCE,LPSTR args,int){
         ID3D11Texture2D* buffer=nullptr;if(FAILED(swap->GetBuffer(0,IID_PPV_ARGS(&buffer))))return 31;
         HRESULT hr=d11->CreateRenderTargetView(buffer,nullptr,&target);buffer->Release();if(FAILED(hr))return 32;
     }
-    ShowWindow(window,SW_SHOWNOACTIVATE);DWORD start=GetTickCount();bool fullscreen=false;MSG msg={};
-    while(running&&GetTickCount()-start<35000){
+    ShowWindow(window,SW_SHOWNOACTIVATE);DWORD start=GetTickCount();bool resized=false,fullscreen=false,fullscreenTried=false;HRESULT fullscreenHr=S_FALSE;DWORD titled=0;MSG msg={};
+    while(running&&GetTickCount()-start<(strstr(args,"long")?120000u:35000u)){
         while(PeekMessageW(&msg,nullptr,0,0,PM_REMOVE)){TranslateMessage(&msg);DispatchMessageW(&msg);}
         if(!running)break;
-        if(swap&&!fullscreen&&strstr(args,"fullscreen")&&GetTickCount()-start>3000){fullscreen=SUCCEEDED(swap->SetFullscreenState(TRUE,nullptr));}
+        if(swap&&!fullscreenTried&&strstr(args,"fullscreen")&&GetTickCount()-start>3000){fullscreenTried=true;SetForegroundWindow(window);fullscreenHr=swap->SetFullscreenState(TRUE,nullptr);fullscreen=SUCCEEDED(fullscreenHr);}
+        if(d11&&!resized&&strstr(args,"resize")&&GetTickCount()-start>8000){
+            resized=true;ctx->OMSetRenderTargets(0,nullptr,nullptr);Release(target);
+            if(FAILED(swap->ResizeBuffers(0,800,500,DXGI_FORMAT_UNKNOWN,0))){error=43;break;}
+            ID3D11Texture2D* buffer=nullptr;if(FAILED(swap->GetBuffer(0,IID_PPV_ARGS(&buffer)))){error=44;break;}
+            HRESULT hr=d11->CreateRenderTargetView(buffer,nullptr,&target);buffer->Release();if(FAILED(hr)){error=45;break;}
+        }
+        if(fullscreenTried&&GetTickCount()-titled>500){titled=GetTickCount();BOOL current=FALSE;swap->GetFullscreenState(&current,nullptr);wchar_t title[160];swprintf(title,160,L"PiP test fullscreen hr=%08lX actual=%d foreground=%d",(unsigned long)fullscreenHr,(int)current,GetForegroundWindow()==window);SetWindowTextW(window,title);}
         float color[]={0.035f,0.06f,0.12f,1};
         if(gl){glClearColor(color[0],color[1],color[2],1);glClear(GL_COLOR_BUFFER_BIT);SwapBuffers(dc);Sleep(15);}
         else if(dx12){
@@ -53,7 +60,10 @@ int WINAPI WinMain(HINSTANCE instance,HINSTANCE,LPSTR args,int){
             auto handle=heap->GetCPUDescriptorHandleForHeapStart();handle.ptr+=index*stride;list->ClearRenderTargetView(handle,color,0,nullptr);
             barrier.Transition.StateBefore=D3D12_RESOURCE_STATE_RENDER_TARGET;barrier.Transition.StateAfter=D3D12_RESOURCE_STATE_PRESENT;list->ResourceBarrier(1,&barrier);list->Close();ID3D12CommandList* commands[]={list};queue->ExecuteCommandLists(1,commands);if(FAILED(chain->Present(1,0))){error=40;break;}
             queue->Signal(fence,++fenceValue);if(fence->GetCompletedValue()<fenceValue){fence->SetEventOnCompletion(fenceValue,event);if(WaitForSingleObject(event,5000)!=WAIT_OBJECT_0){error=41;break;}}
-        }else{ctx->ClearRenderTargetView(target,color);if(FAILED(swap->Present(1,0))){error=42;break;}}
+        }else{ctx->ClearRenderTargetView(target,color);ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+            if(FAILED(swap->Present(1,0))){error=42;break;}
+            D3D11_PRIMITIVE_TOPOLOGY topology;ctx->IAGetPrimitiveTopology(&topology);if(topology!=D3D11_PRIMITIVE_TOPOLOGY_LINELIST){error=46;break;}
+        }
     }
     if(swap&&fullscreen)swap->SetFullscreenState(FALSE,nullptr);
     if(gl){wglMakeCurrent(nullptr,nullptr);wglDeleteContext(rc);ReleaseDC(window,dc);}

@@ -5,10 +5,13 @@ internal static class Program
     [STAThread]
     static int Main(string[] args)
     {
+        L.Set(Settings.Load(Path.Combine(AppContext.BaseDirectory,"data","settings.json")).Language);
         Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 #if !PRODUCTION
+        if(args.Length>=2&&args[0]=="--desktop-test")return DesktopOverlayTests.Run(args[1]);
+        if(args.Length>=2&&args[0]=="--localization-test")return LocalizationTests.Run(args[1]);
         if(args.Length>=2&&args[0]=="--workspace-test")return WorkspaceTests.Run(args[1]);
         if(args.Length>=2&&args[0]=="--soak-test")return SoakTests.Run(args[1]);
         if(args.Length>=2&&args[0]=="--ux-test")return UxTests.Run(args[1]);
@@ -34,7 +37,7 @@ internal static class Program
         if (args.Length>=2 && args[0]=="--self-test") return SelfTest.Run(args[1]);
 #endif
         using var instance=new Mutex(true,"Local\\PipOverlay-Portable-0.1",out var first);
-        if(!first) { MessageBox.Show("A ferramenta já está aberta. Dê dois cliques no ícone PiP Overlay perto do relógio para ajustar.","PiP Overlay");return 0; }
+        if(!first) { MessageBox.Show(L.T("A ferramenta já está aberta. Dê dois cliques no ícone PiP Overlay perto do relógio para ajustar."),"PiP Overlay");return 0; }
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
         using var main=new MainForm();
         Application.Run(main);

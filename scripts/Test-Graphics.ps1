@@ -40,4 +40,10 @@ try{
 }finally{$env:INCLUDE=$previousInclude;$env:LIB=$previousLib}
 & "$app/PipOverlay.exe" --gpu-test "$app/capture-continuous.json" | Out-Null
 if($LASTEXITCODE){throw 'Continuous capture test failed'}
+foreach($bits in @(11,1132)){
+    & "$app/PipOverlay.exe" --shared-test "$app/late-dx11-$bits.json" pixels $bits | Out-Null
+    if($LASTEXITCODE){throw "Late D3D11 attachment failed: $bits"}
+}
+& "$app/PipOverlay.exe" --desktop-test "$app/desktop.json" | Out-Null
+if($LASTEXITCODE){throw 'Independent overlay failed'}
 Write-Output 'Graphics validation passed. Reports are in artifacts/tests.'

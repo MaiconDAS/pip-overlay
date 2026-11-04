@@ -6,9 +6,9 @@ using Windows.Graphics.DirectX.Direct3D11;
 
 namespace PipOverlay;
 
-internal sealed record RenderTarget(int Pid,string Name,bool Is32Bit,bool MultiApi=false,string? UnavailableReason=null)
+internal sealed record RenderTarget(int Pid,string Name,bool Is32Bit,bool MultiApi=false,string? UnavailableReason=null,string Backend="d3d9")
 {
-    public override string ToString()=>$"{Name} · PID {Pid}"+(UnavailableReason==null?"":" · não conectado");
+    public override string ToString()=>Backend=="desktop"?L.T("Área de trabalho · janela/borderless"):$"{Name} · PID {Pid}"+(UnavailableReason==null?"":L.T(" · não conectado"));
     internal static RenderTarget[] Find()=>GameDiscovery.Find();
 }
 
@@ -33,6 +33,7 @@ internal sealed class GpuVideoSession : IDisposable
     nint timer;
     readonly AutoResetEvent frameAvailable=new(false);
     long discarded,processed,wakeups;
+    internal string Backend {get;}
     internal long DiscardedFrames=>Interlocked.Read(ref discarded);
     internal long ProcessedFrames=>Interlocked.Read(ref processed);
     internal long WorkerWakeups=>Interlocked.Read(ref wakeups);
@@ -70,7 +71,8 @@ internal sealed class GpuVideoSession : IDisposable
     [UnmanagedFunctionPointer(CallingConvention.StdCall)] delegate int GetInterface(nint self,ref Guid iid,out nint result);
     internal GpuVideoSession(WindowSource source,Settings initial,Size screen,RenderTarget target)
     {
-        if(!target.MultiApi)PortableSetup.Ensure(target.Is32Bit?32:64);
+        Backend=target.MultiApi&&target.Backend!="desktop"?"prepared":target.Backend;
+        if(!target.MultiApi&&target.Backend=="d3d9")PortableSetup.Ensure(target.Is32Bit?32:64);
         settings=initial.Validated();monitor=screen;
         producer=PipOpen((uint)target.Pid);if(producer==0)throw new InvalidOperationException("Não foi possível abrir o transporte em memória.");
         #if !PRODUCTION
@@ -80,8 +82,8 @@ internal sealed class GpuVideoSession : IDisposable
         IDirect3DDevice? d=null;Direct3D11CaptureFramePool? f=null;GraphicsCaptureSession? s=null;
         try {
             string attach=Path.Combine(AppContext.BaseDirectory,$"PipAttach{(target.Is32Bit?32:64)}.exe");
-            if(!target.MultiApi)using(var helper=Process.Start(new ProcessStartInfo(attach,target.Pid.ToString()){UseShellExecute=false,CreateNoWindow=true})!) {
-                if(!helper.WaitForExit(12000))throw new InvalidOperationException("Tempo de conexão excedido. O alvo não foi confirmado.");
+            if(!target.MultiApi)using(var helper=Process.Start(new ProcessStartInfo(attach,target.Pid.ToString()+(target.Backend=="d3d11"?" dx11":"")){UseShellExecute=false,CreateNoWindow=true})!) {
+                if(!helper.WaitForExit(18000))throw new InvalidOperationException("Tempo de conexão excedido. O alvo não foi confirmado.");
                 if(helper.ExitCode!=0)throw new InvalidOperationException($"Conexão Direct3D recusada (código {helper.ExitCode}). Nenhuma proteção foi alterada.");
             }
             d=CaptureInterop.CreateDevice();item=CaptureInterop.CreateItem(source.Handle);

@@ -4,26 +4,27 @@
 
 Vídeo do Edge ou Chrome sobre seu jogo, com posição e tamanho ajustáveis. A interação fica no editor: o vídeo dentro do jogo não recebe cliques nem foco do teclado.
 
-[**Baixar v0.16.1**](https://github.com/MaiconDAS/pip-overlay/releases/latest) · [Guia de uso](docs/pt-BR/USAGE.md) · [Compatibilidade](docs/COMPATIBILITY.md) · [Relatar problema](https://github.com/MaiconDAS/pip-overlay/issues/new/choose)
+[**Baixar v0.17.0**](https://github.com/MaiconDAS/pip-overlay/releases/latest) · [Guia de uso](docs/pt-BR/USAGE.md) · [Compatibilidade](docs/COMPATIBILITY.md) · [Relatar problema](https://github.com/MaiconDAS/pip-overlay/issues/new/choose)
 
 Windows x64 · Código aberto / MIT · Sem RTSS ou extensão
 
 ## Novidades da versão atual
 
-A **0.16.1** organiza a documentação em português e inglês e identifica a versão no nome do instalador: `PiP-Overlay-v0.16.1.exe`. Ela mantém as melhorias da **0.16**:
+A **0.17.0** simplifica a conexão e adiciona dez idiomas ao aplicativo:
 
-- **Detecção de jogos:** identifica janelas e renderizadores sem depender do nome de um jogo específico. Processos ainda não preparados aparecem como **não conectado**.
-- **Transporte GPU em DirectX 11:** três texturas compartilhadas, com retorno ao caminho CPU quando necessário.
-- **Posicionamento:** o PiP pode encostar nas quatro bordas da tela, mesmo com encaixe ativo.
-- **Acabamento:** cantos do vídeo discretamente arredondados.
+- **DirectX 11 já aberto:** conexão por processo, sem exigir reiniciar o jogo, quando a integração é permitida.
+- **Saída independente:** composição na área de trabalho para janela/borderless, sem carregar código no jogo. Não cobre fullscreen exclusivo.
+- **Idiomas:** português, inglês, espanhol, alemão, italiano, francês, japonês, coreano, chinês simplificado e russo, em **Ajustes → Mais → Idioma**.
+- **Descoberta por eventos:** notificações de janelas com verificação periódica de segurança; tentativas transitórias limitadas.
+- **Imagem:** resolução e FPS continuam independentes, com transporte GPU quando compatível e posicionamento até as bordas.
 
-[Notas da versão](CHANGELOG.md) · [Medições e testes da 0.16](docs/VALIDATION-0.16.md)
+[Histórico](CHANGELOG.md) · [Testes e medições da 0.17](docs/VALIDATION-0.17.md)
 
 ## Como usar
 
 1. Baixe e execute o instalador. Ele inclui o runtime, cria atalhos e registra a desinstalação no Windows. Atualizações preservam preferências.
 2. Abra o PiP Overlay e coloque o vídeo no **Picture-in-Picture nativo do Edge ou Chrome**. Mantenha a janela aberta, sem minimizar.
-3. Para DirectX 11/12, OpenGL e Vulkan, use **Iniciar jogo configurado** no menu do ícone perto do relógio. Escolha o executável real do jogo. Para trocar, use **Ajustes → Mais → Trocar jogo**.
+3. DirectX 9/11 tentam conectar ao processo já aberto. A saída independente atende janela/borderless. Para fullscreen exclusivo em DirectX 12, OpenGL ou Vulkan, use **Iniciar jogo configurado** no menu do ícone perto do relógio. Escolha o executável real do jogo. Para trocar, use **Ajustes → Mais → Trocar jogo**.
 4. Arraste o vídeo no editor e use suas bordas ou cantos para redimensioná-lo. A conexão ocorre quando a fonte e um renderizador compatível estão disponíveis.
 
 Resolução e FPS são independentes. Escolher 30 fps mantém o limite de resolução escolhido; o tamanho real da captura depende do navegador e da fonte. **Pausar** impede a reconexão automática. Fechar a janela mantém o app na bandeja; use **Sair** para encerrá-lo.
@@ -32,7 +33,7 @@ Resolução e FPS são independentes. Escolher 30 fps mantém o limite de resolu
 
 ## Editor visual
 
-![Editor do PiP Overlay com ajustes laterais](docs/assets/workspace-016.png)
+![Editor do PiP Overlay com ajustes laterais](docs/assets/workspace-017.png)
 
 O editor representa o monitor proporcionalmente. Os ajustes ficam na lateral, preservando a área principal do PiP.
 
@@ -51,7 +52,9 @@ O editor representa o monitor proporcionalmente. Os ajustes ficam na lateral, pr
 | Windows | Windows 10 2004 ou superior / Windows 11, x64 |
 | Navegadores | PiP nativo do Edge e Chrome |
 | DirectX 9 | Conexão por processo com D3D9; testes em host próprio, incluindo fullscreen |
-| DirectX 11/12 e OpenGL | Integração incluída; testes em hosts próprios de 32/64 bits |
+| DirectX 11 | Conexão com processo aberto; hosts próprios x86/x64 |
+| DirectX 12 e OpenGL | Integração preparada na inicialização; hosts próprios x86/x64 |
+| Janela/borderless | Saída independente via DirectComposition, sem integração no processo |
 | Vulkan | Experimental; SDR de 8 bits, com limites de apresentação |
 | Transporte GPU | Otimizado em DirectX 11; outras APIs mantêm transporte CPU |
 

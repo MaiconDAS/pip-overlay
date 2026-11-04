@@ -1,0 +1,14 @@
+{
+  "prepared": {
+    "uploadedFps": 42.901728845242026,
+    "producerCpu": 88.52853353765126,
+    "hostCpu": 12.204550919799658,
+    "submitMs": 0.8350624999999999
+  },
+  "lateAttach": {
+    "uploadedFps": 42.662281681585796,
+    "producerCpu": 86.67648234275345,
+    "hostCpu": 11.117532954554733,
+    "submitMs": 0.8940475000000001
+  }
+}

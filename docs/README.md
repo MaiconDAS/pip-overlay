@@ -21,6 +21,7 @@
 | Arquitetura | [Guia](ARCHITECTURE.md) | [Guide](en/ARCHITECTURE.md) |
 | Como contribuir | [Guia](../CONTRIBUTING.md) | [Guide](en/CONTRIBUTING.md) |
 | Matriz de testes | [Matriz](TEST-MATRIX.md) | [Matrix](en/TEST-MATRIX.md) |
+| Resultados da 0.17 | [Relatório](VALIDATION-0.17.md) | [Report](en/VALIDATION-0.17.md) |
 | Resultados da 0.16 | [Relatório](VALIDATION-0.16.md) | [Report](en/VALIDATION.md) |
 | Revisão do repositório | [Relatório](REPOSITORY-AUDIT-0.16.md) | [Report](en/REPOSITORY-AUDIT.md) |
 | Assinatura digital | [Guia](SIGNING.md) | [Guide](en/SIGNING.md) |
@@ -41,4 +42,4 @@ Os relatórios abaixo descrevem suas versões, não a build atual. Medições br
 | Validação 0.15 | [Relatório](VALIDATION-0.15.md) | [Report](en/VALIDATION-0.15.md) |
 | Investigação de desempenho, 29/10/2026 | [Relatório](PERFORMANCE-2026-10-29.md) | [Report](en/PERFORMANCE-2026-10-29.md) |
 
-A interface do aplicativo continua em português. Estas são as duas edições da documentação. O [texto original da licença MIT](../LICENSE), licenças de dependências, identificadores de código e dados brutos são preservados no formato original. O guia `USO.txt` acompanha o pacote como referência portátil.
+O aplicativo oferece dez idiomas em Ajustes → Mais → Idioma. A documentação tem edições em português e inglês. O [texto original da licença MIT](../LICENSE), licenças de dependências, identificadores de código e dados brutos são preservados no formato original. O guia `USO.txt` acompanha o pacote como referência portátil.

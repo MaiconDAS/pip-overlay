@@ -13,14 +13,14 @@ Alterar apenas o FPS mantém o limite de resolução e o tamanho solicitado à j
 ## Renderizadores
 
 - D3D9 usa o renderizador por processo, detectado por janela e módulo gráfico, sem filtro por nome de jogo.
-- D3D11, D3D12 e OpenGL usam ReShade 6.8.0 e um add-on próprio. O efeito desenha somente o retângulo do vídeo. A interface interna do motor é bloqueada; hooks de entrada e navegação por controle são desativados.
+- D3D11 pode conectar ao processo aberto com hooks Present/Present1 e estado gráfico isolado. A compatibilidade por inicialização preparada de D3D11, D3D12 e OpenGL usam ReShade 6.8.0 e um add-on próprio. O efeito desenha somente o retângulo do vídeo. A interface interna do motor é bloqueada; hooks de entrada e navegação por controle são desativados.
 - Vulkan usa uma camada própria de transferência/blit, sem shaders de storage image. Cada imagem da swapchain possui comandos, textura, upload, fence e semáforo próprios. A submissão espera os semáforos originais e a apresentação espera a composição. O semáforo só é reutilizado quando sua imagem retorna ao aplicativo. A GPU não é bloqueada a cada quadro; espera completa só ocorre na destruição dos recursos.
 
 ## Inicialização
 
 **Iniciar jogo configurado**, no menu do ícone perto do relógio, inicia o executável escolhido. O auxiliar da mesma arquitetura prepara esse processo antes do ponto de entrada. Arquivos e configurações ficam em `data/games` na instalação. Não são escritos arquivos na pasta do jogo, Registro, serviços ou variáveis globais. A camada Vulkan é habilitada somente no ambiente do processo filho.
 
-Pausar torna os renderizadores passivos; bibliotecas permanecem carregadas até o jogo terminar. A descoberta do PiP ocorre a cada 1,5 segundo quando não há sessão. Uma falha não gera tentativas infinitas. Fechar a interface mantém o app na bandeja; quando pausado e oculto, a descoberta evita trabalho. A instalação, separadamente, gerencia atalhos e registro de desinstalação por usuário.
+Pausar torna os renderizadores passivos; bibliotecas permanecem carregadas até o jogo terminar. Eventos WinEvent fora do processo acionam descoberta com debounce, com verificação de segurança a cada 5 segundos visível ou 15 segundos oculto. Falhas transitórias permitem no máximo duas novas tentativas espaçadas. Falhas na conexão ao processo podem retornar à saída independente sem repetir a conexão indefinidamente. Fechar a interface mantém o app na bandeja; quando pausado e oculto, a descoberta evita trabalho. A instalação, separadamente, gerencia atalhos e registro de desinstalação por usuário.
 
 ## Limites
 
@@ -39,3 +39,9 @@ Uma memória de controle separada e versionada negocia três texturas RGBA com m
 ## Cantos e posicionamento
 
 O vídeo tem cantos discretos de seis pixels: geometria no D3D9, máscara nas APIs ReShade e um conjunto limitado de regiões de blit no Vulkan. O editor permite coordenadas exatas de borda mesmo com margem de encaixe ativa.
+
+## Saída independente e idiomas
+
+O backend de área de trabalho usa texturas D3D11 compartilhadas e uma superfície DirectComposition. Só apresenta quadros novos. A janela transparente, em camadas e sem ativação deixa os cliques atravessarem; o posicionamento no topo usa NOACTIVATE explicitamente. Esse caminho atende janela/borderless, não fullscreen exclusivo.
+
+Dez catálogos de idioma embutidos usam chaves estáveis em português. A preferência global de idioma é validada e salva separadamente dos perfis por jogo. Trocar o idioma não recria nem encerra a sessão de captura.

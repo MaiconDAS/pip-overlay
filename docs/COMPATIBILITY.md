@@ -2,7 +2,7 @@
 
 # Compatibilidade com Jogos
 
-Estado da versão **0.16.1**, experimental. Suporte ao renderizador não significa que todos os jogos que usam essa API sejam compatíveis.
+Estado da versão **0.17.0**, experimental. Suporte ao renderizador não significa que todos os jogos que usam essa API sejam compatíveis.
 
 | Componente | Suporte e validação |
 | --- | --- |
@@ -44,6 +44,6 @@ Na 0.16, o transporte compartilhado pela GPU é específico de DirectX 11, com r
 
 A lista consulta janelas abertas e módulos gráficos, sem restringir o nome do executável a um jogo. A consulta é somente leitura, tem cache de cinco segundos e deixa de ser repetida enquanto a sessão está conectada e o editor está oculto. Aplicativos gráficos também podem aparecer: detectar um renderizador não prova que seja um jogo compatível.
 
-DirectX 9 usa a conexão existente por processo. DirectX 11/12, OpenGL e Vulkan encontrados sem uma integração preparada aparecem como **não conectado**. Em **Ajustes → Mais**, selecione o executável real em **Trocar jogo**; a inicialização preparada continua no menu do ícone perto do relógio. A seleção do executável também permite incluir uma janela cujo renderizador não foi identificado. Launchers que abrem outro processo e jogos protegidos podem impedir essa integração. Não há tentativa de contornar a proteção ou elevar privilégios.
+DirectX 9 e DirectX 11 oferecem conexão por processo já aberto. Módulos carregados são candidatos, não confirmação da API ativa. DirectX 12, OpenGL e Vulkan podem exigir integração preparada para fullscreen exclusivo. A saída independente serve para janela/borderless e não contorna fullscreen exclusivo ou proteção do jogo. Em **Ajustes → Mais**, selecione o executável real em **Trocar jogo**; a inicialização preparada continua no menu do ícone perto do relógio. A seleção do executável também permite incluir uma janela cujo renderizador não foi identificado. Launchers que abrem outro processo e jogos protegidos podem impedir essa integração. Não há tentativa de contornar a proteção ou elevar privilégios.
 
 Black Desert Online não foi testado nesta versão. Sua presença na lista e a autorização da integração pelo jogo são verificações diferentes; não é declarado compatível só porque a detecção foi ampliada.

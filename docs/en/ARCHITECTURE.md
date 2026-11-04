@@ -14,7 +14,7 @@ The D3D11 shared-GPU transport uses a separate versioned control mapping and a t
 
 ## Rendering and input
 
-D3D9 uses a per-process renderer discovered by window and graphics module without game-name filters. D3D11, D3D12 and OpenGL use ReShade 6.8.0 with a custom add-on; the effect draws only the video rectangle and no interactive overlay. ReShade input hooks and gamepad navigation are disabled; its internal overlay is blocked. Vulkan uses a custom transfer/blit layer with per-swapchain-image commands, upload resources, fences and semaphores. Composition waits on the original presentation semaphores, then presentation waits for composition. Synchronization resources are reused only when the swapchain image is available again. Vulkan does not wait for the entire GPU each frame; full waiting occurs on resource destruction.
+D3D9 uses a per-process renderer discovered by window and graphics module without game-name filters. D3D11 can attach to an existing process using Present/Present1 hooks and isolated context state. D3D11 prepared-launch compatibility, D3D12 and OpenGL use ReShade 6.8.0 with a custom add-on; the effect draws only the video rectangle and no interactive overlay. ReShade input hooks and gamepad navigation are disabled; its internal overlay is blocked. Vulkan uses a custom transfer/blit layer with per-swapchain-image commands, upload resources, fences and semaphores. Composition waits on the original presentation semaphores, then presentation waits for composition. Synchronization resources are reused only when the swapchain image is available again. Vulkan does not wait for the entire GPU each frame; full waiting occurs on resource destruction.
 
 The video has a small six-pixel corner radius. D3D9 uses rounded geometry, the ReShade APIs use a rounded mask, and Vulkan uses a bounded set of clipped blit regions. The visual editor provides all mouse interaction; game input is not consumed. Exact screen-edge positions are valid even with margin snapping enabled.
 
@@ -22,8 +22,14 @@ The video has a small six-pixel corner radius. D3D9 uses rounded geometry, the R
 
 The tray action launches the selected executable through an architecture-matched helper before its entry point. Libraries, configuration and caches live under the app's `data/games`, not inside the game's folder. Vulkan enablement is scoped to the child process environment. Runtime launch does not alter the registry, services, drivers or global environment.
 
-Pausing makes renderers passive; libraries remain loaded until the game exits. Closing the UI keeps the app in the tray. PiP discovery runs every 1.5 seconds without an active session and skips work when paused and hidden. A failure does not trigger infinite connection retries. The installer separately manages per-user shortcuts and uninstall registration.
+Pausing makes renderers passive; libraries remain loaded until the game exits. Closing the UI keeps the app in the tray. Out-of-context WinEvent notifications trigger debounced discovery, with periodic fallback checks every 5 seconds when visible or 15 seconds when hidden. Paused hidden discovery skips work. Transient capture failures allow at most two delayed retries; process connection failures can fall back to independent desktop output without repeatedly attaching to the failed process. The installer separately manages per-user shortcuts and uninstall registration.
 
 ## Limits
 
 Secondary launchers, protected games/video, driver differences and unsupported Vulkan presentation modes can prevent operation. Vulkan currently targets SDR 8-bit RGBA/BGRA, a graphics presentation queue and a single swapchain; HDR/device groups are unsupported; presentation extension chains pass through without composition. Select the actual renderer executable when a launcher starts another process. Shared D3D11 resources may not open across incompatible adapters, so the compatibility path remains necessary. API support does not guarantee every game or 60 fps. See [validation](VALIDATION.md).
+
+## Independent output and languages
+
+The desktop backend uses D3D11 shared textures and a DirectComposition surface. It presents only newly captured frames. Its layered, transparent, non-activating window passes hit testing through; topmost placement explicitly uses NOACTIVATE. This path supports windowed/borderless, not exclusive fullscreen.
+
+Ten embedded language catalogs share stable Portuguese source keys. The global language setting is validated and persisted separately from game profiles. Updating the UI language does not dispose or recreate the capture session.

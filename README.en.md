@@ -4,43 +4,44 @@
 
 Watch an Edge or Chrome video over your game, with adjustable position and size. Interaction stays in the editor: the in-game video receives neither clicks nor keyboard focus.
 
-[**Download v0.16.1**](https://github.com/MaiconDAS/pip-overlay/releases/latest) · [User guide](docs/en/USAGE.md) · [Compatibility](docs/en/COMPATIBILITY.md) · [Report a problem](https://github.com/MaiconDAS/pip-overlay/issues/new/choose)
+[**Download v0.17.0**](https://github.com/MaiconDAS/pip-overlay/releases/latest) · [User guide](docs/en/USAGE.md) · [Compatibility](docs/en/COMPATIBILITY.md) · [Report a problem](https://github.com/MaiconDAS/pip-overlay/issues/new/choose)
 
 Windows x64 · Open source / MIT · No RTSS or extension
 
 ## What's new
 
-**0.16.1** organizes Portuguese and English documentation and puts the version in the installer filename: `PiP-Overlay-v0.16.1.exe`. It retains the improvements introduced in **0.16**:
+**0.17.0** simplifies connection and adds ten application languages:
 
-- **Game discovery:** identifies windows and renderers without depending on a particular game name. Unprepared processes appear as **não conectado** (not connected).
-- **D3D11 GPU transport:** three shared textures with CPU fallback when needed.
-- **Positioning:** PiP can touch all four screen edges, even with snapping enabled.
-- **Appearance:** subtle rounded video corners.
+- **Already-running DirectX 11:** per-process connection without restarting the game, when integration is permitted.
+- **Independent output:** desktop composition for windowed/borderless games, without loading code into the game. This does not cover exclusive fullscreen.
+- **Languages:** Portuguese, English, Spanish, German, Italian, French, Japanese, Korean, Simplified Chinese and Russian in **Settings → More → Language**.
+- **Event-driven discovery:** window notifications with periodic fallback checks and bounded transient retries.
+- **Image quality:** resolution and FPS remain independent, with GPU transport when compatible and positioning to all screen edges.
 
-[Release notes](docs/en/CHANGELOG.md) · [0.16 measurements and tests](docs/en/VALIDATION.md)
+[Release notes](docs/en/CHANGELOG.md) · [0.17 tests and measurements](docs/en/VALIDATION-0.17.md)
 
 ## Getting started
 
 1. Download and run the installer. It bundles the runtime, creates shortcuts and registers Windows uninstallation. Updates preserve preferences.
 2. Open PiP Overlay and put the video in **Edge or Chrome's native Picture-in-Picture**. Keep that window open and not minimized.
-3. For DirectX 11/12, OpenGL and Vulkan, use **Iniciar jogo configurado** in the tray menu. Select the actual game executable. To change it, use **Ajustes → Mais → Trocar jogo**.
+3. DirectX 9/11 can connect to an already-running process. Independent output supports windowed/borderless. For exclusive fullscreen in DirectX 12, OpenGL or Vulkan, use **Launch configured game** in the tray menu. Select the actual game executable. To change it, use **Settings → More → Change game**.
 4. Drag the video in the editor and resize using its edges or corners. Connection starts when a source and supported renderer are available.
 
-Resolution and FPS are independent. Selecting 30 fps keeps your chosen resolution limit; actual capture size depends on the browser and source. **Pausar** stops automatic reconnection. Closing the window keeps the app in the tray; choose **Sair** to exit. The application UI currently uses Portuguese; this is the English documentation edition.
+Resolution and FPS are independent. Selecting 30 fps keeps your chosen resolution limit; actual capture size depends on the browser and source. **Pause** stops automatic reconnection. Closing the window keeps the app in the tray; choose **Exit** to exit. Choose the application language under **Settings → More → Language**; the change is immediate and saved.
 
 [Complete installation, settings and uninstall guide](docs/en/USAGE.md)
 
 ## Visual editor
 
-![PiP Overlay editor with a settings sidebar](docs/assets/workspace-016.png)
+![PiP Overlay editor with a settings sidebar](docs/assets/workspace-017-en.png)
 
 The editor represents the monitor proportionally. Settings live in the sidebar, preserving the main PiP workspace.
 
 | I want to adjust | Where to find it |
 | --- | --- |
-| Resolution and FPS | Ajustes → Imagem |
-| Monitor, position and snapping | Ajustes → Posição |
-| Games, sources, shortcuts and updates | Ajustes → Mais |
+| Resolution and FPS | Settings → Image |
+| Monitor, position and snapping | Settings → Position |
+| Games, sources, shortcuts and updates | Settings → More |
 | Center or undo | Editor toolbar; Ctrl+Z works inside the editor |
 | Move without snapping | Hold Alt while dragging |
 
@@ -51,7 +52,9 @@ The editor represents the monitor proportionally. Settings live in the sidebar, 
 | Windows | Windows 10 2004 or later / Windows 11, x64 |
 | Browsers | Native Edge and Chrome PiP |
 | DirectX 9 | Per-process D3D9 connection; dedicated-host tests, including fullscreen |
-| DirectX 11/12 and OpenGL | Bundled integration; dedicated x86/x64 host tests |
+| DirectX 11 | Connection to already-running processes; dedicated x86/x64 hosts |
+| DirectX 12 and OpenGL | Prepared launch integration; dedicated x86/x64 hosts |
+| Windowed/borderless | Independent DirectComposition output, without process integration |
 | Vulkan | Experimental; 8-bit SDR with presentation limitations |
 | GPU transport | Optimized for DirectX 11; other APIs retain CPU transport |
 

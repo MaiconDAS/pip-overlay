@@ -1,0 +1,26 @@
+{
+  "result": 0,
+  "mode": "reconnect",
+  "bits": 11,
+  "observations": [
+    {
+      "discovery": "generic-window",
+      "Name": "PipModern64",
+      "Is32Bit": false,
+      "requiresPreparation": false
+    },
+    {
+      "cycles": 24,
+      "privateGrowthBytes": 25944064,
+      "samples": [
+        15855616,
+        17203200,
+        17383424,
+        23179264,
+        25120768,
+        25944064
+      ],
+      "SharedTransport": 1
+    }
+  ]
+}

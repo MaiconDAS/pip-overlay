@@ -1,0 +1,30 @@
+{
+  "result": 0,
+  "mode": "gpu",
+  "bits": 64,
+  "observations": [
+    {
+      "discovery": "generic-window",
+      "Name": "PipModern64",
+      "Is32Bit": false,
+      "requiresPreparation": false
+    },
+    {
+      "seconds": 8.5777429,
+      "sourceFps": 54.32664576598582,
+      "sentFps": 43.01830963014758,
+      "uploadedFps": 42.901728845242026,
+      "baseCpu": 90.4618610797288,
+      "baseHost": 9.981954223875908,
+      "producerCpu": 88.52853353765126,
+      "hostCpu": 12.204550919799658,
+      "submitMs": 1.0178224999999996,
+      "SharedTransport": 1,
+      "TransferSize": {
+        "IsEmpty": false,
+        "Width": 1920,
+        "Height": 1080
+      }
+    }
+  ]
+}

@@ -14,7 +14,7 @@ struct Producer {
     ID3D11ShaderResourceView* srv=nullptr;ID3D11RenderTargetView* rtv=nullptr;
     ID3D11VertexShader* vs=nullptr;ID3D11PixelShader* ps=nullptr;ID3D11SamplerState* sampler=nullptr;
     UINT sw=0,sh=0,w=0,h=0,index=0,maxW=640,maxH=360;DXGI_FORMAT format=DXGI_FORMAT_UNKNOWN;bool pending[3]={};uint64_t order[3]={},serial=0,delivered=0;
-    ~Producer(){ClearShared();if(gpu){gpu->active=0;UnmapViewOfFile(gpu);gpu=nullptr;}if(gpuMapping)CloseHandle(gpuMapping);if(memory){InterlockedExchange(&memory->active,0);UnmapViewOfFile(memory);}if(mapping)CloseHandle(mapping);ClearTextures();Release(sampler);Release(ps);Release(vs);Release(context);Release(device);}
+    ~Producer(){if(context){context->ClearState();context->Flush();}ClearShared();if(gpu){gpu->active=0;UnmapViewOfFile(gpu);gpu=nullptr;}if(gpuMapping)CloseHandle(gpuMapping);if(memory){InterlockedExchange(&memory->active,0);UnmapViewOfFile(memory);}if(mapping)CloseHandle(mapping);ClearTextures();Release(sampler);Release(ps);Release(vs);Release(context);Release(device);}
     void ClearShared(){if(gpu){gpu->active=0;for(auto& slot:gpu->slots)slot.handle=0;}for(int i=0;i<3;i++){Release(sharedMutex[i]);Release(sharedRtv[i]);Release(shared[i]);}sharedIndex=0;}
     void ClearTextures(){ClearShared();Release(srv);Release(rtv);Release(source);Release(target);for(auto& p:staging)Release(p);for(auto& p:pending)p=false;index=0;}
     HRESULT Setup(ID3D11Texture2D* input) {
@@ -133,7 +133,7 @@ extern "C" __declspec(dllexport) Producer* __cdecl PipOpen(DWORD pid) {
     if(!p->memory){delete p;return nullptr;}
     if(fresh){memset(p->memory,0,sizeof(PipMemory));p->memory->magic=PIP_MAGIC;p->memory->version=1;}
     else if(p->memory->magic!=PIP_MAGIC||p->memory->version!=1){delete p;return nullptr;}
-        p->memory->active=0;
+        p->memory->active=0;InterlockedExchange(&p->memory->ready,0);InterlockedExchange(&p->memory->error,0);
     GpuName(name,pid);p->gpuMapping=CreateFileMappingW(INVALID_HANDLE_VALUE,nullptr,PAGE_READWRITE,0,sizeof(GpuChannel),name);
     bool newGpu=GetLastError()!=ERROR_ALREADY_EXISTS;
     if(p->gpuMapping)p->gpu=(GpuChannel*)MapViewOfFile(p->gpuMapping,FILE_MAP_ALL_ACCESS,0,0,sizeof(GpuChannel));

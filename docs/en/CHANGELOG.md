@@ -2,6 +2,15 @@
 
 [Português](../../CHANGELOG.md) · [Documentation](README.md)
 
+## 0.17.0 — easier connection and ten languages
+
+- Settings language selection: Portuguese, English, Spanish, German, Italian, French, Japanese, Korean, Simplified Chinese and Russian. Selection is saved and applied without restarting capture.
+- DirectX 11 connection to already-running x86/x64 processes, using shared GPU textures with CPU fallback and restoration of graphics state.
+- Independent DirectComposition output for windowed/borderless, without loading an integration into the game. Click-through and non-activation are checked in a dedicated host.
+- Loaded graphics modules remain candidates rather than proof of the presenting API. Discovery uses debounced WinEvent notifications plus a periodic fallback.
+- Bounded transient retries and independent-output fallback when a process connection fails. Resolution and FPS remain independent.
+- Installer includes the new renderers. Public code signing remains pending; protected games and exclusive fullscreen still have renderer-specific requirements.
+
 ## 0.16.1 — bilingual repository and versioned installer
 
 - Reorganized both READMEs: download and current changes first; usage, editor, compatibility and contribution follow.

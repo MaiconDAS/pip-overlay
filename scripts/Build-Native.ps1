@@ -14,7 +14,9 @@ foreach($arch in @('x86','x86_64')){
     $common=@('-target',"$arch-windows-gnu",'-O2','-I',"$mh/include")
     & $ZigPath c++ @common -shared "$native/renderer.cpp" "$mh/src/buffer.c" "$mh/src/hook.c" "$mh/src/trampoline.c" "$mh/src/hde/hde32.c" "$mh/src/hde/hde64.c" -ld3d9 -luser32 -o "$Destination/PipRender$bits.dll"
     if($LASTEXITCODE){throw "Falha renderer $bits"}
-    & $ZigPath c++ @common "$native/loader.cpp" -municode -o "$Destination/PipAttach$bits.exe"
+    & $ZigPath c++ @common -shared "$native/d3d11_overlay.cpp" "$mh/src/buffer.c" "$mh/src/hook.c" "$mh/src/trampoline.c" "$mh/src/hde/hde32.c" "$mh/src/hde/hde64.c" -ld3d11 -ldxgi -ld3dcompiler_47 -luser32 -o "$Destination/PipDx11$bits.dll"
+    if($LASTEXITCODE){throw "Failed D3D11 renderer $bits"}
+    & $ZigPath c++ @common "$native/loader.cpp" -ld3d11 -ldxgi -luser32 -municode -o "$Destination/PipAttach$bits.exe"
     if($LASTEXITCODE){throw "Falha loader $bits"}
     & $ZigPath c++ @common "$native/host.cpp" -mwindows -ld3d9 -luser32 -o "$Destination/PipTest$bits.exe"
     if($LASTEXITCODE){throw "Falha host $bits"}
@@ -23,6 +25,8 @@ foreach($arch in @('x86','x86_64')){
 }
 & $ZigPath c++ -target x86_64-windows-gnu -O2 -shared "$native/capture.cpp" -ld3d11 -ld3dcompiler_47 -luser32 -o "$Destination/PipGpu.dll"
 if($LASTEXITCODE){throw 'Falha captura GPU'}
+& $ZigPath c++ -target x86_64-windows-gnu -O2 -shared -DPIP_DESKTOP "$native/d3d11_overlay.cpp" -ldcomp -ld3d11 -ldxgi -ld3dcompiler_47 -luser32 -o "$Destination/PipDesktop.dll"
+if($LASTEXITCODE){throw "Failed desktop renderer"}
 Copy-Item "$mh/LICENSE.txt" "$Destination/LICENSE-MINHOOK.txt" -Force
 $graphics=Join-Path $Destination 'graphics'
 & "$PSScriptRoot/Initialize-Graphics.ps1" -Destination $graphics

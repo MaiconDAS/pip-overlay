@@ -17,6 +17,13 @@ internal static class AutoConnectTests
         a.Reset();Check("Repetir manual permite tentativa",a.TakeAttempt("outro",3,false));
         var settings=new Settings{AutomaticEnabled=false};var saved=System.Text.Json.JsonSerializer.Serialize(settings);Check("Pausa persiste nas preferências",!System.Text.Json.JsonSerializer.Deserialize<Settings>(saved)!.AutomaticEnabled);
         Check("Preferências antigas habilitam automático",System.Text.Json.JsonSerializer.Deserialize<Settings>("{}")!.AutomaticEnabled);
+        long now=0;var retry=new AutoConnect(()=>now);retry.TakeAttempt("v",1,false);retry.RetryTransient();
+        Check("Transient retry waits",!retry.TakeAttempt("v",1,false));now=3000;
+        Check("First delayed retry",retry.TakeAttempt("v",1,false));retry.RetryTransient();now=12999;
+        Check("Second retry backs off",!retry.TakeAttempt("v",1,false));now=13000;
+        Check("Second delayed retry",retry.TakeAttempt("v",1,false));retry.RetryTransient();now=999999;
+        Check("Retry budget is bounded",!retry.TakeAttempt("v",1,false));retry.Reset();retry.TakeAttempt("v",1,false);retry.RetryTransient();retry.Pause();now+=10000;
+        Check("Pause cancels scheduled retry",!retry.TakeAttempt("v",1,false));
         File.WriteAllLines(path,results);return failed==0?0:1;
     }
 }

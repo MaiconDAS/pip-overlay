@@ -2,6 +2,15 @@
 
 # Histórico
 
+## 0.17.0 — conexão simplificada e dez idiomas
+
+- Seleção de idioma nos ajustes: português, inglês, espanhol, alemão, italiano, francês, japonês, coreano, chinês simplificado e russo. A escolha é salva e aplicada sem reiniciar a captura.
+- Conexão DirectX 11 com processos x86/x64 já abertos, usando texturas compartilhadas na GPU, retorno à CPU e restauração do estado gráfico.
+- Saída independente por DirectComposition para janela/borderless, sem carregar integração no jogo. Passagem de cliques e ausência de ativação verificadas em host próprio.
+- Módulos gráficos carregados são candidatos, não confirmação da API que apresenta os quadros. A descoberta usa eventos WinEvent com debounce e verificação periódica.
+- Novas tentativas transitórias limitadas e retorno à saída independente quando a conexão ao processo falha. Resolução e FPS continuam independentes.
+- Instalador inclui os novos renderizadores. Assinatura pública continua pendente; jogos protegidos e fullscreen exclusivo mantêm requisitos específicos por renderizador.
+
 ## 0.16.1 — repositório bilíngue e instalador versionado
 
 - READMEs reorganizados: download e novidades no topo, seguidos de uso, editor, compatibilidade e contribuição.

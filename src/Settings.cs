@@ -4,6 +4,8 @@ namespace PipOverlay;
 
 internal sealed record Settings
 {
+    public bool PreferDesktop {get;set;}
+    public string Language {get;set;} = "pt-BR";
     public string Monitor { get; set; } = "";
     public bool AutomaticEnabled {get;set;} = true;
     public int StartShortcut {get;set;}
@@ -28,6 +30,7 @@ internal sealed record Settings
     public int CropBottom { get; set; }
 
     internal Settings Validated() => this with {
+        Language=L.Normalize(Language),
         X=Math.Clamp(X,0,32000), Y=Math.Clamp(Y,0,32000),FramesPerSecond=FramesPerSecond is 15 or 30 or 60?FramesPerSecond:30,
         MinimumFps=MinimumFps==30?30:15,SnapMargin=Math.Clamp(SnapMargin,0,96),
         Resolution=Resolution is "1080p" or "720p" or "480p" or "auto"?Resolution:Resolution==null&&Quality is "balanced" or "economy"?"auto":"1080p",

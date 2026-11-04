@@ -18,7 +18,7 @@ internal sealed class ModernToggle : CheckBox
 
 internal sealed class ModernSlider : TrackBar
 {
-    public ModernSlider(){SetStyle(ControlStyles.UserPaint|ControlStyles.OptimizedDoubleBuffer,true);TickStyle=TickStyle.None;Cursor=Cursors.Hand;AccessibleName="Margem de encaixe";}
+    public ModernSlider(){SetStyle(ControlStyles.UserPaint|ControlStyles.OptimizedDoubleBuffer,true);TickStyle=TickStyle.None;Cursor=Cursors.Hand;AccessibleName=L.T("Margem de encaixe");}
     protected override void WndProc(ref Message m){
         if(m.Msg==0x201||(m.Msg==0x200&&Capture)){if(m.Msg==0x201){Focus();Capture=true;}int x=unchecked((short)(long)m.LParam);Value=Math.Clamp(Minimum+(int)Math.Round((x-12d)/Math.Max(1,Width-24)*(Maximum-Minimum)),Minimum,Maximum);return;}
         if(m.Msg==0x202&&Capture){Capture=false;return;}base.WndProc(ref m);

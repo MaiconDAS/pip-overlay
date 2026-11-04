@@ -9,7 +9,7 @@ New-Item -ItemType Directory -Path $root | Out-Null
 $target=Join-Path $root 'Aplicativo com espaços'
 $previous=$target
 New-Item -ItemType Directory -Path "$previous/data/profiles" -Force | Out-Null
-'{"Resolution":"1080p","FramesPerSecond":30}' | Set-Content "$previous/data/settings.json"
+'{"Resolution":"1080p","FramesPerSecond":30,"Language":"de"}' | Set-Content "$previous/data/settings.json"
 $key='A'*64
 '{"Resolution":"720p","Fps":30}' | Set-Content "$previous/data/profiles/$key.json"
 $registry='HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{BFAFEE61-6519-4912-B741-389AC78FA812}_is1'
@@ -24,7 +24,7 @@ function RunSetup([switch]$UseRegisteredPath) {
 }
 RunSetup
 $entry=Get-ItemProperty $registry
-if($entry.DisplayName -ne 'PiP Overlay' -or $entry.DisplayVersion -ne '0.16.1'){throw 'Wrong installed apps entry'}
+if($entry.DisplayName -ne 'PiP Overlay' -or $entry.DisplayVersion -ne '0.17.0'){throw 'Wrong installed apps entry'}
 if($entry.InstallLocation.TrimEnd('\') -ne $target){throw 'Wrong install location'}
 $shell=New-Object -ComObject WScript.Shell
 foreach($link in @($desktop,(Join-Path $menu 'PiP Overlay.lnk'))){
@@ -34,6 +34,7 @@ foreach($link in @($desktop,(Join-Path $menu 'PiP Overlay.lnk'))){
 }
 foreach($link in @("$target/Desinstalar PiP Overlay.lnk","$menu/Desinstalar PiP Overlay.lnk")){if(!(Test-Path -LiteralPath $link)){throw 'Missing uninstall shortcut'}}
 if((Get-Content "$target/data/settings.json" -Raw | ConvertFrom-Json).FramesPerSecond -ne 30){throw 'Existing preferences lost'}
+if((Get-Content "$target/data/settings.json" -Raw | ConvertFrom-Json).Language -ne 'de'){throw 'Language preference lost'}
 if(!(Test-Path "$target/data/profiles/$key.json")){throw 'Profile import failed'}
 'keep this user file' | Set-Content "$target/personal.txt"
 '{"Resolution":"720p","FramesPerSecond":15}' | Set-Content "$target/data/settings.json"

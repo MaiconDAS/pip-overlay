@@ -9,7 +9,7 @@ $native=Join-Path $root 'artifacts/native'
 New-Item -ItemType Directory -Force $dist | Out-Null
 & "$PSScriptRoot/Build.ps1" -Destination $stage -Production -Portable
 & "$PSScriptRoot/Build-Native.ps1" -Destination $native -ZigPath $ZigPath
-foreach($file in @('PipRender32.dll','PipRender64.dll','PipAttach32.exe','PipAttach64.exe','PipProbe32.exe','PipProbe64.exe','PipGpu.dll','LICENSE-MINHOOK.txt')){Copy-Item (Join-Path $native $file) $stage}
+foreach($file in @('PipDesktop.dll','PipDx1132.dll','PipDx1164.dll','PipRender32.dll','PipRender64.dll','PipAttach32.exe','PipAttach64.exe','PipProbe32.exe','PipProbe64.exe','PipGpu.dll','LICENSE-MINHOOK.txt')){Copy-Item (Join-Path $native $file) $stage}
 Copy-Item "$root/docs/USO.txt" "$stage/LEIA-ME.txt"
 (Get-Content "$root/docs/en/USAGE.md" -Raw).Replace("](../pt-BR/USAGE.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/pt-BR/USAGE.md)").Replace("](../USO.txt)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/USO.txt)").Replace("](README.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/en/README.md)").Replace("](../../PRIVACY.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/PRIVACY.md)").Replace("](COMPATIBILITY.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/en/COMPATIBILITY.md)").Replace("](SIGNING.md)","](https://github.com/MaiconDAS/pip-overlay/blob/main/docs/en/SIGNING.md)") | Set-Content "$stage/READ-ME.md"
 Copy-Item "$root/LICENSE" "$stage/LICENSE"

@@ -4,15 +4,19 @@
 
 ## Instalar ou levar para outro computador
 
-Copie `PiP-Overlay-v0.16.1.exe` e execute-o. O atalho na área de trabalho é opcional e vem marcado por padrão. Atalhos no menu Iniciar e a entrada em Aplicativos instalados / Programas e Recursos são criados automaticamente. Runtime e renderizadores estão incluídos; não precisa de extensão, RTSS ou download separado de runtime.
+Copie `PiP-Overlay-v0.17.0.exe` e execute-o. O atalho na área de trabalho é opcional e vem marcado por padrão. Atalhos no menu Iniciar e a entrada em Aplicativos instalados / Programas e Recursos são criados automaticamente. Runtime e renderizadores estão incluídos; não precisa de extensão, RTSS ou download separado de runtime.
 
 A instalação registrada é detectada automaticamente. Atualizar na mesma pasta preserva preferências. Escolher outro destino importa as preferências da instalação registrada sem sobrescrever ajustes existentes no destino. Para uma cópia portátil antiga, selecione a própria pasta dela. Não há etapa manual de importação nem varredura indiscriminada do disco.
 
 ## Conectar vídeo e jogo
 
-Abra o PiP Overlay e o PiP nativo do vídeo no Edge ou Chrome. Mantenha-o aberto e sem minimizar. Para APIs modernas, use **Iniciar jogo configurado** no menu do ícone perto do relógio e selecione o executável real na primeira vez. A conexão é automática quando uma fonte e um renderizador compatíveis estão disponíveis. Uma aba comum do navegador, sozinha, não é uma fonte suportada.
+Abra o PiP Overlay e o PiP nativo do vídeo no Edge ou Chrome. Mantenha-o aberto e sem minimizar. DirectX 9/11 podem conectar ao processo já aberto. A saída independente funciona em janela/borderless, sem integração no jogo. Para fullscreen exclusivo em DirectX 12, OpenGL ou Vulkan, use **Iniciar jogo configurado** no menu do ícone perto do relógio e selecione o executável real na primeira vez. A conexão é automática quando uma fonte e um renderizador compatíveis estão disponíveis. Uma aba comum do navegador, sozinha, não é uma fonte suportada.
 
 A lista identifica janelas e módulos gráficos sem filtrar por nome de jogo. Um processo pode aparecer como **não conectado** quando ainda não foi preparado ou sua consulta foi bloqueada. Use **Ajustes → Mais → Trocar jogo** para configurar outro executável. Detectar um jogo não comprova compatibilidade; Black Desert Online não foi validado. Veja [compatibilidade](../COMPATIBILITY.md).
+
+## Idioma
+
+Em **Ajustes → Mais → Idioma**, escolha uma das dez línguas. A alteração é aplicada sem reiniciar a captura e fica salva globalmente, independentemente do perfil do jogo. Mensagens técnicas do Windows podem seguir o idioma do sistema.
 
 ## Posição, tamanho e qualidade
 
@@ -22,7 +26,7 @@ Arraste o PiP e use suas bordas ou cantos para redimensionar mantendo a proporç
 | --- | --- |
 | Imagem | Resolução, FPS e ajuste automático |
 | Posição | Monitor, posição, encaixe e margem |
-| Mais | Jogos, fontes, atalhos, atualizações e diagnóstico |
+| Mais | Idioma, jogos, fontes, atalhos, atualizações e diagnóstico |
 
 Resolução é independente de 15/30/60 fps. Até 1080p a 30 fps preserva o limite solicitado. Selecionar 1080p no site não garante captura PiP de 1920×1080. O app amplia temporariamente a origem e restaura seu tamanho ao parar; limites de hardware e navegador continuam aplicáveis. FPS automático reduz a cadência dentro dos limites escolhidos, sem reduzir a resolução selecionada. Perfis guardam posição e qualidade por jogo.
 

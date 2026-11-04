@@ -21,6 +21,7 @@
 | Architecture | [Guia](../ARCHITECTURE.md) | [Guide](ARCHITECTURE.md) |
 | Contributing | [Guia](../../CONTRIBUTING.md) | [Guide](CONTRIBUTING.md) |
 | Test matrix | [Matriz](../TEST-MATRIX.md) | [Matrix](TEST-MATRIX.md) |
+| 0.17 results | [Relatório](../VALIDATION-0.17.md) | [Report](VALIDATION-0.17.md) |
 | 0.16 results | [Relatório](../VALIDATION-0.16.md) | [Report](VALIDATION.md) |
 | Repository audit | [Relatório](../REPOSITORY-AUDIT-0.16.md) | [Report](REPOSITORY-AUDIT.md) |
 | Code signing | [Guia](../SIGNING.md) | [Guide](SIGNING.md) |
@@ -41,4 +42,4 @@ The reports below describe their respective releases, not the current build. Bot
 | Validation 0.15 | [Relatório](../VALIDATION-0.15.md) | [Report](VALIDATION-0.15.md) |
 | Performance investigation, October 29, 2026 | [Relatório](../PERFORMANCE-2026-10-29.md) | [Report](PERFORMANCE-2026-10-29.md) |
 
-The application interface remains in Portuguese. These are the two documentation editions. The [original MIT license](../../LICENSE), dependency licenses, code identifiers and raw data retain their original form. `USO.txt` accompanies the package as a portable reference.
+The application offers ten languages under Settings → More → Language. Documentation is available in Portuguese and English. The [original MIT license](../../LICENSE), dependency licenses, code identifiers and raw data retain their original form. `USO.txt` accompanies the package as a portable reference.

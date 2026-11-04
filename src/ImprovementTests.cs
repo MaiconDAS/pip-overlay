@@ -6,7 +6,7 @@ internal static class ImprovementTests
         var lines=new List<string>();int failures=0;void Check(string name,bool ok){lines.Add($"{(ok?"PASS":"FAIL")} {name}");if(!ok)failures++;}
         Check("Unknown process is not assumed a game",GameDiscovery.Renderer(new[]{"kernel32.dll"})==null);
         Check("D3D9 detected without game name",GameDiscovery.Renderer(new[]{"D3D9.DLL"})=="DirectX 9");
-        Check("D3D12 preferred over helper D3D11",GameDiscovery.Renderer(new[]{"d3d11.dll","d3d12.dll"})=="DirectX 12");
+        Check("Loaded APIs remain candidates, not confirmation",GameDiscovery.Renderer(new[]{"d3d11.dll","d3d12.dll"})=="DirectX 11 / DirectX 12");
         Check("OpenGL detected",GameDiscovery.Renderer(new[]{"opengl32.dll"})=="OpenGL");
         Check("Vulkan detected",GameDiscovery.Renderer(new[]{"vulkan-1.dll"})=="Vulkan");
         var adaptive=new AdaptiveFrameRate();adaptive.Configure(true,15,60);for(int i=0;i<3;i++)adaptive.Sample(20);Check("Overload reduces 60 to 30",adaptive.Current==30);
