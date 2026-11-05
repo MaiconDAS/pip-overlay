@@ -33,3 +33,9 @@ Secondary launchers, protected games/video, driver differences and unsupported V
 The desktop backend uses D3D11 shared textures and a DirectComposition surface. It presents only newly captured frames. Its layered, transparent, non-activating window passes hit testing through; topmost placement explicitly uses NOACTIVATE. This path supports windowed/borderless, not exclusive fullscreen.
 
 Ten embedded language catalogs share stable Portuguese source keys. The global language setting is validated and persisted separately from game profiles. Updating the UI language does not dispose or recreate the capture session.
+
+## Desktop-first lifecycle and recovery (0.18)
+
+Desktop output is the default, including a one-time migration of older settings. In this mode, target enumeration returns only the desktop backend: game module discovery and automatic promotion to a game process are skipped. Browser discovery retains its event-driven and periodic fallback behavior. Direct mode must be selected explicitly.
+
+Monitor layouts store reference resolution and rectangle. Display changes stop the current session, rebuild the monitor list, fit the saved rectangle and reconnect. Import uses a bounded JSON archive, hashed profile keys, a pre-import backup and restoration of changed files if writing fails. Installer downloads use bounded streaming SHA-256 verification against official GitHub asset metadata; partial files are discarded. The app never executes the downloaded installer automatically. Diagnostic rates are session averages, not game FPS measurements.

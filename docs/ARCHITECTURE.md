@@ -45,3 +45,9 @@ O vídeo tem cantos discretos de seis pixels: geometria no D3D9, máscara nas AP
 O backend de área de trabalho usa texturas D3D11 compartilhadas e uma superfície DirectComposition. Só apresenta quadros novos. A janela transparente, em camadas e sem ativação deixa os cliques atravessarem; o posicionamento no topo usa NOACTIVATE explicitamente. Esse caminho atende janela/borderless, não fullscreen exclusivo.
 
 Dez catálogos de idioma embutidos usam chaves estáveis em português. A preferência global de idioma é validada e salva separadamente dos perfis por jogo. Trocar o idioma não recria nem encerra a sessão de captura.
+
+## Ciclo desktop e recuperação (0.18)
+
+A saída desktop é padrão, com migração única de ajustes antigos. Nesse modo, a enumeração de destinos retorna apenas o backend desktop: não consulta módulos de jogos nem promove automaticamente a sessão para um processo. A descoberta do navegador continua por eventos e verificação periódica. O modo direto exige escolha explícita.
+
+Layouts por monitor guardam resolução de referência e retângulo. Mudanças de tela encerram a sessão, atualizam a lista de monitores, ajustam o retângulo salvo e reconectam. A importação usa JSON limitado, chaves de perfil em hash, backup anterior e restauração dos arquivos alterados se a escrita falhar. Downloads verificam SHA-256 durante leitura limitada contra metadados oficiais do GitHub; arquivos parciais são descartados. O app não executa o instalador automaticamente. As taxas no diagnóstico são médias da sessão, não medições do FPS do jogo.

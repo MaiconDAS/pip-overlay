@@ -20,7 +20,7 @@ internal sealed partial class MainForm : Form
     readonly System.Windows.Forms.Timer discovery=new(){Interval=1500};
     readonly AutoConnect automatic=new();
     readonly NotifyIcon tray=new();
-    bool refreshing,exiting,connectionFailed,syncing;
+    bool refreshing,exiting,connectionFailed,syncing,preferencesImported;
     readonly ModernToggle adaptiveBox=new(){Text=L.T("FPS automático"),AutoSize=true};
     readonly ModernComboBox minimumFps=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=80};
     readonly ModernToggle updateChecks=new(){Text=L.T("Avisar atualizações"),AutoSize=true};
@@ -51,7 +51,7 @@ internal sealed partial class MainForm : Form
         if(!settings.AutomaticEnabled)automatic.Pause();
         Text="PiP Overlay";Font=new Font("Segoe UI",10);BackColor=Color.FromArgb(15,20,30);ForeColor=Color.White;
         Icon=Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-        ClientSize=new Size(1140,780);MinimumSize=new Size(1040,720);StartPosition=FormStartPosition.CenterScreen;
+        ClientSize=new Size(1140,780);MinimumSize=new Size(920,620);StartPosition=FormStartPosition.CenterScreen;
         var layout=new TableLayoutPanel{Dock=DockStyle.Fill,Padding=new Padding(20),ColumnCount=1,RowCount=7};Controls.Add(layout);
         foreach(int h in new[]{90,82,78,130,54})layout.RowStyles.Add(new(SizeType.Absolute,h));layout.RowStyles.Add(new(SizeType.Percent,100));layout.RowStyles.Add(new(SizeType.Absolute,72));
         var header=new TableLayoutPanel{Dock=DockStyle.Fill,ColumnCount=2,RowCount=1};header.ColumnStyles.Add(new(SizeType.Absolute,64));header.ColumnStyles.Add(new(SizeType.Percent,100));
@@ -59,16 +59,16 @@ internal sealed partial class MainForm : Form
         var heading=new FlowLayoutPanel{Dock=DockStyle.Fill,FlowDirection=FlowDirection.TopDown,WrapContents=false};heading.Controls.Add(new Label{Text="PiP Overlay",AutoSize=true,Font=new Font("Segoe UI Semibold",24),Margin=Padding.Empty});heading.Controls.Add(new Label{Text=L.T("Seu vídeo por perto. Seu jogo em foco."),AutoSize=true,ForeColor=UiTheme.Muted,Margin=new Padding(0,5,0,0)});header.Controls.Add(heading);layout.Controls.Add(header,0,0);
         foreach(var box in new[]{sources,targets,monitors,quality,frameRate})UiTheme.Combo(box);
         var toolbar=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false};toolbar.Controls.Add(UiTheme.Field(L.T("VÍDEO DO NAVEGADOR"),sources,360));toolbar.Controls.Add(UiTheme.Field(L.T("JOGO"),targets,300));
-        var refresh=new ModernButton{AccessibleName=L.T("Atualizar vídeos e jogos")};UiTheme.Button(refresh,L.T("Atualizar"),"refresh");refresh.Margin=new Padding(0,25,0,0);refresh.Click+=(_,_)=>{GameDiscovery.Find(settings.GameExecutable,true);failedTargets.Clear();automatic.Reset();Discover();};toolbar.Controls.Add(refresh);layout.Controls.Add(toolbar,0,1);
+        var refresh=new ModernButton{AccessibleName=L.T("Atualizar vídeos e jogos")};UiTheme.Button(refresh,L.T("Atualizar"),"refresh");refresh.Margin=new Padding(0,25,0,0);refresh.Click+=(_,_)=>{if(!settings.PreferDesktop)GameDiscovery.Find(settings.GameExecutable,true);failedTargets.Clear();automatic.Reset();Discover();};toolbar.Controls.Add(refresh);layout.Controls.Add(toolbar,0,1);
         quality.Items.AddRange(new object[]{L.T("Até 1080p"),L.T("Até 720p"),L.T("Até 480p"),L.T("Adaptar ao tamanho")});quality.SelectedIndex=settings.Validated().Resolution switch{"720p"=>1,"480p"=>2,"auto"=>3,_=>0};
         frameRate.Items.AddRange(new object[]{"60 fps","30 fps","15 fps"});frameRate.SelectedIndex=settings.FramesPerSecond==15?2:settings.FramesPerSecond==30?1:0;
         var options=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false};options.Controls.Add(UiTheme.Field(L.T("MONITOR"),monitors,230));options.Controls.Add(UiTheme.Field(L.T("RESOLUÇÃO"),quality,205));options.Controls.Add(UiTheme.Field("FPS",frameRate,110));dimensions.Margin=new Padding(10,31,0,0);dimensions.ForeColor=UiTheme.Muted;options.Controls.Add(dimensions);layout.Controls.Add(options,0,2);
         var editorTools=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false};profileLabel.Margin=new Padding(0,8,12,0);editorTools.Controls.Add(profileLabel);
         UiTheme.Button(centerLayout,L.T("Centralizar"),"pip");centerLayout.Width=140;centerLayout.Click+=(_,_)=>editor.Center();editorTools.Controls.Add(centerLayout);
         UiTheme.Button(undoLayout,L.T("Desfazer posição"),"refresh");undoLayout.Width=180;undoLayout.Enabled=false;undoLayout.Click+=(_,_)=>editor.Undo();editor.HistoryChanged+=()=>undoLayout.Enabled=editor.CanUndo;editorTools.Controls.Add(undoLayout);
-        UiTheme.Button(pickVideo,L.T("Vídeos"),"pip");pickVideo.Visible=false;pickVideo.Click+=(_,_)=>PickVideo();editorTools.Controls.Add(pickVideo);
+        UiTheme.Button(pickVideo,L.T("Vídeos"),"pip");pickVideo.Visible=true;pickVideo.Click+=(_,_)=>PickVideo();editorTools.Controls.Add(pickVideo);
         layout.Controls.Add(editorTools,0,4);layout.Controls.Add(editor,0,5);
-        var footer=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false,Padding=new Padding(0,16,0,0)};UiTheme.Button(start,L.T("Retomar"),"play",true);UiTheme.Button(stop,L.T("Pausar"),"stop");status.AutoSize=false;status.Size=new Size(650,44);status.TextAlign=ContentAlignment.MiddleLeft;status.ForeColor=UiTheme.Muted;footer.Controls.Add(start);footer.Controls.Add(stop);footer.Controls.Add(status);layout.Controls.Add(footer,0,6);
+        var footer=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=false,Padding=new Padding(0,16,0,0)};UiTheme.Button(start,L.T("Retomar"),"play",true);UiTheme.Button(stop,L.T("Pausar"),"stop");status.AutoSize=false;status.Size=new Size(650,44);status.TextAlign=ContentAlignment.MiddleLeft;status.ForeColor=UiTheme.Muted;footer.Controls.Add(start);footer.Controls.Add(stop);footer.Controls.Add(status);footer.SizeChanged+=(_,_)=>ResizeStatus();layout.Controls.Add(footer,0,6);
                 var extras=new FlowLayoutPanel{Dock=DockStyle.Fill,WrapContents=true};
         adaptiveBox.Checked=settings.AdaptiveFps;adaptiveBox.Margin=new Padding(0,27,16,0);extras.Controls.Add(adaptiveBox);
         minimumFps.Items.AddRange(new object[]{"15 fps","30 fps"});minimumFps.SelectedIndex=settings.MinimumFps==30?1:0;UiTheme.Combo(minimumFps);extras.Controls.Add(UiTheme.Field(L.T("FPS MÍNIMO"),minimumFps,110));
@@ -88,16 +88,15 @@ internal sealed partial class MainForm : Form
         adaptiveBox.CheckedChanged+=(_,_)=>{if(syncing)return;settings=settings with{AdaptiveFps=adaptiveBox.Checked};Apply();};
         minimumFps.SelectedIndexChanged+=(_,_)=>{if(syncing)return;settings=settings with{MinimumFps=minimumFps.SelectedIndex==1?30:15};Apply();};
         updateChecks.CheckedChanged+=(_,_)=>{settings.CheckForUpdates=updateChecks.Checked;Save();};
-        updates.Click+=async (_,_)=>{if(availableRelease!=null)System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(availableRelease.Url){UseShellExecute=true});else await CheckUpdates(true);};
-        diagnostic.Click+=(_,_)=>{using var picker=new SaveFileDialog{Filter=L.T("Diagnóstico")+" JSON (*.json)|*.json",FileName="PiP-diagnostics.json"};if(picker.ShowDialog(this)==DialogResult.OK)try{File.WriteAllText(picker.FileName,SupportReport.Create(settings,session));status.Text=L.T("Diagnóstico salvo, sem imagens, URLs ou caminhos pessoais.");}catch(Exception ex)when(ex is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar o diagnóstico.");}};
+        updates.Click+=(_,_)=>{Save();using var dialog=new UpdateDialog(Path.GetDirectoryName(settingsPath)!);dialog.ShowDialog(this);};
+        diagnostic.Click+=(_,_)=>{using var picker=new SaveFileDialog{Filter=L.T("Diagnóstico")+" JSON (*.json)|*.json",FileName="PiP-diagnostics.json"};if(picker.ShowDialog(this)==DialogResult.OK)try{File.WriteAllText(picker.FileName,SupportReport.Create(settings,session,session==null?0:elapsed.Elapsed.TotalSeconds,!automatic.Enabled));status.Text=L.T("Diagnóstico salvo, sem imagens, URLs ou caminhos pessoais.");}catch(Exception ex)when(ex is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar o diagnóstico.");}};
         toolbar.Visible=options.Visible=false;layout.RowStyles[1].Height=0;layout.RowStyles[2].Height=0;
         var advanced=new ModernButton{AccessibleName=L.T("Mostrar ou ocultar ajustes avançados")};UiTheme.Button(advanced,L.T("Ajustes"),"pip");advanced.Margin=new Padding(0,8,0,0);header.ColumnCount=3;header.ColumnStyles.Add(new(SizeType.Absolute,160));header.Controls.Add(advanced,2,0);
 
-        foreach(var screen in Screen.AllScreens)monitors.Items.Add(new MonitorItem(screen));monitors.SelectedIndex=0;
-        for(int i=0;i<monitors.Items.Count;i++)if(((MonitorItem)monitors.Items[i]!).Screen.DeviceName==settings.Monitor)monitors.SelectedIndex=i;
+        RebuildMonitors();RestoreMonitorLayout();
         UpdateCanvas();if(!designPreview){RefreshSources();RefreshTargets();}
         editor.LayoutChanged+=box=>{settings=settings with {X=box.X,Y=box.Y,Width=box.Width,Height=box.Height};Apply();};
-        monitors.SelectedIndexChanged+=(_,_)=>{if(syncing)return;editor.ClearHistory();Stop("");automatic.Reset();UpdateCanvas();Discover();};
+        monitors.SelectedIndexChanged+=(_,_)=>{if(syncing)return;RememberMonitorLayout();settings.PreferredMonitor=SelectedScreen.DeviceName;RestoreMonitorLayout();editor.ClearHistory();Stop("");automatic.Reset();UpdateCanvas();if(!designPreviewMode)Discover();};
         sources.SelectedIndexChanged+=(_,_)=>{if(refreshing)return;editor.ClearHistory();Stop("");automatic.Reset();PreviewSelection();Discover();};
         quality.SelectedIndexChanged+=(_,_)=>{if(syncing)return;settings=settings with {Resolution=quality.SelectedIndex switch{1=>"720p",2=>"480p",3=>"auto",_=>"1080p"}};Apply();};
         frameRate.SelectedIndexChanged+=(_,_)=>{if(syncing)return;settings=settings with {FramesPerSecond=frameRate.SelectedIndex==2?15:frameRate.SelectedIndex==1?30:60};Apply();};
@@ -115,7 +114,8 @@ internal sealed partial class MainForm : Form
         var chooseGame=new ModernButton();UiTheme.Button(chooseGame,L.T("Trocar jogo"),"pip");chooseGame.Width=150;chooseGame.Margin=new Padding(12,25,0,0);options.Controls.Add(chooseGame);chooseGame.Click+=(_,_)=>{using var picker=new OpenFileDialog{Filter=L.T("Jogo Windows")+" (*.exe)|*.exe"};if(picker.ShowDialog(this)==DialogResult.OK){settings.GameExecutable=picker.FileName;Save();GameDiscovery.Find(settings.GameExecutable,true);automatic.Reset();Discover();status.Text=L.T("Jogo selecionado. A opção de iniciar fica no ícone perto do relógio.");}};
         var shortcuts=new ModernButton{AccessibleName=L.T("Configurar atalhos de teclado")};UiTheme.Button(shortcuts,L.T("Atalhos"),"keyboard");shortcuts.Margin=new Padding(12,25,0,0);toolbar.Controls.Add(shortcuts);shortcuts.Click+=(_,_)=>ConfigureShortcuts();
         ConfigureWorkspace(layout,header,footer,advanced,refresh,chooseGame,shortcuts,resetProfile,copyProfile);
-        Shown+=async (_,_)=>{if(designPreview)return;hotkeys=new Hotkeys(Handle);windowEvents=new WindowEvents(()=>{GameDiscovery.Invalidate();Discover();});Discover();if(!hotkeys.Apply(new(settings.StartShortcut),new(settings.StopShortcut),out var error))status.Text=error;if(settings.CheckForUpdates)await CheckUpdates(false);};
+        if(!designPreview)Microsoft.Win32.SystemEvents.DisplaySettingsChanged+=DisplayChanged;
+        Shown+=async (_,_)=>{if(designPreview)return;hotkeys=new Hotkeys(Handle);windowEvents=new WindowEvents(()=>{if(!settings.PreferDesktop)GameDiscovery.Invalidate();Discover();});Discover();if(!hotkeys.Apply(new(settings.StartShortcut),new(settings.StopShortcut),out var error))status.Text=error;if(settings.CheckForUpdates)await CheckUpdates(false);};
         if(designPreview){save.Stop();exiting=true;ShowInTaskbar=false;StartPosition=FormStartPosition.Manual;Location=new Point(-20000,-20000);}
     }
     void SelectProfile(string key,string name){
@@ -126,14 +126,14 @@ internal sealed partial class MainForm : Form
     void LoadProfile(GameProfile profile){
         syncing=true;
         try{settings=profile.Apply(settings);snapBox.Checked=settings.SnapEnabled;margin.Value=settings.SnapMargin;editor.ClearHistory();quality.SelectedIndex=settings.Resolution switch{"720p"=>1,"480p"=>2,"auto"=>3,_=>0};frameRate.SelectedIndex=settings.FramesPerSecond==15?2:settings.FramesPerSecond==30?1:0;adaptiveBox.Checked=settings.AdaptiveFps;minimumFps.SelectedIndex=settings.MinimumFps==30?1:0;
-            for(int i=0;i<monitors.Items.Count;i++)if(((MonitorItem)monitors.Items[i]!).Screen.DeviceName==settings.Monitor)monitors.SelectedIndex=i;
+            RebuildMonitors();RestoreMonitorLayout();
             UpdateCanvas();
         }finally{syncing=false;}
     }
     WindowSource[] AvailableVideos()=>WindowSource.Find().Where(x=>x.LikelyPip).Concat(active is {Exists:true}?new[]{active}:Array.Empty<WindowSource>()).DistinctBy(x=>(x.Handle,x.ProcessId)).ToArray();
     void RefreshVideoChoices(){
         lastVideoRefresh=Environment.TickCount64;var found=AvailableVideos();var old=sources.SelectedItem as WindowSource;
-        refreshing=true;try{sources.Items.Clear();sources.Items.AddRange(found);sources.SelectedItem=found.FirstOrDefault(x=>x.Handle==old?.Handle&&x.ProcessId==old?.ProcessId)??found.FirstOrDefault();pickVideo.Visible=found.Length>1;}finally{refreshing=false;}
+        refreshing=true;try{sources.Items.Clear();sources.Items.AddRange(found);sources.SelectedItem=found.FirstOrDefault(x=>x.Handle==old?.Handle&&x.ProcessId==old?.ProcessId)??found.FirstOrDefault();pickVideo.Visible=true;}finally{refreshing=false;}
     }
     void PickVideo(){
         pickingVideo=true;
@@ -156,7 +156,8 @@ internal sealed partial class MainForm : Form
     void ConfigureShortcuts(){if(hotkeys==null)return;configuringShortcuts=true;try{using var dialog=new ShortcutDialog(new(settings.StartShortcut),new(settings.StopShortcut),(a,b)=>{if(!hotkeys.Apply(a,b,out var error))return error;settings=settings with{StartShortcut=a.Value,StopShortcut=b.Value};Save();return null;});shortcutDialog=dialog;dialog.ShowDialog(this);}finally{shortcutDialog=null;configuringShortcuts=false;}}
     protected override void WndProc(ref Message m){if(m.Msg==0x312&&hotkeys!=null){if(configuringShortcuts)shortcutDialog?.ReceiveRegisteredShortcut(hotkeys.ShortcutFor((int)m.WParam));else{int action=hotkeys.ActionFor((int)m.WParam);if(action==0)ResumeAutomatic();else if(action==1)PauseAutomatic();}return;}base.WndProc(ref m);}
     void ShowEditor(){Show();WindowState=FormWindowState.Normal;Activate();}
-    void UpdateActions(){start.Visible=!automatic.Enabled||connectionFailed;start.Text=connectionFailed?L.T("Tentar novamente"):L.T("Retomar");start.Enabled=true;stop.Visible=automatic.Enabled;stop.Enabled=true;}
+    void UpdateActions(){start.Visible=!automatic.Enabled||connectionFailed;start.Text=connectionFailed?L.T("Tentar novamente"):L.T("Retomar");start.Enabled=true;stop.Visible=automatic.Enabled;stop.Enabled=true;ResizeStatus();}
+    void ResizeStatus(){if(status.Parent is Control parent)status.Width=Math.Max(120,parent.ClientSize.Width-parent.Padding.Horizontal-(start.Visible?start.Width+start.Margin.Horizontal:0)-(stop.Visible?stop.Width+stop.Margin.Horizontal:0)-status.Margin.Horizontal);}
     void PauseAutomatic(){automatic.Pause();connectionFailed=false;settings.AutomaticEnabled=false;Stop(L.T("Pausado · clique em Retomar quando quiser."));PreviewSelection();Save();}
     void ResumeAutomatic(){automatic.Resume();failedTargets.Clear();connectionFailed=false;settings.AutomaticEnabled=true;Save();Discover();}
     void Fail(string message){
@@ -170,15 +171,11 @@ internal sealed partial class MainForm : Form
         discovery.Interval=!Visible?15000:5000;
         if(!automatic.Enabled&&!Visible)return;
         if(configuringShortcuts||refreshing||pickingVideo)return;
-        if(session!=null&&desktopOverlay!=null&&!settings.PreferDesktop){
-            var candidate=AvailableTargets().FirstOrDefault(x=>x.Backend!="desktop"&&x.UnavailableReason==null&&!failedTargets.Contains(x.Pid));
-            if(candidate!=null){Stop("");automatic.Reset();refreshing=true;try{targets.Items.Clear();targets.Items.AddRange(AvailableTargets());targets.SelectedItem=candidate;}finally{refreshing=false;}}
-        }
         if(session!=null){if(activeTarget is int pid){try{using var p=System.Diagnostics.Process.GetProcessById(pid);if(!p.HasExited){if(Visible&&Environment.TickCount64-lastVideoRefresh>5000){RefreshVideoChoices();RefreshGameChoices();}return;}}catch(ArgumentException){}}Stop(L.T("Aguardando o jogo abrir…"));}
         refreshing=true;
         try{
             var found=WindowSource.Find().Where(x=>x.LikelyPip).ToArray();
-            pickVideo.Visible=found.Length>1;
+            pickVideo.Visible=true;
             var games=AvailableTargets();
             if(!found.Select(x=>(x.Handle,x.ProcessId)).SequenceEqual(sources.Items.Cast<WindowSource>().Select(x=>(x.Handle,x.ProcessId)))){var old=sources.SelectedItem as WindowSource;sources.Items.Clear();sources.Items.AddRange(found);sources.SelectedItem=found.FirstOrDefault(x=>x.Handle==old?.Handle&&x.ProcessId==old?.ProcessId)??found.FirstOrDefault();PreviewSelection();}
             if(!games.SequenceEqual(targets.Items.Cast<RenderTarget>())){var old=targets.SelectedItem as RenderTarget;targets.Items.Clear();targets.Items.AddRange(games);targets.SelectedItem=games.FirstOrDefault(x=>x.Pid==old?.Pid)??games.FirstOrDefault();}
@@ -197,10 +194,10 @@ internal sealed partial class MainForm : Form
     void Apply(){editor.SnapEnabled=settings.SnapEnabled;editor.SnapMargin=settings.SnapMargin;try{lease?.EnsureResolution(settings.SourceResolution);}catch(System.ComponentModel.Win32Exception ex){Fail(ex.Message);}editor.Video=new(settings.X,settings.Y,settings.Width,settings.Height);editor.Invalidate();session?.Apply(settings);desktopOverlay?.Apply(settings,SelectedScreen.Bounds);
         dimensions.Text=L.F("Vídeo · {0:F0}% da largura da tela",100.0*settings.Width/editor.MonitorSize.Width);
         save.Stop();save.Start();}
-    void Save(){if(designPreviewMode||syncing)return;try{settings.Save(settingsPath);if(profileKey!=null)profiles.Save(profileKey,settings);}catch(Exception e)when(e is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar: ")+e.Message;}}
+    void Save(){if(designPreviewMode||syncing||preferencesImported)return;try{RememberMonitorLayout();settings.Save(settingsPath);if(profileKey!=null)profiles.Save(profileKey,settings);}catch(Exception e)when(e is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar: ")+e.Message;}}
     void RefreshSources(){Stop("");sources.Items.Clear();foreach(var source in WindowSource.Find().Where(x=>x.LikelyPip))sources.Items.Add(source);if(sources.Items.Count>0)sources.SelectedIndex=0;else status.Text=L.T("Abra o PiP do navegador. Vídeo e jogo são detectados automaticamente.");}
     void PreviewSelection(){if(sources.SelectedItem is WindowSource source&&source.Exists){Native.GetWindowRect(source.Handle,out var rect);if(rect.Right>rect.Left&&rect.Bottom>rect.Top){editor.Aspect=(double)(rect.Right-rect.Left)/(rect.Bottom-rect.Top);UpdateCanvas();}editor.AttachSource(source.Handle);}}
-    RenderTarget[] AvailableTargets()=>GameLauncher.Targets().Concat(GameDiscovery.Find(settings.GameExecutable))
+    RenderTarget[] AvailableTargets()=>(settings.PreferDesktop?Enumerable.Empty<RenderTarget>():GameLauncher.Targets().Concat(GameDiscovery.Find(settings.GameExecutable)))
         .Append(new RenderTarget(Environment.ProcessId,L.T("Área de trabalho · janela/borderless"),false,true,Backend:"desktop"))
         .DistinctBy(x=>x.Pid).OrderBy(x=>x.UnavailableReason!=null).ThenBy(x=>settings.PreferDesktop?x.Backend!="desktop":x.Backend=="desktop").ToArray();
     void RefreshGameChoices(){
@@ -218,7 +215,7 @@ internal sealed partial class MainForm : Form
         lease=new SourceLease(source,settings.SourceResolution);
         if(target.Backend=="desktop"){desktopOverlay=new DesktopOverlay(settings,SelectedScreen.Bounds);desktopOverlay.ShowOverlay();}
         session=new GpuVideoSession(source,settings,editor.MonitorSize,target);editor.Aspect=(double)session.SourceSize.Width/session.SourceSize.Height;UpdateCanvas();editor.AttachSource(source.Handle);
-        active=source;activeTarget=target.Pid;start.Enabled=false;stop.Enabled=true;elapsed.Restart();lastFrames=0;lastTick=Environment.TickCount64;pulse.Start();status.Text=ConnectionMessages.Connecting;
+        active=source;activeTarget=target.Pid;start.Enabled=false;stop.Enabled=true;elapsed.Restart();lastFrames=0;lastTick=Environment.TickCount64;pulse.Start();status.Text=desktopOverlay!=null?L.T("Conectando à área de trabalho…"):ConnectionMessages.Connecting;
     }catch(Exception e){Fail(e.Message);}}
     void Stop(string message){pulse.Stop();session?.Dispose();session=null;desktopOverlay?.Dispose();desktopOverlay=null;editor.DetachSource();lease?.Dispose();lease=null;active=null;activeTarget=null;UpdateActions();status.Text=message;}
     void Poll(){if(session==null||active==null)return;
@@ -227,8 +224,8 @@ internal sealed partial class MainForm : Form
         if(session.Published==0&&elapsed.Elapsed.TotalSeconds>8){Fail(ConnectionMessages.Interrupted);automatic.RetryTransient();return;}
         if(!session.Ready&&elapsed.Elapsed.TotalSeconds>20){Fail(ConnectionMessages.Unavailable);return;}
         if(Visible&&WindowState!=FormWindowState.Minimized)editor.RefreshThumbnail();lease?.KeepBehind();
-        long now=Environment.TickCount64;if(now-lastTick>=1000){long count=session.Published;double fps=(count-lastFrames)*1000.0/(now-lastTick);lastFrames=count;lastTick=now;status.Text=session.Rendered>0?L.F("●  Overlay ativa · {0}×{1} · {2:F0} fps",session.TransferSize.Width,session.TransferSize.Height,fps)+(settings.AdaptiveFps?L.F(" · automático até {0} fps",session.EffectiveFps):""):L.T("Aguardando o jogo ficar visível…");}
+        long now=Environment.TickCount64;if(now-lastTick>=1000){long count=session.Published;double fps=(count-lastFrames)*1000.0/(now-lastTick);lastFrames=count;lastTick=now;status.Text=session.Rendered>0?L.F(desktopOverlay!=null?"Desktop ativo · {0}×{1} · {2:F0} fps":"Renderizador conectado · {0}×{1} · {2:F0} fps",session.TransferSize.Width,session.TransferSize.Height,fps)+(settings.AdaptiveFps?L.F(" · automático até {0} fps",session.EffectiveFps):""):desktopOverlay!=null?L.T("Aguardando o primeiro quadro…"):L.T("Aguardando o jogo ficar visível…");}
     }
-    protected override void Dispose(bool disposing){if(disposing){windowEvents?.Dispose();windowEvents=null;tray.Visible=false;tray.ContextMenuStrip?.Dispose();tray.Dispose();discovery.Dispose();pulse.Dispose();save.Dispose();session?.Dispose();session=null;desktopOverlay?.Dispose();desktopOverlay=null;lease?.Dispose();lease=null;}base.Dispose(disposing);}
+    protected override void Dispose(bool disposing){if(disposing){Microsoft.Win32.SystemEvents.DisplaySettingsChanged-=DisplayChanged;windowEvents?.Dispose();windowEvents=null;tray.Visible=false;tray.ContextMenuStrip?.Dispose();tray.Dispose();discovery.Dispose();pulse.Dispose();save.Dispose();session?.Dispose();session=null;desktopOverlay?.Dispose();desktopOverlay=null;lease?.Dispose();lease=null;}base.Dispose(disposing);}
     sealed record MonitorItem(Screen Screen){public override string ToString()=>$"{Screen.DeviceName.Replace("\\\\.\\","")} · {Screen.Bounds.Width}×{Screen.Bounds.Height}";}
 }

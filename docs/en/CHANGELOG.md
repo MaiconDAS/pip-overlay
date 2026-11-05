@@ -2,6 +2,15 @@
 
 [Português](../../CHANGELOG.md) · [Documentation](README.md)
 
+## 0.18.0 — desktop first, layout recovery and verified updates
+
+- Independent desktop output is now the default, with migration of old preferences. No automatic game attachment or game module discovery in this mode; direct mode remains optional.
+- Always-visible video picker, keyboard movement/resizing, focus indicator and smaller minimum window size. Desktop and renderer connection states are distinguished.
+- Per-monitor layouts, proportional resolution recovery, preferred-display reconnection, and portable preference archives with validation, backups and write-failure recovery.
+- Stable installer downloads verify official asset SHA-256 and size. Previous stable installers are available for manual recovery; no automatic execution. Public code signing remains pending.
+- New controls translated in ten languages; privacy-preserving session diagnostics expanded. Documentation updated in Portuguese and English.
+- User-reported Black Desert desktop success is recorded separately from synthetic testing and unvalidated exclusive fullscreen.
+
 ## 0.17.0 — easier connection and ten languages
 
 - Settings language selection: Portuguese, English, Spanish, German, Italian, French, Japanese, Korean, Simplified Chinese and Russian. Selection is saved and applied without restarting capture.

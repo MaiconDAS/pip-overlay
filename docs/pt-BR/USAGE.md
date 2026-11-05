@@ -4,15 +4,15 @@
 
 ## Instalar ou levar para outro computador
 
-Copie `PiP-Overlay-v0.17.0.exe` e execute-o. O atalho na área de trabalho é opcional e vem marcado por padrão. Atalhos no menu Iniciar e a entrada em Aplicativos instalados / Programas e Recursos são criados automaticamente. Runtime e renderizadores estão incluídos; não precisa de extensão, RTSS ou download separado de runtime.
+Copie `PiP-Overlay-v0.18.0.exe` e execute-o. O atalho na área de trabalho é opcional e vem marcado por padrão. Atalhos no menu Iniciar e a entrada em Aplicativos instalados / Programas e Recursos são criados automaticamente. Runtime e renderizadores estão incluídos; não precisa de extensão, RTSS ou download separado de runtime.
 
 A instalação registrada é detectada automaticamente. Atualizar na mesma pasta preserva preferências. Escolher outro destino importa as preferências da instalação registrada sem sobrescrever ajustes existentes no destino. Para uma cópia portátil antiga, selecione a própria pasta dela. Não há etapa manual de importação nem varredura indiscriminada do disco.
 
-## Conectar vídeo e jogo
+## Abra o PiP e jogue
 
-Abra o PiP Overlay e o PiP nativo do vídeo no Edge ou Chrome. Mantenha-o aberto e sem minimizar. DirectX 9/11 podem conectar ao processo já aberto. A saída independente funciona em janela/borderless, sem integração no jogo. Para fullscreen exclusivo em DirectX 12, OpenGL ou Vulkan, use **Iniciar jogo configurado** no menu do ícone perto do relógio e selecione o executável real na primeira vez. A conexão é automática quando uma fonte e um renderizador compatíveis estão disponíveis. Uma aba comum do navegador, sozinha, não é uma fonte suportada.
+Abra o PiP Overlay e o PiP nativo do vídeo no Edge ou Chrome. Mantenha a origem aberta e sem minimizar. A overlay desktop padrão aparece sobre janelas e jogos borderless, deixa os cliques atravessarem e não toma o foco do teclado. Não é preciso selecionar um jogo nem reiniciá-lo. Uma aba comum do navegador, sozinha, não é uma fonte suportada.
 
-A lista identifica janelas e módulos gráficos sem filtrar por nome de jogo. Um processo pode aparecer como **não conectado** quando ainda não foi preparado ou sua consulta foi bloqueada. Use **Ajustes → Mais → Trocar jogo** para configurar outro executável. Detectar um jogo não comprova compatibilidade; Black Desert Online não foi validado. Veja [compatibilidade](../COMPATIBILITY.md).
+**Ajustes → Mais → Conectar diretamente ao jogo** revela a seleção avançada de jogos. Esse modo pode carregar uma integração no processo compatível; não é necessário para a saída desktop. D3D9/11 podem conectar a processos abertos quando permitido; outras APIs podem exigir inicialização preparada pelo menu da bandeja. Um processo listado não comprova compatibilidade. A saída desktop não cobre fullscreen exclusivo. Veja [compatibilidade](../COMPATIBILITY.md).
 
 ## Idioma
 
@@ -37,3 +37,15 @@ O PiP pode encostar nas bordas mesmo com margem de encaixe e tem cantos discreto
 **Pausar** também interrompe a reconexão automática; **Retomar** a reativa. Fechar a janela deixa o app na bandeja. Use **Sair** para encerrá-lo. O aplicativo não configura inicialização automática com o Windows.
 
 Desinstale por Aplicativos instalados, pelo menu Iniciar ou pelo atalho na pasta do app. Feche primeiro o aplicativo e os jogos iniciados por ele. Preferências e arquivos pessoais são preservados; veja a [política de privacidade](PRIVACY.md) para remover dados locais. O pacote contém políticas de privacidade nos dois idiomas. A assinatura pública permanece [pendente](../SIGNING.md).
+
+## Layouts e teclado
+
+As setas movem o PiP em um pixel físico; Shift aumenta o passo para dez. Ctrl+setas redimensiona preservando a proporção. Ctrl+Z desfaz o último gesto. Essas teclas só funcionam quando o editor tem foco. A overlay continua sem interação.
+
+Layouts de monitores são salvos separadamente dentro do perfil atual. Mudanças de resolução ajustam o tamanho proporcionalmente e preservam a posição relativa, incluindo as bordas. Se o monitor preferido desconectar, o aplicativo usa a tela principal sem esquecer a preferência. Ao reconectar, restaura seu layout. As telas são identificadas pelo nome atribuído pelo Windows, que pode mudar em outro PC. Perfis por jogo são aplicados no modo direto; o modo desktop usa o layout atual sem procurar jogos.
+
+## Preferências e recuperação
+
+Em **Ajustes → Mais**, exporte um JSON e importe no outro computador. A importação valida o arquivo, mescla os perfis de jogos, salva os ajustes anteriores em `data/backups`, mantém o caminho local do executável e pausa o PiP. O aplicativo fecha; abra novamente para aplicar e escolha Retomar. Backups podem ser importados pela mesma ação. As chaves dos perfis dependem do caminho do executável; caminhos diferentes em outro PC exigem selecionar/copiar o perfil novamente. O monitor também pode precisar de nova seleção.
+
+**Atualizações** lista instaladores estáveis com SHA-256 informado pela release oficial do GitHub. Verifica tamanho e hash antes de aceitar o arquivo, salva um backup e permite escolher uma versão estável anterior. Feche o app e execute o instalador baixado. Versões antigas podem não entender ajustes novos; os backups continuam disponíveis. O hash não substitui assinatura do editor; a assinatura pública está pendente. Fechar a janela de download cancela a operação. Nenhum instalador é executado automaticamente. Downloads e backups permanecem locais até serem removidos pelo usuário.

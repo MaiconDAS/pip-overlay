@@ -58,7 +58,7 @@ internal sealed class LayoutEditor : Control
     ResizeEdge edge;
     Rectangle original;
     Point anchor;
-    internal LayoutEditor(){SetStyle(ControlStyles.Selectable,true);TabStop=true;DoubleBuffered=true;BackColor=Color.FromArgb(18,24,34);Cursor=Cursors.Default;AccessibleName="Editor visual: arraste o vídeo ou suas bordas";}
+    internal LayoutEditor(){SetStyle(ControlStyles.Selectable,true);TabStop=true;DoubleBuffered=true;BackColor=Color.FromArgb(18,24,34);Cursor=Cursors.Default;AccessibleName=L.T("Editor visual: arraste o vídeo ou suas bordas");}
     Rectangle Canvas=>Settings.Fit(MonitorSize,new Rectangle(20,20,Math.Max(1,Width-40),Math.Max(1,Height-40)));
     internal Rectangle ToPreview(Rectangle box) {
         var canvas=Canvas;double s=(double)canvas.Width/MonitorSize.Width;
@@ -92,10 +92,24 @@ internal sealed class LayoutEditor : Control
     void FinishGesture(){if(!dragging)return;dragging=false;if(original!=Video){undo=original;HistoryChanged?.Invoke();}}
     protected override void OnMouseUp(MouseEventArgs e){base.OnMouseUp(e);FinishGesture();Capture=false;}
     protected override void OnMouseCaptureChanged(EventArgs e){base.OnMouseCaptureChanged(e);if(!Capture)FinishGesture();}
-    protected override void OnKeyDown(KeyEventArgs e){if(e.Control&&e.KeyCode==Keys.Z){Undo();e.Handled=true;}base.OnKeyDown(e);}
+    protected override bool IsInputKey(Keys keyData)=>(keyData&Keys.KeyCode) is Keys.Left or Keys.Right or Keys.Up or Keys.Down||base.IsInputKey(keyData);
+    internal void AdjustByKeyboard(Keys key,bool resize,bool fast){
+        int step=fast?10:1;
+        var delta=key switch{Keys.Left=>new Point(-step,0),Keys.Right=>new Point(step,0),Keys.Up=>new Point(0,-step),Keys.Down=>new Point(0,step),_=>Point.Empty};
+        var next=resize?LayoutMath.Resize(Video,delta,ResizeEdge.Right|ResizeEdge.Bottom,MonitorSize,Aspect):LayoutMath.Drag(Video,delta,MonitorSize);
+        if(next==Video)return;undo=Video;Video=next;LayoutChanged?.Invoke(Video);HistoryChanged?.Invoke();AccessibilityNotifyClients(AccessibleEvents.ValueChange,-1);Invalidate();
+    }
+    protected override void OnKeyDown(KeyEventArgs e){
+        if(e.Control&&e.KeyCode==Keys.Z){Undo();e.Handled=e.SuppressKeyPress=true;}
+        else if(!e.Alt&&e.KeyCode is Keys.Left or Keys.Right or Keys.Up or Keys.Down){AdjustByKeyboard(e.KeyCode,e.Control,e.Shift);e.Handled=e.SuppressKeyPress=true;}
+        base.OnKeyDown(e);
+    }
+    protected override void OnGotFocus(EventArgs e){base.OnGotFocus(e);Invalidate();}
+    protected override void OnLostFocus(EventArgs e){base.OnLostFocus(e);Invalidate();}
     protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);if(Width<50||Height<50)return;
         var c=Canvas;using var bg=new SolidBrush(Color.FromArgb(9,13,20));e.Graphics.FillRectangle(bg,c);
         using var grid=new Pen(Color.FromArgb(34,44,58));for(int i=1;i<4;i++){e.Graphics.DrawLine(grid,c.Left+c.Width*i/4,c.Top,c.Left+c.Width*i/4,c.Bottom);e.Graphics.DrawLine(grid,c.Left,c.Top+c.Height*i/4,c.Right,c.Top+c.Height*i/4);}e.Graphics.DrawRectangle(grid,c);
+        if(Focused&&ShowFocusCues)ControlPaint.DrawFocusRectangle(e.Graphics,Rectangle.Inflate(c,-4,-4));
         RefreshThumbnail();var box=ToPreview(Video);using var rounded=new System.Drawing.Drawing2D.GraphicsPath();float d=(float)Math.Max(2,12d*c.Width/MonitorSize.Width);rounded.AddArc(box.Left,box.Top,d,d,180,90);rounded.AddArc(box.Right-d,box.Top,d,d,270,90);rounded.AddArc(box.Right-d,box.Bottom-d,d,d,0,90);rounded.AddArc(box.Left,box.Bottom-d,d,d,90,90);rounded.CloseFigure();e.Graphics.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.AntiAlias;var saved=e.Graphics.Save();e.Graphics.SetClip(rounded);if(preview!=null)e.Graphics.DrawImage(preview,box);else {using var fill=new SolidBrush(Color.FromArgb(30,70,77));e.Graphics.FillPath(fill,rounded);TextRenderer.DrawText(e.Graphics,"PiP",Font,box,Color.White,TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter);}e.Graphics.Restore(saved);
         using var pen=new Pen(Color.FromArgb(79,220,182),2);e.Graphics.DrawPath(pen,rounded);
         foreach(var p in new[]{new Point(box.Left,box.Top),new Point(box.Right,box.Top),new Point(box.Left,box.Bottom),new Point(box.Right,box.Bottom),new Point(box.Left+box.Width/2,box.Top),new Point(box.Left+box.Width/2,box.Bottom),new Point(box.Left,box.Top+box.Height/2),new Point(box.Right,box.Top+box.Height/2)})e.Graphics.FillRectangle(Brushes.White,p.X-3,p.Y-3,6,6);

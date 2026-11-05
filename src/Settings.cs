@@ -4,9 +4,12 @@ namespace PipOverlay;
 
 internal sealed record Settings
 {
-    public bool PreferDesktop {get;set;}
+    public bool PreferDesktop {get;set;} = true;
+    public int OutputModeVersion {get;set;} = 1;
     public string Language {get;set;} = "pt-BR";
     public string Monitor { get; set; } = "";
+    public string PreferredMonitor {get;set;} = "";
+    public Dictionary<string,DisplayLayout> MonitorLayouts {get;set;} = new();
     public bool AutomaticEnabled {get;set;} = true;
     public int StartShortcut {get;set;}
     public int StopShortcut {get;set;}
@@ -31,6 +34,7 @@ internal sealed record Settings
 
     internal Settings Validated() => this with {
         Language=L.Normalize(Language),
+        MonitorLayouts=(MonitorLayouts??new()).Where(x=>x.Key.Length<=200&&x.Value is {ScreenWidth:>0,ScreenHeight:>0,Width:>0,Height:>0}).Take(32).ToDictionary(x=>x.Key,x=>x.Value),
         X=Math.Clamp(X,0,32000), Y=Math.Clamp(Y,0,32000),FramesPerSecond=FramesPerSecond is 15 or 30 or 60?FramesPerSecond:30,
         MinimumFps=MinimumFps==30?30:15,SnapMargin=Math.Clamp(SnapMargin,0,96),
         Resolution=Resolution is "1080p" or "720p" or "480p" or "auto"?Resolution:Resolution==null&&Quality is "balanced" or "economy"?"auto":"1080p",
@@ -67,7 +71,14 @@ internal sealed record Settings
     }
     internal static Settings Load(string path)
     {
-        try { return (JsonSerializer.Deserialize<Settings>(File.ReadAllText(path)) ?? new()).Validated(); }
+        try {
+            string json=File.ReadAllText(path);
+            using var document=JsonDocument.Parse(json);
+            if(document.RootElement.ValueKind!=JsonValueKind.Object)return new();
+            var value=(JsonSerializer.Deserialize<Settings>(json)??new()).Validated();
+            // Earlier versions automatically tried attaching to a game. Migrate once.
+            return document.RootElement.TryGetProperty(nameof(OutputModeVersion),out _)?value:value with {PreferDesktop=true,OutputModeVersion=1};
+        }
         catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new(); }
     }
     internal void Save(string path)

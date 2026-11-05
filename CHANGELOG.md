@@ -2,6 +2,15 @@
 
 # Histórico
 
+## 0.18.0 — desktop por padrão, recuperação e atualização verificada
+
+- Saída independente desktop como padrão, com migração de preferências antigas. Sem conexão automática nem consulta de módulos de jogos nesse modo; conexão direta permanece opcional.
+- Botão Vídeos sempre disponível, movimento/redimensionamento pelo teclado, indicação de foco e janela mínima menor. Estados desktop e renderizador conectado diferenciados.
+- Layouts por monitor, recuperação proporcional após mudar resolução, retorno ao monitor preferido e arquivo portátil de preferências com validação, backup e recuperação de falha de escrita.
+- Download de instaladores estáveis verifica tamanho e SHA-256 oficial. Versões anteriores disponíveis para recuperação manual; sem execução automática. Assinatura pública continua pendente.
+- Novos controles nos dez idiomas; diagnóstico local ampliado sem dados pessoais. Documentação revisada em português e inglês.
+- Relato do usuário sobre Black Desert no desktop registrado separadamente dos testes sintéticos e do fullscreen exclusivo não validado.
+
 ## 0.17.0 — conexão simplificada e dez idiomas
 
 - Seleção de idioma nos ajustes: português, inglês, espanhol, alemão, italiano, francês, japonês, coreano, chinês simplificado e russo. A escolha é salva e aplicada sem reiniciar a captura.

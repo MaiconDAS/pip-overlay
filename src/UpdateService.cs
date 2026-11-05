@@ -10,10 +10,11 @@ internal static class UpdateService
         if(doc.RootElement.ValueKind!=JsonValueKind.Array)throw new JsonException("Invalid release list");
         foreach(var item in doc.RootElement.EnumerateArray()){
             if(item.ValueKind!=JsonValueKind.Object||!item.TryGetProperty("draft",out var draft)||draft.ValueKind!=JsonValueKind.False)continue;
+            if(item.TryGetProperty("prerelease",out var pre)&&pre.ValueKind!=JsonValueKind.False)continue;
             if(!item.TryGetProperty("tag_name",out var tagElement)||tagElement.ValueKind!=JsonValueKind.String||!item.TryGetProperty("html_url",out var urlElement)||urlElement.ValueKind!=JsonValueKind.String)continue;
             string tag=tagElement.GetString()??"",url=urlElement.GetString()??"";
             if(!Version.TryParse(tag.TrimStart('v'),out var version)||version<=current)continue;
-            if(!Uri.TryCreate(url,UriKind.Absolute,out var uri)||uri.Scheme!="https"||uri.Host!="github.com"||!uri.AbsolutePath.StartsWith("/MaiconDAS/pip-overlay/releases/tag/",StringComparison.Ordinal))continue;
+            if(url!="https://github.com/MaiconDAS/pip-overlay/releases/tag/"+tag)continue;
             if(newest==null||version>newest.Version)newest=new(version,url);
         }return newest;
     }

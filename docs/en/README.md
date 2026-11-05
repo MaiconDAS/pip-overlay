@@ -21,6 +21,7 @@
 | Architecture | [Guia](../ARCHITECTURE.md) | [Guide](ARCHITECTURE.md) |
 | Contributing | [Guia](../../CONTRIBUTING.md) | [Guide](CONTRIBUTING.md) |
 | Test matrix | [Matriz](../TEST-MATRIX.md) | [Matrix](TEST-MATRIX.md) |
+| 0.18 results | [Relatório](../VALIDATION-0.18.md) | [Report](VALIDATION-0.18.md) |
 | 0.17 results | [Relatório](../VALIDATION-0.17.md) | [Report](VALIDATION-0.17.md) |
 | 0.16 results | [Relatório](../VALIDATION-0.16.md) | [Report](VALIDATION.md) |
 | Repository audit | [Relatório](../REPOSITORY-AUDIT-0.16.md) | [Report](REPOSITORY-AUDIT.md) |

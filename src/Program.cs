@@ -10,6 +10,7 @@ internal static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 #if !PRODUCTION
+        if(args.Length>=2&&args[0]=="--recovery-test")return RecoveryTests.Run(args[1]);
         if(args.Length>=2&&args[0]=="--desktop-test")return DesktopOverlayTests.Run(args[1]);
         if(args.Length>=2&&args[0]=="--localization-test")return LocalizationTests.Run(args[1]);
         if(args.Length>=2&&args[0]=="--workspace-test")return WorkspaceTests.Run(args[1]);

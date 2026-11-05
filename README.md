@@ -4,27 +4,27 @@
 
 Vídeo do Edge ou Chrome sobre seu jogo, com posição e tamanho ajustáveis. A interação fica no editor: o vídeo dentro do jogo não recebe cliques nem foco do teclado.
 
-[**Baixar v0.17.0**](https://github.com/MaiconDAS/pip-overlay/releases/latest) · [Guia de uso](docs/pt-BR/USAGE.md) · [Compatibilidade](docs/COMPATIBILITY.md) · [Relatar problema](https://github.com/MaiconDAS/pip-overlay/issues/new/choose)
+[**Baixar v0.18.0**](https://github.com/MaiconDAS/pip-overlay/releases/latest) · [Guia de uso](docs/pt-BR/USAGE.md) · [Compatibilidade](docs/COMPATIBILITY.md) · [Relatar problema](https://github.com/MaiconDAS/pip-overlay/issues/new/choose)
 
 Windows x64 · Código aberto / MIT · Sem RTSS ou extensão
 
 ## Novidades da versão atual
 
-A **0.17.0** simplifica a conexão e adiciona dez idiomas ao aplicativo:
+A **0.18.0** torna a saída independente na área de trabalho o padrão:
 
-- **DirectX 11 já aberto:** conexão por processo, sem exigir reiniciar o jogo, quando a integração é permitida.
-- **Saída independente:** composição na área de trabalho para janela/borderless, sem carregar código no jogo. Não cobre fullscreen exclusivo.
-- **Idiomas:** português, inglês, espanhol, alemão, italiano, francês, japonês, coreano, chinês simplificado e russo, em **Ajustes → Mais → Idioma**.
-- **Descoberta por eventos:** notificações de janelas com verificação periódica de segurança; tentativas transitórias limitadas.
-- **Imagem:** resolução e FPS continuam independentes, com transporte GPU quando compatível e posicionamento até as bordas.
+- **Abra o PiP e jogue:** sem selecionar processo ou reiniciar o jogo no modo desktop. Não há troca automática para integração no jogo.
+- **Controles simples:** conexão direta é opcional e avançada; o botão Vídeos permanece visível. Setas movem, Ctrl+setas redimensiona e Shift aumenta o passo.
+- **Layouts por monitor:** restauração proporcional ao mudar a resolução, com layout salvo por monitor e preferência de tela preservada.
+- **Recuperação:** exportação/importação com backup e download verificado de instaladores, incluindo versões estáveis anteriores.
+- **Dez idiomas e diagnóstico:** novos controles traduzidos; relatórios locais distinguem saída desktop de renderizador conectado.
 
-[Histórico](CHANGELOG.md) · [Testes e medições da 0.17](docs/VALIDATION-0.17.md)
+[Histórico](CHANGELOG.md) · [Validação e limites da 0.18](docs/VALIDATION-0.18.md)
 
 ## Como usar
 
 1. Baixe e execute o instalador. Ele inclui o runtime, cria atalhos e registra a desinstalação no Windows. Atualizações preservam preferências.
 2. Abra o PiP Overlay e coloque o vídeo no **Picture-in-Picture nativo do Edge ou Chrome**. Mantenha a janela aberta, sem minimizar.
-3. DirectX 9/11 tentam conectar ao processo já aberto. A saída independente atende janela/borderless. Para fullscreen exclusivo em DirectX 12, OpenGL ou Vulkan, use **Iniciar jogo configurado** no menu do ícone perto do relógio. Escolha o executável real do jogo. Para trocar, use **Ajustes → Mais → Trocar jogo**.
+3. A overlay independente aparece sobre janelas e jogos borderless, sem selecionar o processo do jogo. A conexão direta fica como opção avançada; fullscreen exclusivo exige validação de compatibilidade separada.
 4. Arraste o vídeo no editor e use suas bordas ou cantos para redimensioná-lo. A conexão ocorre quando a fonte e um renderizador compatível estão disponíveis.
 
 Resolução e FPS são independentes. Escolher 30 fps mantém o limite de resolução escolhido; o tamanho real da captura depende do navegador e da fonte. **Pausar** impede a reconexão automática. Fechar a janela mantém o app na bandeja; use **Sair** para encerrá-lo.
@@ -33,7 +33,7 @@ Resolução e FPS são independentes. Escolher 30 fps mantém o limite de resolu
 
 ## Editor visual
 
-![Editor do PiP Overlay com ajustes laterais](docs/assets/workspace-017.png)
+![Editor do PiP Overlay com ajustes laterais](docs/assets/workspace-018.png)
 
 O editor representa o monitor proporcionalmente. Os ajustes ficam na lateral, preservando a área principal do PiP.
 
@@ -58,7 +58,7 @@ O editor representa o monitor proporcionalmente. Os ajustes ficam na lateral, pr
 | Vulkan | Experimental; SDR de 8 bits, com limites de apresentação |
 | Transporte GPU | Otimizado em DirectX 11; outras APIs mantêm transporte CPU |
 
-**Detectar um jogo não garante que ele aceite a overlay.** Proteções, launchers e configurações gráficas podem impedir a integração. Black Desert Online ainda não foi validado. Fullscreen das APIs mais novas requer validação específica; testes sintéticos não certificam todos os jogos nem garantem 60 fps.
+**Detectar um jogo não garante que ele aceite a overlay.** Proteções, launchers e configurações gráficas podem impedir a integração. Há relato do usuário de funcionamento no Black Desert Online pela saída desktop; isso não valida integração direta ou fullscreen exclusivo. Fullscreen das APIs mais novas requer validação específica; testes sintéticos não certificam todos os jogos nem garantem 60 fps.
 
 [Limites e detecção de jogos](docs/COMPATIBILITY.md) · [Matriz de testes](docs/TEST-MATRIX.md)
 

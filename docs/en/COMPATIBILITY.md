@@ -1,30 +1,40 @@
-# Compatibility
+[Português](../COMPATIBILITY.md) · **English**
 
-[Português](../COMPATIBILITY.md) · [English index](README.md)
+# Game compatibility
 
-| Component | Support and limits |
+Status for **0.18.0**. Desktop output is the default and does not depend on the game's graphics API while Windows can compose a window above it.
+
+| Component | Status |
 | --- | --- |
-| Windows | Windows 10 2004 or later, Windows 11; x64 OS |
-| Browser source | Native PiP from Edge or Chrome; keep it open and not minimized |
-| DirectX 9 | Window/D3D9-module discovery without game-name filters; dedicated-host tests including fullscreen |
-| DirectX 11 / 12 | Included engine and custom add-on; pixel tests in dedicated x86/x64 hosts |
-| OpenGL | Included engine and custom add-on; pixel tests in dedicated x86/x64 hosts |
-| Vulkan | Custom experimental layer; SDR 8-bit RGBA/BGRA UNORM and graphics queue presentation |
-| Fullscreen | In-process composition; D3D9 dedicated-host validation. Newer APIs require game-specific validation |
-| Windowed / borderless | Windowed synthetic tests; real games still require individual validation |
-| Resolution / FPS | Up to 1920×1080; targets of 15/30/60 fps, not guarantees |
-| Installation | One per-user installer; bundled runtime/renderers; no RTSS or extension |
+| Windows | Windows 10 2004 or later / Windows 11, x64 |
+| Edge and Chrome | Native PiP source, kept open and not minimized |
+| Windowed and borderless | DirectComposition desktop output; no libraries loaded into the game |
+| Exclusive fullscreen | Desktop output does not cover it; requires specific integration and validation |
+| Direct D3D9 | Own host validated, including fullscreen |
+| Direct D3D11 | Already-running x86/x64 hosts validated; exclusive fullscreen unvalidated |
+| D3D12 / OpenGL | Prepared-launch integration validated in own x86/x64 hosts |
+| Vulkan | Experimental: SDR RGBA/BGRA UNORM 8-bit, graphics presentation queue, one swapchain |
+| Video | Up to 1920×1080; independent 15/30/60 fps, subject to source and hardware limits |
+| Installation | Runtime and renderers included; no RTSS or extension; public signing pending |
 
-For modern APIs, launch the game through the app's tray menu. Launchers that spawn another executable, game protections and protected video may prevent capture or connection. No bypass is implemented. There is no certified list of games for the modern APIs and no general guarantee of reduced game-FPS impact.
+## Recommended use
 
-Vulkan does not support HDR, multiple swapchains in one presentation, presentation extension chains, device groups or protected resources in the current composition path. Unsupported cases pass through without composition. The browser PiP window remains necessary; ordinary tabs are not extracted directly.
+Open PiP Overlay and put the browser video in PiP. No process selection is needed: desktop output sits above windows and borderless games, passes clicks through and does not take focus. It never automatically switches to direct integration when a game is detected.
 
-GPU transport support and rendering API support are separate. A transport optimization for D3D11 does not automatically accelerate D3D9, D3D12, OpenGL or Vulkan. See [architecture](ARCHITECTURE.md) and [validation](VALIDATION.md).
+The user reported successful **desktop output over Black Desert Online on their home computer**, while selecting the process directly did not work. The exact presentation mode was not measured. This report does not certify direct integration, exclusive fullscreen or other game configurations.
 
-### Game discovery (0.16)
+## Optional direct connection
 
-The list inspects open windows and graphics modules without a game-name allowlist. Discovery is read-only, cached for five seconds, and skipped while a session is connected and the editor is hidden. Other graphics applications may appear; finding a renderer does not establish game compatibility.
+**Settings → More → Connect directly to game** enables window and graphics-module discovery. Ordinary applications may appear because they use graphics APIs too; detecting a module does not prove a process is a compatible game.
 
-DirectX 9 and DirectX 11 offer connection to already-running processes. Loaded modules are API candidates, not proof of the active renderer. DirectX 12, OpenGL and Vulkan may require prepared integration for exclusive fullscreen. Independent output supports windowed/borderless and does not bypass exclusive fullscreen or game protection. Select the actual game executable with **Change game** under **Settings → More**, then use the configured-game launch entry in the tray menu. Selecting an executable also includes its window when the renderer is unknown. Launchers spawning other processes and protected games may prevent integration. There is no protection bypass or privilege elevation.
+D3D9/11 can connect to running processes when permitted. D3D12, OpenGL and Vulkan may need **Launch configured game** from the tray menu. Choose the actual executable with **Change game**. Launchers, permissions and protections may prevent integration. There is no privilege elevation or protection bypass.
 
-Black Desert Online has not been tested. Discovery and acceptance of the overlay by the game are separate checks; it is not listed as compatible merely because discovery was broadened.
+## Limits
+
+- No promise of support for every game or zero performance cost.
+- Real-game FPS impact was not measured for this release. Desktop mode skips game discovery but does not change video transport cost.
+- HDR and AMD/NVIDIA GPUs were not validated by the project in this round. The home report is usage evidence, not a controlled benchmark.
+- Vulkan does not compose with multiple swapchains, presentation extension chains, device groups or protected resources.
+- Native PiP is still required; ordinary browser tabs are not extracted automatically. Protected video may not be capturable.
+
+[Current validation](VALIDATION-0.18.md) · [0.17 renderer validation](VALIDATION-0.17.md) · [Test matrix](TEST-MATRIX.md) · [Architecture](ARCHITECTURE.md)

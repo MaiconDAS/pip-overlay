@@ -1,49 +1,40 @@
 **Português** · [English](en/COMPATIBILITY.md)
 
-# Compatibilidade com Jogos
+# Compatibilidade com jogos
 
-Estado da versão **0.17.0**, experimental. Suporte ao renderizador não significa que todos os jogos que usam essa API sejam compatíveis.
+Estado da versão **0.18.0**. O modo desktop é o padrão e independe da API do jogo enquanto o Windows consegue compor a janela por cima dele.
 
-| Componente | Suporte e validação |
+| Componente | Situação |
 | --- | --- |
-| Windows | Windows 10 versão 2004 ou superior e Windows 11, sistema x64 |
-| Microsoft Edge | Fonte pelo Picture-in-Picture nativo; precisa permanecer aberto e sem minimizar |
-| Google Chrome | Fonte pelo Picture-in-Picture nativo; precisa permanecer aberto e sem minimizar |
-| Jogos DirectX 9 | Detecção por janelas e módulos D3D9, sem filtro por nome de jogo. Host próprio testado, incluindo fullscreen |
-| Jogos DirectX 11 | Implementado com motor incluído; testes de pixels em hosts próprios de 32 e 64 bits |
-| Jogos DirectX 12 | Implementado com motor incluído; testes de pixels em hosts próprios de 32 e 64 bits |
-| Jogos OpenGL | Implementado com motor incluído; testes de pixels em hosts próprios de 32 e 64 bits |
-| Jogos Vulkan | Camada própria; testes de pixels em hosts próprios de 32 e 64 bits. Inicialmente SDR RGBA/BGRA UNORM de 8 bits, fila gráfica com apresentação |
-| Fullscreen | Composição dentro do processo do jogo. D3D9 testado em fullscreen em host próprio; fullscreen das novas APIs ainda requer validação específica |
-| Janela e borderless | Novas APIs exercitadas em hosts próprios com janela; borderless em jogos reais ainda requer validação |
-| Resolução do vídeo | Captura até 1920 × 1080, limitada pelo tamanho efetivo do PiP e pelo navegador |
-| Taxa de quadros | Alvos de 60, 30 e 15 fps; não são garantias de desempenho |
-| Instalação | Um instalador com runtime e renderizadores incluídos; sem RTSS ou extensão |
+| Windows | Windows 10 2004 ou superior / Windows 11, x64 |
+| Edge e Chrome | Fonte pelo PiP nativo, aberto e sem minimizar |
+| Janela e borderless | Saída desktop por DirectComposition; sem carregar bibliotecas no jogo |
+| Fullscreen exclusivo | A saída desktop não oferece cobertura; requer integração específica e validação |
+| DirectX 9 direto | Host próprio validado, incluindo fullscreen |
+| DirectX 11 direto | Conexão com processo já aberto validada em hosts próprios x86/x64; exclusivo não validado |
+| DirectX 12 / OpenGL | Integração preparada na inicialização, validada em hosts próprios x86/x64 |
+| Vulkan | Experimental: SDR RGBA/BGRA UNORM 8 bits, fila gráfica de apresentação, uma swapchain |
+| Vídeo | Até 1920×1080; 15/30/60 fps independentes, sujeitos à origem e ao hardware |
+| Instalação | Runtime e renderizadores incluídos; sem RTSS ou extensão; assinatura pública pendente |
 
-## Como iniciar Jogos
+## Uso recomendado
 
-Abra o PiP no navegador e use **Iniciar jogo configurado** no menu do ícone da ferramenta perto do relógio. Selecione o executável na primeira vez. A seleção fica salva. A conexão com o vídeo é automática quando a fonte e o renderizador estão disponíveis.
+Abra o PiP Overlay e coloque o vídeo em PiP no navegador. Não selecione processo: o modo desktop aparece sobre janelas e jogos borderless, deixa os cliques atravessarem e não toma foco. Não troca automaticamente para integração direta ao detectar um jogo.
 
-Launchers que criam outro processo e proteções do jogo podem impedir a conexão. Não há tentativa de contornar essas proteções. Vídeos protegidos também podem não ser capturáveis.
+O usuário relatou funcionamento no **Black Desert Online pela saída desktop em seu computador**, enquanto a seleção direta do processo não funcionou. O modo de apresentação exato não foi medido. Esse relato não certifica integração direta, fullscreen exclusivo ou outras configurações do jogo.
 
-## Limites ainda não validados
+## Conexão direta opcional
 
-- Não há lista de jogos certificados para as novas APIs.
-- Não há comparação controlada do impacto no FPS de jogos reais nesta versão.
-- HDR não foi validado; a camada Vulkan não compõe em HDR.
-- Vulkan não compõe em apresentações com múltiplas swapchains, cadeias de extensão de apresentação, device groups ou recursos protegidos.
-- O PiP do navegador continua necessário; a ferramenta não extrai automaticamente o vídeo de uma aba comum.
+Em **Ajustes → Mais → Conectar diretamente ao jogo**, a lista passa a consultar janelas e módulos gráficos. Aplicativos comuns podem aparecer porque também usam APIs gráficas; detectar um módulo não confirma que o processo seja um jogo compatível.
 
-Veja os [resultados atuais](VALIDATION-0.16.md) e a [arquitetura](ARCHITECTURE.md).
+DirectX 9/11 podem conectar a processos abertos quando permitido. DirectX 12, OpenGL e Vulkan podem precisar de **Iniciar jogo configurado** no menu da bandeja. Configure o executável real em **Trocar jogo**. Launchers, permissões e proteções podem impedir a integração. Não há elevação de privilégios nem tentativa de contornar proteção.
 
-Consulte a [matriz de testes](TEST-MATRIX.md).
+## Limites
 
-Na 0.16, o transporte compartilhado pela GPU é específico de DirectX 11, com retorno automático à CPU. Isso não amplia a lista de jogos certificados nem acelera automaticamente outras APIs. Cantos arredondados e posicionamento na borda são recursos de desenho/edição separados do transporte.
+- Não há promessa de cobertura de todos os jogos ou de custo zero de performance.
+- Não foi medido o impacto no FPS de jogos reais nesta versão; a mudança evita a descoberta de processos no modo desktop, mas não altera o custo do transporte de vídeo.
+- HDR e GPUs AMD/NVIDIA não foram validados pelo projeto nesta rodada. O relato doméstico é evidência de uso, não benchmark controlado.
+- Vulkan não compõe em múltiplas swapchains, cadeias de extensão na apresentação, device groups ou recursos protegidos.
+- PiP nativo continua obrigatório; uma aba comum não é extraída automaticamente. Vídeo protegido pode não ser capturável.
 
-### Detecção de jogos (0.16)
-
-A lista consulta janelas abertas e módulos gráficos, sem restringir o nome do executável a um jogo. A consulta é somente leitura, tem cache de cinco segundos e deixa de ser repetida enquanto a sessão está conectada e o editor está oculto. Aplicativos gráficos também podem aparecer: detectar um renderizador não prova que seja um jogo compatível.
-
-DirectX 9 e DirectX 11 oferecem conexão por processo já aberto. Módulos carregados são candidatos, não confirmação da API ativa. DirectX 12, OpenGL e Vulkan podem exigir integração preparada para fullscreen exclusivo. A saída independente serve para janela/borderless e não contorna fullscreen exclusivo ou proteção do jogo. Em **Ajustes → Mais**, selecione o executável real em **Trocar jogo**; a inicialização preparada continua no menu do ícone perto do relógio. A seleção do executável também permite incluir uma janela cujo renderizador não foi identificado. Launchers que abrem outro processo e jogos protegidos podem impedir essa integração. Não há tentativa de contornar a proteção ou elevar privilégios.
-
-Black Desert Online não foi testado nesta versão. Sua presença na lista e a autorização da integração pelo jogo são verificações diferentes; não é declarado compatível só porque a detecção foi ampliada.
+[Validação atual](VALIDATION-0.18.md) · [Validação dos renderizadores na 0.17](VALIDATION-0.17.md) · [Matriz de testes](TEST-MATRIX.md) · [Arquitetura](ARCHITECTURE.md)

@@ -16,13 +16,15 @@ internal sealed partial class MainForm
         Compact(centerLayout,L.T("Centralizar"));Compact(undoLayout,L.T("Desfazer"));Compact(pickVideo,L.T("Vídeos"));
         tools.Controls.Add(centerLayout,1,0);tools.Controls.Add(undoLayout,2,0);tools.Controls.Add(pickVideo,3,0);
         canvas.Controls.Add(tools,0,0);canvas.Controls.Add(editor,0,1);
-        canvas.Controls.Add(new Label{Text=L.T("Arraste para mover · Puxe as bordas para redimensionar · Ctrl+Z desfaz"),Dock=DockStyle.Fill,ForeColor=UiTheme.Muted,Font=new Font(Font.FontFamily,9),TextAlign=ContentAlignment.MiddleLeft},0,2);
+        canvas.Controls.Add(new Label{Text=L.T("Arraste ou use as setas · Ctrl+setas redimensiona · Shift acelera · Ctrl+Z desfaz"),Dock=DockStyle.Fill,ForeColor=UiTheme.Muted,Font=new Font(Font.FontFamily,9),TextAlign=ContentAlignment.MiddleLeft},0,2);
         var tabs=new Panel{Dock=DockStyle.Fill,BackColor=UiTheme.Panel,Padding=new Padding(1),Margin=new Padding(14,0,0,0)};
         var navigation=new FlowLayoutPanel{Dock=DockStyle.Top,Height=38,WrapContents=false,Padding=new Padding(5,2,0,0)};
         var pages=new Panel{Dock=DockStyle.Fill,BackColor=BackColor,Padding=new Padding(12)};tabs.Controls.Add(pages);tabs.Controls.Add(navigation);
         var sections=new List<(FlowLayoutPanel Page,Button Tab)>();
         FlowLayoutPanel Page(string name){
-            var flow=new FlowLayoutPanel{Dock=DockStyle.Fill,FlowDirection=FlowDirection.TopDown,WrapContents=false,AutoScroll=true,Visible=sections.Count==0};pages.Controls.Add(flow);flow.SizeChanged+=(_,_)=>{foreach(Control child in flow.Controls)child.Width=Math.Max(160,flow.ClientSize.Width-child.Margin.Horizontal-2);};
+            var flow=new FlowLayoutPanel{Dock=DockStyle.Fill,FlowDirection=FlowDirection.TopDown,WrapContents=false,AutoScroll=true,Visible=sections.Count==0};pages.Controls.Add(flow);
+            bool sizing=false;
+            flow.Layout+=(_,_)=>{if(sizing)return;sizing=true;try{int width=Math.Max(160,flow.Width-SystemInformation.VerticalScrollBarWidth-4);foreach(Control child in flow.Controls){int desired=Math.Max(120,width-child.Margin.Horizontal);if(child.Width!=desired)child.Width=desired;}}finally{sizing=false;}};
             var tab=new ModernButton{Text=name,Width=88,Height=32,FlatStyle=FlatStyle.Flat,BackColor=UiTheme.Panel,ForeColor=sections.Count==0?UiTheme.Accent:UiTheme.Muted,Margin=Padding.Empty,Cursor=Cursors.Hand};tab.FlatAppearance.BorderSize=0;navigation.Controls.Add(tab);sections.Add((flow,tab));
             tab.Click+=(_,_)=>{foreach(var section in sections){section.Page.Visible=section.Page==flow;section.Tab.ForeColor=section.Page==flow?UiTheme.Accent:UiTheme.Muted;}flow.BringToFront();};return flow;
         }
@@ -44,7 +46,15 @@ internal sealed partial class MainForm
             finally{syncing=wasSyncing;}
             marginLabel.Text=L.F("Margem: {0} px",margin.Value);profileLabel.Text=profileName.Length==0?L.T("Perfil: Geral"):L.F("Perfil: {0}",profileName);UpdateActions();Apply();Save();
         };
-        Field(more,L.T("VÍDEO DO NAVEGADOR"),sources);Field(more,L.T("JOGO CONECTADO"),targets);Item(more,refresh);Item(more,chooseGame);Item(more,shortcuts);Item(more,updateChecks);Item(more,updates);Item(more,diagnostic);
+        var direct=new ModernToggle{Text=L.T("Conectar diretamente ao jogo"),Checked=!settings.PreferDesktop,Height=48};Item(more,direct);
+        var explanation=new Label{Text=L.T("Modo desktop: funciona sobre janelas e jogos borderless, sem selecionar um processo."),Height=76,ForeColor=UiTheme.Muted};Item(more,explanation);
+        Field(more,L.T("VÍDEO DO NAVEGADOR"),sources);Field(more,L.T("CONEXÃO AVANÇADA"),targets);Item(more,refresh);Item(more,chooseGame);
+        void ConnectionControls(){targets.Parent!.Visible=direct.Checked;chooseGame.Visible=direct.Checked;refresh.Visible=direct.Checked;explanation.Visible=!direct.Checked;}
+        targets.SelectedIndexChanged+=(_,_)=>{if(refreshing)return;bool previous=syncing;syncing=true;try{direct.Checked=!settings.PreferDesktop;ConnectionControls();}finally{syncing=previous;}};
+        ConnectionControls();direct.CheckedChanged+=(_,_)=>{if(syncing)return;settings.PreferDesktop=!direct.Checked;settings.OutputModeVersion=1;Stop("");refreshing=true;try{targets.Items.Clear();targets.Items.AddRange(AvailableTargets());if(targets.Items.Count>0)targets.SelectedIndex=0;}finally{refreshing=false;}automatic.Reset();ConnectionControls();Save();if(!designPreviewMode)Discover();};
+        Item(more,shortcuts);
+        foreach(var action in new[]{(L.T("Exportar preferências"),(Action)ExportPreferences),(L.T("Importar preferências"),(Action)ImportPreferences)}){var button=new ModernButton{Text=action.Item1};UiTheme.Button(button,action.Item1,"pip");button.Click+=(_,_)=>action.Item2();Item(more,button);}
+        Item(more,updateChecks);Item(more,updates);Item(more,diagnostic);
         tabs.Visible=false;body.Controls.Add(tabs,1,0);
         toggle.Click+=(_,_)=>{bool open=!tabs.Visible;body.ColumnStyles[1].Width=open?316:0;tabs.Visible=open;toggle.Text=open?L.T("Fechar"):L.T("Ajustes");};
         Controls.Remove(old);Controls.Add(root);old.Dispose();ResumeLayout(true);

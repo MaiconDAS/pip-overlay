@@ -2,7 +2,7 @@
 
 [English](../../PRIVACY.md) · [Documentação](../README.md)
 
-Atualizada em 29 de outubro de 2026. Aplica-se ao aplicativo oficial PiP Overlay mantido em [MaiconDAS/pip-overlay](https://github.com/MaiconDAS/pip-overlay). Forks e sites externos podem funcionar de outra forma.
+Atualizada em 5 de novembro de 2026. Aplica-se ao aplicativo oficial PiP Overlay mantido em [MaiconDAS/pip-overlay](https://github.com/MaiconDAS/pip-overlay). Forks e sites externos podem funcionar de outra forma.
 
 ## Processamento local do vídeo
 
@@ -31,3 +31,9 @@ Ao anexar um relatório, imagem ou log a uma issue, você decide compartilhar es
 ## Contato e alterações
 
 Para dúvidas gerais, contate o mantenedor por uma [issue no GitHub](https://github.com/MaiconDAS/pip-overlay/issues), sem dados privados. Para vulnerabilidades, siga [SECURITY.md](SECURITY.md). Pedidos sobre dados mantidos pelo GitHub devem usar os canais de privacidade do GitHub. Esta política acompanha o histórico do código; alterações relevantes devem constar nas notas de versão. Ela descreve o funcionamento atual e não declara certificação ou conformidade jurídica universal.
+
+## Backup de preferências e download do instalador (0.18)
+
+Exportações solicitadas e backups automáticos anteriores à importação ou ao download contêm preferências e perfis, mas omitem o caminho do executável. Nomes de arquivos de perfil contêm um hash derivado desse caminho; não são identificadores anônimos. Backups ficam em `data/backups` e instaladores verificados em `data/updates`. A desinstalação preserva esses arquivos criados pelo usuário. Importar, exportar e baixar não envia preferências.
+
+A janela Atualizações consulta releases estáveis no GitHub e baixa somente o instalador escolhido. O GitHub e sua infraestrutura de distribuição recebem dados normais de conexão. O app verifica o arquivo contra o SHA-256 informado nos metadados da release e não o executa automaticamente. Diagnósticos também incluem modo de saída, estado de conexão, idioma, duração da sessão e médias de publicação/upload/renderização; não são medidas do FPS do jogo. O modo desktop não consulta processos ou módulos de jogos.

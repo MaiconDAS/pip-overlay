@@ -4,15 +4,15 @@
 
 ## Install or move to another computer
 
-Copy `PiP-Overlay-v0.17.0.exe` to the other computer and run it. The desktop shortcut is optional and selected by default. Start menu shortcuts and a Windows Installed apps / Programs and Features entry are created automatically. The runtime and renderers are included; no browser extension, RTSS or separate runtime download is needed.
+Copy `PiP-Overlay-v0.18.0.exe` to the other computer and run it. The desktop shortcut is optional and selected by default. Start menu shortcuts and a Windows Installed apps / Programs and Features entry are created automatically. The runtime and renderers are included; no browser extension, RTSS or separate runtime download is needed.
 
 Existing registered installations are detected automatically. Updating in the same folder preserves preferences. Choosing a different destination imports the registered installation's preferences without overwriting existing destination settings. For an old portable copy, select its existing folder. There is no manual import-path step or whole-disk search.
 
-## Connect video and game
+## Open PiP and play
 
-Open PiP Overlay, then open the video's native PiP window in Edge or Chrome. Keep it open and not minimized. DirectX 9/11 can connect to an already-running process. Independent desktop output supports windowed/borderless without game integration. For exclusive fullscreen in DirectX 12, OpenGL or Vulkan use **Launch configured game** in the tray menu and select the game executable on first use. The app connects automatically when a supported source and renderer are available. An ordinary browser tab alone is not a supported video source.
+Open PiP Overlay and the video's native PiP in Edge or Chrome. Keep the source open and not minimized. The default desktop overlay sits above windows and borderless games, passes clicks through and does not take keyboard focus. You do not need to select a game or restart it. An ordinary browser tab alone is not a supported source.
 
-The game list identifies windows and graphics modules without game-name filters. A process may appear as **not connected** when unprepared or inaccessible. Use **Settings → More → Change game** to configure another executable. Detection does not establish compatibility; Black Desert Online has not been validated. See [compatibility](COMPATIBILITY.md).
+**Settings → More → Connect directly to game** reveals advanced game selection. This mode can load integration into a compatible process; it is not needed for desktop output. D3D9/11 can connect to already-running processes when permitted; other APIs can require prepared launch from the tray menu. A listed process is not proof of compatibility. Desktop output does not cover exclusive fullscreen. See [compatibility](COMPATIBILITY.md).
 
 ## Language
 
@@ -31,3 +31,15 @@ The current build lets the PiP touch each screen edge even when margin snapping 
 **Pause** also stops automatic reconnection; **Retomar** resumes it. Closing the main window leaves the app in the tray. Use **Exit** to exit. The app does not enable Windows startup automatically.
 
 Uninstall from Windows Installed apps, the Start menu or the uninstall shortcut in the installation folder. Close the app and games launched through it first. Preferences and personal files remain; see [privacy](../../PRIVACY.md) to remove local data. See [compatibility](COMPATIBILITY.md) and [signing](SIGNING.md) for limitations.
+
+## Layouts and keyboard
+
+Arrow keys move the PiP by one physical pixel; Shift increases the step to ten. Ctrl+arrows resize while preserving aspect ratio. Ctrl+Z undoes the last gesture. These keys work only when the editor has focus. The overlay remains noninteractive.
+
+Monitor layouts are saved separately within the current profile. Resolution changes scale the size proportionally and preserve the relative position, including screen edges. If the preferred monitor disconnects, the app falls back to the primary display without forgetting the preferred display. Reconnecting restores its layout. Device names identify displays; Windows may assign different names on another PC. Game profiles apply in direct mode; desktop mode uses the current layout without scanning games.
+
+## Preferences and recovery
+
+Under **Settings → More**, export a JSON file and import it on another PC. Import validates the file, merges its game profiles, backs up existing preferences under `data/backups`, preserves the local executable path and pauses PiP. The app closes; reopen it to apply the settings, then choose Resume. Backups can be imported through the same action. Game profile keys depend on the executable path; different paths on another PC require selecting/copying a profile again. Monitor names may also need reselection.
+
+**Updates** lists stable installers with SHA-256 metadata from the official GitHub release. It verifies size and hash before accepting the file, backs up preferences and allows selecting an older stable version. Close the app and run the downloaded installer yourself. Older versions may not understand new preferences; backups remain available. Hash validation is not a publisher signature; public code signing is pending. Closing the download window cancels the operation. No installer runs automatically. Downloads and backups are retained locally until removed by the user.

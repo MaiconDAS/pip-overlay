@@ -2,7 +2,7 @@
 
 [Português](docs/pt-BR/PRIVACY.md) · [Documentation](docs/en/README.md)
 
-Updated: October 29, 2026. Applies to the official PiP Overlay desktop application maintained in [MaiconDAS/pip-overlay](https://github.com/MaiconDAS/pip-overlay). Forks and external websites may behave differently.
+Updated: November 5, 2026. Applies to the official PiP Overlay desktop application maintained in [MaiconDAS/pip-overlay](https://github.com/MaiconDAS/pip-overlay). Forks and external websites may behave differently.
 
 ## Local video processing
 
@@ -31,3 +31,9 @@ If you attach a report, screenshot or log to a GitHub issue, you choose to share
 ## Contact and changes
 
 For general privacy questions, contact the repository maintainer through a [GitHub issue](https://github.com/MaiconDAS/pip-overlay/issues), without including private data. For vulnerabilities, follow [SECURITY.md](SECURITY.md). Requests about data held by GitHub should use GitHub's privacy contact channels. This policy is versioned with the code; material changes should be described in release notes. It documents current behavior and does not claim certification or universal legal compliance.
+
+## Preferences backup and installer download (0.18)
+
+User-requested exports and automatic pre-import/pre-download backups contain preferences and game profiles, but omit the executable path. Profile filenames contain a hash derived from the executable path; they are not anonymous identifiers. Backups remain under `data/backups` and verified installers under `data/updates`. Uninstall preserves these user-created files. Import/export and download do not upload preferences.
+
+The Updates dialog requests stable release metadata from GitHub and downloads only a selected installer. GitHub and its asset delivery infrastructure receive normal connection data. The app verifies the file against the SHA-256 digest in release metadata, but does not execute it automatically. Diagnostics additionally include output mode, connection state, UI language, session duration and average publication/upload/render rates; these are not game FPS measurements. Desktop mode skips game process/module discovery.
