@@ -2,6 +2,16 @@
 
 [Português](../../CHANGELOG.md) · [Documentation](README.md)
 
+## 0.19.0 — candidate, validation stopped at the user's request
+
+- Desktop receives new-frame notifications, retaining a periodic safety check instead of continuous 8 ms polling. Window-order recovery uses coalesced event notifications.
+- GPU-busy presentations are retried and counted as accepted only after success. Transparent output is cleared before drawing; rendering resources are reused during resizing.
+- Capture avoids recomputing resolution/layout every frame and reduces polling without new frames or pending readback. Automatic FPS considers sustained delivery pressure, recovers gradually and keeps resolution independent.
+- Output mode stays visible; guidance for opening PiP and initial selection among multiple sources. The profile manager assigns imported profiles to local executables and monitors.
+- Lock/sleep notifications drive recovery, with bounded retries for transient device errors. Paused and hidden mode stops periodic discovery and its window hooks.
+- Diagnostics include accepted/busy presentations and recent intervals, which are not game FPS or physical scanout measurements.
+- Preliminary measurements had variable load and do not establish a reliable percentage improvement. The user requested no further tests; compilation is not functional validation. Actual sleep, physical monitors and prolonged stability remain unvalidated for this build. No installation was performed on the user's Windows system.
+
 ## 0.18.0 — desktop first, layout recovery and verified updates
 
 - Independent desktop output is now the default, with migration of old preferences. No automatic game attachment or game module discovery in this mode; direct mode remains optional.

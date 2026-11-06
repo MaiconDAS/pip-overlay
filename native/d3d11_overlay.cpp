@@ -21,10 +21,12 @@ struct Renderer {
     ID3D11VertexShader* vs=nullptr;ID3D11PixelShader* ps=nullptr;ID3D11SamplerState* sampler=nullptr;ID3D11BlendState* blend=nullptr;
     ID3D11Texture2D* image=nullptr;ID3D11ShaderResourceView* view=nullptr;ID3D11Buffer* constants=nullptr;
     ID3D11Texture2D* shared[3]={};IDXGIKeyedMutex* mutex[3]={};UINT generation=0,sequence=0,width=0,height=0;bool rgba=false,valid=false;
+    ID3D11RenderTargetView* desktopTarget=nullptr;ID3D11Texture2D* desktopBack=nullptr;
+    void ClearDesktopTarget(){if(context&&(desktopTarget||desktopBack))context->OMSetRenderTargets(0,nullptr,nullptr);Drop(desktopTarget);Drop(desktopBack);presented=0;}
     UINT presented=0;DWORD opened=0,validated=0;std::vector<unsigned char> pixels;
     UINT layoutWidth=0,layoutHeight=0;float layout[4]={};
     void ClearShared(){for(int i=0;i<3;i++){Drop(mutex[i]);Drop(shared[i]);}generation=0;}
-    void Clear(){ClearShared();Drop(view);Drop(image);Drop(constants);Drop(blend);Drop(sampler);Drop(vs);Drop(ps);Drop(state);Drop(context);Drop(device);valid=false;sequence=presented=0;width=height=0;}
+    void Clear(){if(context&&(desktopTarget||desktopBack))context->ClearState();ClearDesktopTarget();ClearShared();Drop(view);Drop(image);Drop(constants);Drop(blend);Drop(sampler);Drop(vs);Drop(ps);Drop(state);Drop(context);Drop(device);valid=false;sequence=presented=0;width=height=0;}
     void CloseMaps(){if(g)UnmapViewOfFile(g);if(gmap)CloseHandle(gmap);if(m)UnmapViewOfFile(m);if(map)CloseHandle(map);g=nullptr;m=nullptr;gmap=map=nullptr;layoutWidth=layoutHeight=0;std::vector<unsigned char>().swap(pixels);}
     ~Renderer(){Clear();CloseMaps();}
     bool Open(){
@@ -96,21 +98,26 @@ struct Renderer {
         // Keep the last image visible when the producer briefly owns the layout lock.
         UINT w=layoutWidth,h=layoutHeight;float rect[4];memcpy(rect,layout,sizeof(rect));
         if(!w||!h||w>PIP_WIDTH||h>PIP_HEIGHT)return false;
-        ID3DDeviceContextState* previous=nullptr;context->SwapDeviceContextState(state,&previous);
+        ID3DDeviceContextState* previous=nullptr;if(!desktop)context->SwapDeviceContextState(state,&previous);
         Upload(w,h);
-        if(desktop&&(!valid||sequence==presented)){context->ClearState();context->SwapDeviceContextState(previous,nullptr);Drop(previous);return false;}
+        if(desktop&&(!valid||sequence==presented))return false;
         ID3D11Texture2D* back=nullptr;ID3D11RenderTargetView* target=nullptr;
-        if(valid&&SUCCEEDED(chain->GetBuffer(0,__uuidof(ID3D11Texture2D),(void**)&back))){
+        if(desktop&&valid){
+            if(!desktopBack){hr=chain->GetBuffer(0,__uuidof(ID3D11Texture2D),(void**)&desktopBack);if(SUCCEEDED(hr))hr=device->CreateRenderTargetView(desktopBack,nullptr,&desktopTarget);if(FAILED(hr)){m->error=hr;ClearDesktopTarget();return false;}}
+            back=desktopBack;back->AddRef();
+        }
+        if(valid&&(back||SUCCEEDED(chain->GetBuffer(0,__uuidof(ID3D11Texture2D),(void**)&back)))){
             D3D11_TEXTURE2D_DESC bd;back->GetDesc(&bd);m->renderWidth=bd.Width;m->renderHeight=bd.Height;BOOL fullscreen=FALSE;chain->GetFullscreenState(&fullscreen,nullptr);m->exclusive=fullscreen;
             if(desktop){rect[0]=rect[1]=0;rect[2]=rect[3]=1;}
-            if(rect[0]>=0&&rect[1]>=0&&rect[2]>0&&rect[3]>0&&rect[0]+rect[2]<=1.001f&&rect[1]+rect[3]<=1.001f&&SUCCEEDED(device->CreateRenderTargetView(back,nullptr,&target))){
+            if(desktop){target=desktopTarget;target->AddRef();const float clear[4]={};context->ClearRenderTargetView(target,clear);}
+            if(rect[0]>=0&&rect[1]>=0&&rect[2]>0&&rect[3]>0&&rect[0]+rect[2]<=1.001f&&rect[1]+rect[3]<=1.001f&&(target||SUCCEEDED(device->CreateRenderTargetView(back,nullptr,&target)))){
                 D3D11_VIEWPORT vp={rect[0]*bd.Width,rect[1]*bd.Height,rect[2]*bd.Width,rect[3]*bd.Height,0,1};float size[4]={vp.Width,vp.Height,0,0};context->UpdateSubresource(constants,0,nullptr,size,0,0);
-                context->OMSetRenderTargets(1,&target,nullptr);context->OMSetBlendState(blend,nullptr,~0u);context->RSSetViewports(1,&vp);context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);context->VSSetShader(vs,nullptr,0);context->PSSetShader(ps,nullptr,0);context->PSSetShaderResources(0,1,&view);context->PSSetSamplers(0,1,&sampler);context->PSSetConstantBuffers(0,1,&constants);context->Draw(3,0);InterlockedIncrement(&m->rendered);Validate(back,vp);
+                context->OMSetRenderTargets(1,&target,nullptr);context->OMSetBlendState(blend,nullptr,~0u);context->RSSetViewports(1,&vp);context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);context->VSSetShader(vs,nullptr,0);context->PSSetShader(ps,nullptr,0);context->PSSetShaderResources(0,1,&view);context->PSSetSamplers(0,1,&sampler);context->PSSetConstantBuffers(0,1,&constants);context->Draw(3,0);if(!desktop)InterlockedIncrement(&m->rendered);Validate(back,vp);
             }
         }
         // Remove backbuffer references before returning to the game, so ResizeBuffers works.
-        bool drawn=target!=nullptr;if(drawn)presented=sequence;
-        context->ClearState();context->SwapDeviceContextState(previous,nullptr);Drop(previous);Drop(target);Drop(back);return drawn;
+        bool drawn=target!=nullptr;if(drawn&&!desktop)presented=sequence;
+        if(!desktop){context->ClearState();context->SwapDeviceContextState(previous,nullptr);Drop(previous);}Drop(target);Drop(back);return drawn;
     }
 };
 static Renderer renderer;static std::mutex gate;
@@ -137,9 +144,22 @@ extern "C" __declspec(dllexport) HRESULT PipDesktopOpen(HWND window){
     }
     Drop(factory);Drop(adapter);Drop(dxgi);Drop(device);return hr;
 }
-extern "C" __declspec(dllexport) void PipDesktopDraw(){if(surface&&renderer.Draw(surface,true))surface->Present(0,DXGI_PRESENT_DO_NOT_WAIT);}
-extern "C" __declspec(dllexport) void PipDesktopResize(){if(surface){renderer.Clear();RECT rect;GetClientRect(desktopWindow,&rect);surface->ResizeBuffers(0,rect.right,rect.bottom,DXGI_FORMAT_UNKNOWN,0);}}
-extern "C" __declspec(dllexport) void PipDesktopClose(){renderer.Clear();renderer.CloseMaps();Drop(visual);Drop(compositionTarget);Drop(composition);Drop(surface);desktopWindow=nullptr;}
+static unsigned long long presentAttempts=0,presentAccepted=0,presentBusy=0;static HRESULT presentError=S_OK;
+extern "C" __declspec(dllexport) int PipDesktopDraw(){
+    if(!surface)return 0;
+    if(renderer.Draw(surface,true)){
+        presentAttempts++;HRESULT hr=surface->Present(0,DXGI_PRESENT_DO_NOT_WAIT);
+        if(hr==DXGI_ERROR_WAS_STILL_DRAWING){presentBusy++;return 2;}
+        if(hr==DXGI_STATUS_OCCLUDED)return 3;
+        if(FAILED(hr)){presentError=hr;if(renderer.m)renderer.m->error=hr;return (int)hr;}
+        renderer.presented=renderer.sequence;presentAccepted++;if(renderer.m)InterlockedIncrement(&renderer.m->rendered);return 1;
+    }
+    if(renderer.g&&renderer.g->active)for(auto& slot:renderer.g->slots)if(slot.sequence>renderer.presented)return 2;
+    return 0;
+}
+extern "C" __declspec(dllexport) void PipDesktopStats(unsigned long long* values){values[0]=presentAttempts;values[1]=presentAccepted;values[2]=presentBusy;values[3]=(unsigned long)presentError;}
+extern "C" __declspec(dllexport) void PipDesktopResize(){if(surface){renderer.ClearDesktopTarget();RECT rect;GetClientRect(desktopWindow,&rect);HRESULT hr=surface->ResizeBuffers(0,rect.right,rect.bottom,DXGI_FORMAT_UNKNOWN,0);if(FAILED(hr)&&renderer.m)renderer.m->error=hr;}}
+extern "C" __declspec(dllexport) void PipDesktopClose(){renderer.Clear();renderer.CloseMaps();Drop(visual);Drop(compositionTarget);Drop(composition);Drop(surface);desktopWindow=nullptr;presentAttempts=presentAccepted=presentBusy=0;presentError=S_OK;}
 #else
 using Present=HRESULT(WINAPI*)(IDXGISwapChain*,UINT,UINT);using Present1=HRESULT(WINAPI*)(IDXGISwapChain1*,UINT,UINT,const DXGI_PRESENT_PARAMETERS*);
 static Present original=nullptr;static Present1 original1=nullptr;static thread_local bool inside=false;

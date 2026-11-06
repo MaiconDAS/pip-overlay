@@ -7,14 +7,14 @@
 
 template<class T> static void Release(T*& p){if(p)p->Release();p=nullptr;}
 struct Producer {
-    HANDLE mapping=nullptr;PipMemory* memory=nullptr;
+    HANDLE mapping=nullptr,frameEvent=nullptr;PipMemory* memory=nullptr;
     HANDLE gpuMapping=nullptr;GpuChannel* gpu=nullptr;ID3D11Texture2D* shared[3]={};ID3D11RenderTargetView* sharedRtv[3]={};IDXGIKeyedMutex* sharedMutex[3]={};UINT sharedIndex=0;bool allowShared=true;DWORD lastGpu=0;
     ID3D11Device* device=nullptr;ID3D11DeviceContext* context=nullptr;
     ID3D11Texture2D *source=nullptr,*target=nullptr,*staging[3]={};
     ID3D11ShaderResourceView* srv=nullptr;ID3D11RenderTargetView* rtv=nullptr;
     ID3D11VertexShader* vs=nullptr;ID3D11PixelShader* ps=nullptr;ID3D11SamplerState* sampler=nullptr;
     UINT sw=0,sh=0,w=0,h=0,index=0,maxW=640,maxH=360;DXGI_FORMAT format=DXGI_FORMAT_UNKNOWN;bool pending[3]={};uint64_t order[3]={},serial=0,delivered=0;
-    ~Producer(){if(context){context->ClearState();context->Flush();}ClearShared();if(gpu){gpu->active=0;UnmapViewOfFile(gpu);gpu=nullptr;}if(gpuMapping)CloseHandle(gpuMapping);if(memory){InterlockedExchange(&memory->active,0);UnmapViewOfFile(memory);}if(mapping)CloseHandle(mapping);ClearTextures();Release(sampler);Release(ps);Release(vs);Release(context);Release(device);}
+    ~Producer(){if(frameEvent)CloseHandle(frameEvent);if(context){context->ClearState();context->Flush();}ClearShared();if(gpu){gpu->active=0;UnmapViewOfFile(gpu);gpu=nullptr;}if(gpuMapping)CloseHandle(gpuMapping);if(memory){InterlockedExchange(&memory->active,0);UnmapViewOfFile(memory);}if(mapping)CloseHandle(mapping);ClearTextures();Release(sampler);Release(ps);Release(vs);Release(context);Release(device);}
     void ClearShared(){if(gpu){gpu->active=0;for(auto& slot:gpu->slots)slot.handle=0;}for(int i=0;i<3;i++){Release(sharedMutex[i]);Release(sharedRtv[i]);Release(shared[i]);}sharedIndex=0;}
     void ClearTextures(){ClearShared();Release(srv);Release(rtv);Release(source);Release(target);for(auto& p:staging)Release(p);for(auto& p:pending)p=false;index=0;}
     HRESULT Setup(ID3D11Texture2D* input) {
@@ -66,6 +66,7 @@ struct Producer {
                 if(mapped.RowPitch==w*4)memcpy(memory->pixels,mapped.pData,(size_t)w*h*4);
                 else for(UINT row=0;row<h;row++)memcpy(memory->pixels+row*w*4,(char*)mapped.pData+row*mapped.RowPitch,w*4);
                 memory->width=w;memory->height=h;memory->sequence++;memory->heartbeat=GetTickCount();memory->active=1;Unlock(memory);
+                if(frameEvent)SetEvent(frameEvent);
                 delivered=order[read];
                 for(int n=0;n<3;n++)if(order[n]<=delivered)pending[n]=false;
             }
@@ -104,7 +105,7 @@ struct Producer {
         for(auto& p:pending)p=false;for(auto& p:staging)Release(p);
         memory->width=w;memory->height=h;memory->sequence++;memory->heartbeat=GetTickCount();memory->active=1;
         gpu->slots[slot].sequence=memory->sequence;InterlockedExchange(&gpu->active,1);Unlock(memory);
-        hr=sharedMutex[slot]->ReleaseSync(1);lastGpu=GetTickCount();return hr;
+        hr=sharedMutex[slot]->ReleaseSync(1);if(SUCCEEDED(hr)&&frameEvent)SetEvent(frameEvent);lastGpu=GetTickCount();return hr;
     }
     HRESULT Submit(ID3D11Texture2D* input) {
         HRESULT hr=Setup(input);if(FAILED(hr))return hr;
@@ -126,7 +127,9 @@ struct Producer {
     }
 };
 extern "C" __declspec(dllexport) Producer* __cdecl PipOpen(DWORD pid) {
-    auto p=new Producer();wchar_t name[80];MappingName(name,pid);
+    auto p=new Producer();wchar_t name[80];
+    if(pid==GetCurrentProcessId()){wsprintfW(name,L"Local\\PipDesktopFrame-%lu",pid);p->frameEvent=CreateEventW(nullptr,FALSE,FALSE,name);}
+    MappingName(name,pid);
     p->mapping=CreateFileMappingW(INVALID_HANDLE_VALUE,nullptr,PAGE_READWRITE,0,sizeof(PipMemory),name);
     bool fresh=GetLastError()!=ERROR_ALREADY_EXISTS;
     if(p->mapping)p->memory=(PipMemory*)MapViewOfFile(p->mapping,FILE_MAP_ALL_ACCESS,0,0,sizeof(PipMemory));
@@ -159,4 +162,5 @@ extern "C" __declspec(dllexport) void __cdecl PipClose(Producer* p) {delete p;}
 extern "C" __declspec(dllexport) void __cdecl PipValidation(Producer* p,uint32_t* stats) {p->memory->validate=1;stats[0]=p->memory->verified;stats[1]=p->memory->mismatched;}
 
 extern "C" __declspec(dllexport) void __cdecl PipAllowShared(Producer* p,int enabled){p->allowShared=enabled!=0;}
+extern "C" __declspec(dllexport) int __cdecl PipPending(Producer* p){for(bool pending:p->pending)if(pending)return 1;return 0;}
 extern "C" __declspec(dllexport) int __cdecl PipSharedState(Producer* p){return p->gpu?(p->gpu->active?1:p->gpu->rejected?-1:0):0;}

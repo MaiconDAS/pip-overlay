@@ -12,7 +12,7 @@ internal sealed partial class MainForm
         canvas.RowStyles.Add(new(SizeType.Absolute,42));canvas.RowStyles.Add(new(SizeType.Percent,100));canvas.RowStyles.Add(new(SizeType.Absolute,44));body.Controls.Add(canvas,0,0);
         var tools=new TableLayoutPanel{Dock=DockStyle.Fill,ColumnCount=4,RowCount=1,Margin=Padding.Empty};
         tools.ColumnStyles.Add(new(SizeType.Percent,100));foreach(int width in new[]{112,110,104})tools.ColumnStyles.Add(new(SizeType.Absolute,width));
-        profileLabel.Dock=DockStyle.Fill;profileLabel.Margin=Padding.Empty;tools.Controls.Add(profileLabel,0,0);
+        profileLabel.Dock=DockStyle.Fill;profileLabel.Margin=Padding.Empty;var identity=new TableLayoutPanel{Dock=DockStyle.Fill,ColumnCount=1,RowCount=2,Margin=Padding.Empty};identity.RowStyles.Add(new(SizeType.Percent,50));identity.RowStyles.Add(new(SizeType.Percent,50));identity.Controls.Add(modeLabel);identity.Controls.Add(profileLabel);tools.Controls.Add(identity,0,0);
         Compact(centerLayout,L.T("Centralizar"));Compact(undoLayout,L.T("Desfazer"));Compact(pickVideo,L.T("Vídeos"));
         tools.Controls.Add(centerLayout,1,0);tools.Controls.Add(undoLayout,2,0);tools.Controls.Add(pickVideo,3,0);
         canvas.Controls.Add(tools,0,0);canvas.Controls.Add(editor,0,1);
@@ -53,6 +53,7 @@ internal sealed partial class MainForm
         targets.SelectedIndexChanged+=(_,_)=>{if(refreshing)return;bool previous=syncing;syncing=true;try{direct.Checked=!settings.PreferDesktop;ConnectionControls();}finally{syncing=previous;}};
         ConnectionControls();direct.CheckedChanged+=(_,_)=>{if(syncing)return;settings.PreferDesktop=!direct.Checked;settings.OutputModeVersion=1;Stop("");refreshing=true;try{targets.Items.Clear();targets.Items.AddRange(AvailableTargets());if(targets.Items.Count>0)targets.SelectedIndex=0;}finally{refreshing=false;}automatic.Reset();ConnectionControls();Save();if(!designPreviewMode)Discover();};
         Item(more,shortcuts);
+        var manageProfiles=new ModernButton();UiTheme.Button(manageProfiles,L.T("Perfis e monitores"),"pip");manageProfiles.Click+=(_,_)=>{Save();using var dialog=new ProfileManager(Path.Combine(AppContext.BaseDirectory,"data","profiles"),settings,p=>{Stop("");LoadProfile(p);Save();automatic.Reset();Discover();});dialog.ShowDialog(this);};Item(more,manageProfiles);
         foreach(var action in new[]{(L.T("Exportar preferências"),(Action)ExportPreferences),(L.T("Importar preferências"),(Action)ImportPreferences)}){var button=new ModernButton{Text=action.Item1};UiTheme.Button(button,action.Item1,"pip");button.Click+=(_,_)=>action.Item2();Item(more,button);}
         Item(more,updateChecks);Item(more,updates);Item(more,diagnostic);
         tabs.Visible=false;body.Controls.Add(tabs,1,0);

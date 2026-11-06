@@ -8,6 +8,8 @@ Vídeo do Edge ou Chrome sobre seu jogo, com posição e tamanho ajustáveis. A 
 
 Windows x64 · Código aberto / MIT · Sem RTSS ou extensão
 
+> **Candidata 0.19.0:** o código contém melhorias de agendamento desktop, recuperação e perfis. Os testes adicionais foram interrompidos a pedido do usuário; o download estável continua na 0.18.0. [Notas da candidata](CHANGELOG.md).
+
 ## Novidades da versão atual
 
 A **0.18.0** torna a saída independente na área de trabalho o padrão:

@@ -34,7 +34,7 @@ internal static class PreferencesArchive
         void Write(string target,Action action){paths.TryAdd(target,File.Exists(target)?File.ReadAllBytes(target):null);action();}
         try{
             var store=new ProfileStore(Path.Combine(root,"profiles"));
-            foreach(var pair in bundle.Profiles){string target=Path.Combine(root,"profiles",pair.Key+".json");Write(target,()=>store.Save(pair.Key,pair.Value.Apply(new Settings())));}
+            foreach(var pair in bundle.Profiles){string target=Path.Combine(root,"profiles",pair.Key+".json");Write(target,()=>store.Save(pair.Key,pair.Value.Apply(new Settings()),pair.Value.Name));}
             string settings=Path.Combine(root,"settings.json");Write(settings,()=>(bundle.Settings with{GameExecutable=original.GameExecutable,AutomaticEnabled=false}).Save(settings));
             return backup;
         }catch{foreach(var pair in paths){if(pair.Value==null)File.Delete(pair.Key);else File.WriteAllBytes(pair.Key,pair.Value);}throw;}

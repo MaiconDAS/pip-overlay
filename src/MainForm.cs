@@ -8,17 +8,19 @@ internal sealed partial class MainForm : Form
     readonly ModernComboBox frameRate=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=90};
     readonly ModernComboBox targets=new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=260};
     readonly LayoutEditor editor=new(){Dock=DockStyle.Fill};
+    readonly Label modeLabel=new(){Dock=DockStyle.Fill,ForeColor=UiTheme.Accent,TextAlign=ContentAlignment.MiddleLeft};
     readonly Label status=new(){AutoSize=true,ForeColor=Color.Silver},dimensions=new(){AutoSize=true,ForeColor=Color.Silver};
     readonly ModernButton start=new(),stop=new(),pickVideo=new(),undoLayout=new(),centerLayout=new();
     readonly Label profileLabel=new(){Text=L.T("Perfil: Geral"),AutoEllipsis=true,TextAlign=ContentAlignment.MiddleLeft,Width=420,Height=42,ForeColor=UiTheme.Muted};
     readonly ModernToggle snapBox=new(){Text=L.T("Encaixar nas bordas"),AutoSize=true};
     readonly ModernSlider margin=new(){Minimum=0,Maximum=96,TickFrequency=24,Width=150,Height=45};
     readonly Label marginLabel=new(){Width=110,Height=40};
-    bool pickingVideo;long lastVideoRefresh;
+    bool pickingVideo,videoChosen;string offeredSources="";long lastVideoRefresh;
     readonly System.Windows.Forms.Timer pulse=new(){Interval=200};
     readonly System.Windows.Forms.Timer save=new(){Interval=600};
     readonly System.Windows.Forms.Timer discovery=new(){Interval=1500};
     readonly AutoConnect automatic=new();
+    readonly CaptureAvailability availability=new();
     readonly NotifyIcon tray=new();
     bool refreshing,exiting,connectionFailed,syncing,preferencesImported;
     readonly ModernToggle adaptiveBox=new(){Text=L.T("FPS automático"),AutoSize=true};
@@ -83,13 +85,13 @@ internal sealed partial class MainForm : Form
         snapBox.CheckedChanged+=(_,_)=>{if(syncing)return;settings.SnapEnabled=snapBox.Checked;Apply();};
         margin.ValueChanged+=(_,_)=>{marginLabel.Text=L.F("Margem: {0} px",margin.Value);if(syncing)return;settings.SnapMargin=margin.Value;Apply();};
         resetProfile.Click+=(_,_)=>{LoadProfile(GameProfile.From(new Settings{Monitor=SelectedScreen.DeviceName}));Save();status.Text=L.T("Perfil restaurado para o padrão.");};
-        copyProfile.Click+=(_,_)=>{using var picker=new OpenFileDialog{Filter=L.T("Jogo Windows")+" (*.exe)|*.exe",Title=L.T("Copiar este perfil para outro jogo")};if(picker.ShowDialog(this)!=DialogResult.OK)return;try{string key=ProfileStore.Key(picker.FileName);if(profiles.Load(key)!=null&&MessageBox.Show(this,L.T("Substituir o perfil já salvo para esse jogo?"),L.T("Copiar perfil"),MessageBoxButtons.YesNo)!=DialogResult.Yes)return;profiles.Save(key,settings);status.Text=L.T("Perfil copiado. Será aplicado quando esse jogo conectar.");}catch(Exception ex)when(ex is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar o perfil.");}};
+        copyProfile.Click+=(_,_)=>{using var picker=new OpenFileDialog{Filter=L.T("Jogo Windows")+" (*.exe)|*.exe",Title=L.T("Copiar este perfil para outro jogo")};if(picker.ShowDialog(this)!=DialogResult.OK)return;try{string key=ProfileStore.Key(picker.FileName);if(profiles.Load(key)!=null&&MessageBox.Show(this,L.T("Substituir o perfil já salvo para esse jogo?"),L.T("Copiar perfil"),MessageBoxButtons.YesNo)!=DialogResult.Yes)return;profiles.Save(key,settings,Path.GetFileNameWithoutExtension(picker.FileName));status.Text=L.T("Perfil copiado. Será aplicado quando esse jogo conectar.");}catch(Exception ex)when(ex is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar o perfil.");}};
         layout.Controls.Add(extras,0,3);extras.Visible=false;layout.RowStyles[3].Height=0;
         adaptiveBox.CheckedChanged+=(_,_)=>{if(syncing)return;settings=settings with{AdaptiveFps=adaptiveBox.Checked};Apply();};
         minimumFps.SelectedIndexChanged+=(_,_)=>{if(syncing)return;settings=settings with{MinimumFps=minimumFps.SelectedIndex==1?30:15};Apply();};
         updateChecks.CheckedChanged+=(_,_)=>{settings.CheckForUpdates=updateChecks.Checked;Save();};
         updates.Click+=(_,_)=>{Save();using var dialog=new UpdateDialog(Path.GetDirectoryName(settingsPath)!);dialog.ShowDialog(this);};
-        diagnostic.Click+=(_,_)=>{using var picker=new SaveFileDialog{Filter=L.T("Diagnóstico")+" JSON (*.json)|*.json",FileName="PiP-diagnostics.json"};if(picker.ShowDialog(this)==DialogResult.OK)try{File.WriteAllText(picker.FileName,SupportReport.Create(settings,session,session==null?0:elapsed.Elapsed.TotalSeconds,!automatic.Enabled));status.Text=L.T("Diagnóstico salvo, sem imagens, URLs ou caminhos pessoais.");}catch(Exception ex)when(ex is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar o diagnóstico.");}};
+        diagnostic.Click+=(_,_)=>{using var picker=new SaveFileDialog{Filter=L.T("Diagnóstico")+" JSON (*.json)|*.json",FileName="PiP-diagnostics.json"};if(picker.ShowDialog(this)==DialogResult.OK)try{File.WriteAllText(picker.FileName,SupportReport.Create(settings,session,session==null?0:elapsed.Elapsed.TotalSeconds,!automatic.Enabled,desktopOverlay));status.Text=L.T("Diagnóstico salvo, sem imagens, URLs ou caminhos pessoais.");}catch(Exception ex)when(ex is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar o diagnóstico.");}};
         toolbar.Visible=options.Visible=false;layout.RowStyles[1].Height=0;layout.RowStyles[2].Height=0;
         var advanced=new ModernButton{AccessibleName=L.T("Mostrar ou ocultar ajustes avançados")};UiTheme.Button(advanced,L.T("Ajustes"),"pip");advanced.Margin=new Padding(0,8,0,0);header.ColumnCount=3;header.ColumnStyles.Add(new(SizeType.Absolute,160));header.Controls.Add(advanced,2,0);
 
@@ -97,7 +99,7 @@ internal sealed partial class MainForm : Form
         UpdateCanvas();if(!designPreview){RefreshSources();RefreshTargets();}
         editor.LayoutChanged+=box=>{settings=settings with {X=box.X,Y=box.Y,Width=box.Width,Height=box.Height};Apply();};
         monitors.SelectedIndexChanged+=(_,_)=>{if(syncing)return;RememberMonitorLayout();settings.PreferredMonitor=SelectedScreen.DeviceName;RestoreMonitorLayout();editor.ClearHistory();Stop("");automatic.Reset();UpdateCanvas();if(!designPreviewMode)Discover();};
-        sources.SelectedIndexChanged+=(_,_)=>{if(refreshing)return;editor.ClearHistory();Stop("");automatic.Reset();PreviewSelection();Discover();};
+        sources.SelectedIndexChanged+=(_,_)=>{if(refreshing)return;videoChosen=true;editor.ClearHistory();Stop("");automatic.Reset();PreviewSelection();Discover();};
         quality.SelectedIndexChanged+=(_,_)=>{if(syncing)return;settings=settings with {Resolution=quality.SelectedIndex switch{1=>"720p",2=>"480p",3=>"auto",_=>"1080p"}};Apply();};
         frameRate.SelectedIndexChanged+=(_,_)=>{if(syncing)return;settings=settings with {FramesPerSecond=frameRate.SelectedIndex==2?15:frameRate.SelectedIndex==1?30:60};Apply();};
         start.Click+=(_,_)=>ResumeAutomatic();stop.Click+=(_,_)=>PauseAutomatic();
@@ -107,20 +109,20 @@ internal sealed partial class MainForm : Form
         PreviewSelection();UpdateActions();status.Text=L.T("Abra o PiP no Edge ou Chrome. A overlay inicia sozinha.");
         discovery.Tick+=(_,_)=>Discover();if(!designPreview)discovery.Start();
         tray.Icon=Icon;tray.Text=L.T("PiP Overlay · automático");tray.Visible=!designPreview;
-        VisibleChanged+=(_,_)=>{if(!Visible)editor.DetachSource();else PreviewSelection();};
+        VisibleChanged+=(_,_)=>{ConfigureDiscovery();if(!Visible)editor.DetachSource();else PreviewSelection();};
         var menu=new ContextMenuStrip();menu.Items.Add(L.T("Ajustar posição e tamanho"),null,(_,_)=>ShowEditor());menu.Items.Add(L.T("Retomar"),null,(_,_)=>ResumeAutomatic());menu.Items.Add(L.T("Pausar"),null,(_,_)=>PauseAutomatic());menu.Items.Add(L.T("Sair"),null,(_,_)=>{exiting=true;Close();});tray.ContextMenuStrip=menu;tray.DoubleClick+=(_,_)=>ShowEditor();
         var launchGame=new ToolStripMenuItem(L.T("Iniciar jogo configurado"));menu.Items.Insert(0,launchGame);
         launchGame.Click+=async (_,_)=>{try{if(!File.Exists(settings.GameExecutable)){ShowEditor();using var picker=new OpenFileDialog{Filter=L.T("Jogo Windows")+" (*.exe)|*.exe",Title=L.T("Escolha o executável do seu jogo")};if(picker.ShowDialog(this)!=DialogResult.OK)return;settings.GameExecutable=picker.FileName;Save();}launchGame.Enabled=false;status.Text=L.T("Preparando seu jogo…");await GameLauncher.Launch(settings.GameExecutable);automatic.Reset();Discover();}catch(Exception ex){ShowEditor();status.Text=ex.Message;}finally{launchGame.Enabled=true;}};
         var chooseGame=new ModernButton();UiTheme.Button(chooseGame,L.T("Trocar jogo"),"pip");chooseGame.Width=150;chooseGame.Margin=new Padding(12,25,0,0);options.Controls.Add(chooseGame);chooseGame.Click+=(_,_)=>{using var picker=new OpenFileDialog{Filter=L.T("Jogo Windows")+" (*.exe)|*.exe"};if(picker.ShowDialog(this)==DialogResult.OK){settings.GameExecutable=picker.FileName;Save();GameDiscovery.Find(settings.GameExecutable,true);automatic.Reset();Discover();status.Text=L.T("Jogo selecionado. A opção de iniciar fica no ícone perto do relógio.");}};
         var shortcuts=new ModernButton{AccessibleName=L.T("Configurar atalhos de teclado")};UiTheme.Button(shortcuts,L.T("Atalhos"),"keyboard");shortcuts.Margin=new Padding(12,25,0,0);toolbar.Controls.Add(shortcuts);shortcuts.Click+=(_,_)=>ConfigureShortcuts();
         ConfigureWorkspace(layout,header,footer,advanced,refresh,chooseGame,shortcuts,resetProfile,copyProfile);
-        if(!designPreview)Microsoft.Win32.SystemEvents.DisplaySettingsChanged+=DisplayChanged;
-        Shown+=async (_,_)=>{if(designPreview)return;hotkeys=new Hotkeys(Handle);windowEvents=new WindowEvents(()=>{if(!settings.PreferDesktop)GameDiscovery.Invalidate();Discover();});Discover();if(!hotkeys.Apply(new(settings.StartShortcut),new(settings.StopShortcut),out var error))status.Text=error;if(settings.CheckForUpdates)await CheckUpdates(false);};
+        if(!designPreview){Microsoft.Win32.SystemEvents.DisplaySettingsChanged+=DisplayChanged;Microsoft.Win32.SystemEvents.PowerModeChanged+=PowerChanged;Microsoft.Win32.SystemEvents.SessionSwitch+=SessionChanged;}
+        Shown+=async (_,_)=>{if(designPreview)return;hotkeys=new Hotkeys(Handle);ConfigureDiscovery();Discover();if(!hotkeys.Apply(new(settings.StartShortcut),new(settings.StopShortcut),out var error))status.Text=error;if(settings.CheckForUpdates)await CheckUpdates(false);};
         if(designPreview){save.Stop();exiting=true;ShowInTaskbar=false;StartPosition=FormStartPosition.Manual;Location=new Point(-20000,-20000);}
     }
     void SelectProfile(string key,string name){
         if(profileKey==key)return;
-        if(profileKey!=null)try{profiles.Save(profileKey,settings);}catch(Exception ex)when(ex is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar o perfil anterior.");}
+        if(profileKey!=null)try{profiles.Save(profileKey,settings,profileName);}catch(Exception ex)when(ex is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar o perfil anterior.");}
         profileKey=key;profileName=name;profileLabel.Text=L.F("Perfil: {0}",name);editor.ClearHistory();var profile=profiles.Load(key);if(profile!=null)LoadProfile(profile);
     }
     void LoadProfile(GameProfile profile){
@@ -135,10 +137,10 @@ internal sealed partial class MainForm : Form
         lastVideoRefresh=Environment.TickCount64;var found=AvailableVideos();var old=sources.SelectedItem as WindowSource;
         refreshing=true;try{sources.Items.Clear();sources.Items.AddRange(found);sources.SelectedItem=found.FirstOrDefault(x=>x.Handle==old?.Handle&&x.ProcessId==old?.ProcessId)??found.FirstOrDefault();pickVideo.Visible=true;}finally{refreshing=false;}
     }
-    void PickVideo(){
+    void PickVideo(bool requireChoice=false){
         pickingVideo=true;
-        try{RefreshVideoChoices();var found=sources.Items.Cast<WindowSource>().ToArray();if(found.Length==0){status.Text=ConnectionMessages.WaitingVideo;return;}
-            using var picker=new VideoPicker(found);if(picker.ShowDialog(this)==DialogResult.OK&&picker.Selected is WindowSource selected)sources.SelectedItem=selected;
+        try{RefreshVideoChoices();var found=sources.Items.Cast<WindowSource>().ToArray();if(found.Length==0){status.Text=ConnectionMessages.WaitingVideo;MessageBox.Show(this,L.T("Abra o vídeo no Edge ou Chrome e use a opção Picture-in-Picture do navegador. Mantenha essa janela aberta e sem minimizar; a conexão será automática."),L.T("Vídeos"),MessageBoxButtons.OK,MessageBoxIcon.Information);return;}
+            using var picker=new VideoPicker(found);if(picker.ShowDialog(this)==DialogResult.OK&&picker.Selected is WindowSource selected){videoChosen=true;sources.SelectedItem=selected;}else if(requireChoice)PauseAutomatic();
         }finally{pickingVideo=false;Discover();}
     }
     async Task CheckUpdates(bool manual){
@@ -156,10 +158,10 @@ internal sealed partial class MainForm : Form
     void ConfigureShortcuts(){if(hotkeys==null)return;configuringShortcuts=true;try{using var dialog=new ShortcutDialog(new(settings.StartShortcut),new(settings.StopShortcut),(a,b)=>{if(!hotkeys.Apply(a,b,out var error))return error;settings=settings with{StartShortcut=a.Value,StopShortcut=b.Value};Save();return null;});shortcutDialog=dialog;dialog.ShowDialog(this);}finally{shortcutDialog=null;configuringShortcuts=false;}}
     protected override void WndProc(ref Message m){if(m.Msg==0x312&&hotkeys!=null){if(configuringShortcuts)shortcutDialog?.ReceiveRegisteredShortcut(hotkeys.ShortcutFor((int)m.WParam));else{int action=hotkeys.ActionFor((int)m.WParam);if(action==0)ResumeAutomatic();else if(action==1)PauseAutomatic();}return;}base.WndProc(ref m);}
     void ShowEditor(){Show();WindowState=FormWindowState.Normal;Activate();}
-    void UpdateActions(){start.Visible=!automatic.Enabled||connectionFailed;start.Text=connectionFailed?L.T("Tentar novamente"):L.T("Retomar");start.Enabled=true;stop.Visible=automatic.Enabled;stop.Enabled=true;ResizeStatus();}
+    void UpdateActions(){modeLabel.Text=L.T(desktopOverlay!=null||settings.PreferDesktop?"Saída: Desktop":"Saída: Conexão direta");start.Visible=!automatic.Enabled||connectionFailed;start.Text=connectionFailed?L.T("Tentar novamente"):L.T("Retomar");start.Enabled=true;stop.Visible=automatic.Enabled;stop.Enabled=true;ResizeStatus();}
     void ResizeStatus(){if(status.Parent is Control parent)status.Width=Math.Max(120,parent.ClientSize.Width-parent.Padding.Horizontal-(start.Visible?start.Width+start.Margin.Horizontal:0)-(stop.Visible?stop.Width+stop.Margin.Horizontal:0)-status.Margin.Horizontal);}
-    void PauseAutomatic(){automatic.Pause();connectionFailed=false;settings.AutomaticEnabled=false;Stop(L.T("Pausado · clique em Retomar quando quiser."));PreviewSelection();Save();}
-    void ResumeAutomatic(){automatic.Resume();failedTargets.Clear();connectionFailed=false;settings.AutomaticEnabled=true;Save();Discover();}
+    void PauseAutomatic(){automatic.Pause();connectionFailed=false;settings.AutomaticEnabled=false;Stop(L.T("Pausado · clique em Retomar quando quiser."));PreviewSelection();Save();ConfigureDiscovery();}
+    void ResumeAutomatic(){automatic.Resume();failedTargets.Clear();connectionFailed=false;settings.AutomaticEnabled=true;Save();ConfigureDiscovery();Discover();}
     void Fail(string message){
         var target=targets.SelectedItem as RenderTarget;connectionFailed=true;Stop(message);
         if(automatic.Enabled&&!settings.PreferDesktop&&target is {Backend:not "desktop"}&&failedTargets.Add(target.Pid)){
@@ -168,6 +170,7 @@ internal sealed partial class MainForm : Form
         }
     }
     void Discover(){
+        if(!availability.CanRun)return;
         discovery.Interval=!Visible?15000:5000;
         if(!automatic.Enabled&&!Visible)return;
         if(configuringShortcuts||refreshing||pickingVideo)return;
@@ -181,6 +184,10 @@ internal sealed partial class MainForm : Form
             if(!games.SequenceEqual(targets.Items.Cast<RenderTarget>())){var old=targets.SelectedItem as RenderTarget;targets.Items.Clear();targets.Items.AddRange(games);targets.SelectedItem=games.FirstOrDefault(x=>x.Pid==old?.Pid)??games.FirstOrDefault();}
             var source=sources.SelectedItem as WindowSource;var target=targets.SelectedItem as RenderTarget;
             UpdateActions();tray.Text=automatic.Enabled?L.T("PiP Overlay · automático"):L.T("PiP Overlay · pausado");
+            string signature=string.Join(",",found.Select(x=>x.Handle.ToString()).Order());
+            if(Visible&&automatic.Enabled&&!videoChosen&&found.Length>1&&signature!=offeredSources&&!designPreviewMode){
+                offeredSources=signature;pickingVideo=true;BeginInvoke(()=>{pickingVideo=false;if(!IsDisposed)PickVideo(true);});return;
+            }
             if(target?.UnavailableReason is string reason&&automatic.Enabled)status.Text=reason;
             else if(automatic.TakeAttempt(source==null?null:$"{source.Handle}:{source.ProcessId}",target?.Pid,false))Start();
             else if(!automatic.Enabled)status.Text=L.T("Pausado · clique em Retomar quando quiser.");
@@ -194,7 +201,7 @@ internal sealed partial class MainForm : Form
     void Apply(){editor.SnapEnabled=settings.SnapEnabled;editor.SnapMargin=settings.SnapMargin;try{lease?.EnsureResolution(settings.SourceResolution);}catch(System.ComponentModel.Win32Exception ex){Fail(ex.Message);}editor.Video=new(settings.X,settings.Y,settings.Width,settings.Height);editor.Invalidate();session?.Apply(settings);desktopOverlay?.Apply(settings,SelectedScreen.Bounds);
         dimensions.Text=L.F("Vídeo · {0:F0}% da largura da tela",100.0*settings.Width/editor.MonitorSize.Width);
         save.Stop();save.Start();}
-    void Save(){if(designPreviewMode||syncing||preferencesImported)return;try{RememberMonitorLayout();settings.Save(settingsPath);if(profileKey!=null)profiles.Save(profileKey,settings);}catch(Exception e)when(e is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar: ")+e.Message;}}
+    void Save(){if(designPreviewMode||syncing||preferencesImported)return;try{RememberMonitorLayout();settings.Save(settingsPath);if(profileKey!=null)profiles.Save(profileKey,settings,profileName);}catch(Exception e)when(e is IOException or UnauthorizedAccessException){status.Text=L.T("Não foi possível salvar: ")+e.Message;}}
     void RefreshSources(){Stop("");sources.Items.Clear();foreach(var source in WindowSource.Find().Where(x=>x.LikelyPip))sources.Items.Add(source);if(sources.Items.Count>0)sources.SelectedIndex=0;else status.Text=L.T("Abra o PiP do navegador. Vídeo e jogo são detectados automaticamente.");}
     void PreviewSelection(){if(sources.SelectedItem is WindowSource source&&source.Exists){Native.GetWindowRect(source.Handle,out var rect);if(rect.Right>rect.Left&&rect.Bottom>rect.Top){editor.Aspect=(double)(rect.Right-rect.Left)/(rect.Bottom-rect.Top);UpdateCanvas();}editor.AttachSource(source.Handle);}}
     RenderTarget[] AvailableTargets()=>(settings.PreferDesktop?Enumerable.Empty<RenderTarget>():GameLauncher.Targets().Concat(GameDiscovery.Find(settings.GameExecutable)))
@@ -215,17 +222,17 @@ internal sealed partial class MainForm : Form
         lease=new SourceLease(source,settings.SourceResolution);
         if(target.Backend=="desktop"){desktopOverlay=new DesktopOverlay(settings,SelectedScreen.Bounds);desktopOverlay.ShowOverlay();}
         session=new GpuVideoSession(source,settings,editor.MonitorSize,target);editor.Aspect=(double)session.SourceSize.Width/session.SourceSize.Height;UpdateCanvas();editor.AttachSource(source.Handle);
-        active=source;activeTarget=target.Pid;start.Enabled=false;stop.Enabled=true;elapsed.Restart();lastFrames=0;lastTick=Environment.TickCount64;pulse.Start();status.Text=desktopOverlay!=null?L.T("Conectando à área de trabalho…"):ConnectionMessages.Connecting;
+        active=source;activeTarget=target.Pid;UpdateActions();start.Enabled=false;stop.Enabled=true;elapsed.Restart();lastFrames=0;lastTick=Environment.TickCount64;pulse.Start();status.Text=desktopOverlay!=null?L.T("Conectando à área de trabalho…"):ConnectionMessages.Connecting;
     }catch(Exception e){Fail(e.Message);}}
     void Stop(string message){pulse.Stop();session?.Dispose();session=null;desktopOverlay?.Dispose();desktopOverlay=null;editor.DetachSource();lease?.Dispose();lease=null;active=null;activeTarget=null;UpdateActions();status.Text=message;}
     void Poll(){if(session==null||active==null)return;
         if(!active.Exists){Stop(ConnectionMessages.Interrupted);automatic.Reset();return;}
-        if(session.Error is string error){Fail(error);return;}
+        if((session.Error??desktopOverlay?.Error) is string error){int code=session.ErrorCode!=0?session.ErrorCode:desktopOverlay?.ErrorCode??0;Fail(error);if(CaptureAvailability.IsTransient(code))automatic.RetryTransient();return;}
         if(session.Published==0&&elapsed.Elapsed.TotalSeconds>8){Fail(ConnectionMessages.Interrupted);automatic.RetryTransient();return;}
         if(!session.Ready&&elapsed.Elapsed.TotalSeconds>20){Fail(ConnectionMessages.Unavailable);return;}
         if(Visible&&WindowState!=FormWindowState.Minimized)editor.RefreshThumbnail();lease?.KeepBehind();
         long now=Environment.TickCount64;if(now-lastTick>=1000){long count=session.Published;double fps=(count-lastFrames)*1000.0/(now-lastTick);lastFrames=count;lastTick=now;status.Text=session.Rendered>0?L.F(desktopOverlay!=null?"Desktop ativo · {0}×{1} · {2:F0} fps":"Renderizador conectado · {0}×{1} · {2:F0} fps",session.TransferSize.Width,session.TransferSize.Height,fps)+(settings.AdaptiveFps?L.F(" · automático até {0} fps",session.EffectiveFps):""):desktopOverlay!=null?L.T("Aguardando o primeiro quadro…"):L.T("Aguardando o jogo ficar visível…");}
     }
-    protected override void Dispose(bool disposing){if(disposing){Microsoft.Win32.SystemEvents.DisplaySettingsChanged-=DisplayChanged;windowEvents?.Dispose();windowEvents=null;tray.Visible=false;tray.ContextMenuStrip?.Dispose();tray.Dispose();discovery.Dispose();pulse.Dispose();save.Dispose();session?.Dispose();session=null;desktopOverlay?.Dispose();desktopOverlay=null;lease?.Dispose();lease=null;}base.Dispose(disposing);}
+    protected override void Dispose(bool disposing){if(disposing){Microsoft.Win32.SystemEvents.DisplaySettingsChanged-=DisplayChanged;Microsoft.Win32.SystemEvents.PowerModeChanged-=PowerChanged;Microsoft.Win32.SystemEvents.SessionSwitch-=SessionChanged;windowEvents?.Dispose();windowEvents=null;tray.Visible=false;tray.ContextMenuStrip?.Dispose();tray.Dispose();discovery.Dispose();pulse.Dispose();save.Dispose();session?.Dispose();session=null;desktopOverlay?.Dispose();desktopOverlay=null;lease?.Dispose();lease=null;}base.Dispose(disposing);}
     sealed record MonitorItem(Screen Screen){public override string ToString()=>$"{Screen.DeviceName.Replace("\\\\.\\","")} · {Screen.Bounds.Width}×{Screen.Bounds.Height}";}
 }

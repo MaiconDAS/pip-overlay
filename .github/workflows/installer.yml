@@ -5,7 +5,7 @@ on:
       tag:
         description: Draft release containing the installer / Release em rascunho
         required: true
-        default: v0.18.0
+        default: v0.19.0
 permissions:
   contents: write # Required to download assets from a draft release.
 jobs:

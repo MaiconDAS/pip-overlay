@@ -2,6 +2,16 @@
 
 # Histórico
 
+## 0.19.0 — candidata, validação interrompida a pedido do usuário
+
+- Desktop recebe notificações de novos quadros; mantém uma verificação periódica de segurança, em vez de consultar continuamente a cada 8 ms. Recuperação da ordem de janelas por eventos, com agrupamento de notificações.
+- Apresentações recusadas por GPU ocupada são tentadas novamente e só contam como aceitas após sucesso. O fundo transparente é limpo ao desenhar; recursos de desenho são reutilizados ao redimensionar.
+- Captura evita recalcular resolução/layout a cada quadro e reduz consultas quando não há imagem nova nem leitura pendente. FPS automático considera pressão de entrega sustentada, com recuperação gradual e resolução independente.
+- Estado de saída sempre visível; orientação para abrir o PiP e escolha inicial entre várias fontes. Gerenciador associa perfis importados a executáveis e monitores locais.
+- Recuperação por notificações de bloqueio/suspensão e tentativas limitadas para erros transitórios de dispositivo. Pausado e oculto, o aplicativo interrompe a descoberta periódica e seus hooks de janelas.
+- Diagnóstico inclui apresentações aceitas/ocupadas e intervalos recentes, sem equivaler a FPS do jogo ou exibição física.
+- As medições preliminares tiveram carga variável e não demonstram ganho percentual confiável. O usuário pediu para não continuar os testes; a compilação não substitui validação funcional. Suspensão real, monitores físicos e estabilidade prolongada permanecem sem validação desta build. Não houve instalação no Windows do usuário.
+
 ## 0.18.0 — desktop por padrão, recuperação e atualização verificada
 
 - Saída independente desktop como padrão, com migração de preferências antigas. Sem conexão automática nem consulta de módulos de jogos nesse modo; conexão direta permanece opcional.

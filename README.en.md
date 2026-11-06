@@ -8,6 +8,8 @@ Watch an Edge or Chrome video over your game, with adjustable position and size.
 
 Windows x64 · Open source / MIT · No RTSS or extension
 
+> **0.19.0 candidate:** desktop scheduling, recovery and profile improvements are in the source. Further tests were stopped at the user’s request; stable download remains 0.18.0. [Candidate notes](docs/en/CHANGELOG.md).
+
 ## What's new
 
 **0.18.0** makes independent desktop output the default:

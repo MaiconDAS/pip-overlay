@@ -8,11 +8,11 @@ internal sealed class AdaptiveFrameRate
         minimum=Math.Min(minimum,maximum);
         if(active!=enabled||minimum!=floor||maximum!=ceiling){enabled=active;floor=minimum;ceiling=maximum;Current=maximum;slow=healthy=0;}
     }
-    internal int Sample(double processingMs){
+    internal int Sample(double processingMs,double backpressureRatio=0){
         if(!enabled)return Current;
         double budget=1000.0/Current;
-        if(processingMs>budget*.75){healthy=0;if(++slow>=3){Current=Math.Max(floor,Current==60?30:15);slow=0;}}
-        else if(processingMs<budget*.25){slow=0;if(++healthy>=20){Current=Math.Min(ceiling,Current==15?30:60);healthy=0;}}
+        if(processingMs>budget*.75||backpressureRatio>.15){healthy=0;if(++slow>=3){Current=Math.Max(floor,Current==60?30:15);slow=0;}}
+        else if(processingMs<(1000.0/ceiling)*.25&&backpressureRatio<.03){slow=0;if(++healthy>=20){Current=Math.Min(ceiling,Current==15?30:60);healthy=0;}}
         else slow=healthy=0;
         return Current;
     }
