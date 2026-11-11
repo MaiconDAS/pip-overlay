@@ -2,7 +2,7 @@
 
 [Português](docs/pt-BR/PRIVACY.md) · [Documentation](docs/en/README.md)
 
-Updated: November 5, 2026. Applies to the official PiP Overlay desktop application maintained in [MaiconDAS/pip-overlay](https://github.com/MaiconDAS/pip-overlay). Forks and external websites may behave differently.
+Updated: November 11, 2026. Applies to the official PiP Overlay desktop application maintained in [MaiconDAS/pip-overlay](https://github.com/MaiconDAS/pip-overlay). Forks and external websites may behave differently.
 
 ## Local video processing
 

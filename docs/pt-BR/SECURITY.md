@@ -2,7 +2,7 @@
 
 [English](../../SECURITY.md) · [Privacidade](PRIVACY.md)
 
-Correções de segurança são direcionadas à versão publicada mais recente. Versões antigas não têm branches de segurança mantidas separadamente. Suporte experimental a APIs não garante compatibilidade com jogos protegidos.
+Correções de segurança são direcionadas à versão estável mais recente. Versões antigas não têm branches de segurança mantidas separadamente. Suporte experimental a APIs não garante compatibilidade com jogos protegidos.
 
 Relate vulnerabilidades de forma privada por [Security > Report a vulnerability](https://github.com/MaiconDAS/pip-overlay/security/advisories/new). O relato privado de vulnerabilidades está habilitado neste repositório. Se não estiver disponível, abra uma issue pedindo um canal privado, sem detalhes de exploração, credenciais, logs pessoais ou dados de pessoas afetadas. Não publique explorações ou relatos sensíveis em uma issue comum. No relato privado, informe versão, componente, condições de reprodução e impacto. Não há prazo de resposta garantido ou programa de recompensas.
 
