@@ -2,7 +2,9 @@
 
 [Português](../../CHANGELOG.md) · [Documentation](README.md)
 
-## 0.19.0 — candidate, validation stopped at the user's request
+## 0.19.0 — desktop scheduling and portable profiles
+
+Initially published as a candidate on November 6, 2026; promoted to the main release on November 11 following approval of use in the two reported games. Original binaries and checksums were preserved. [Evidence and limits](VALIDATION-0.19.md).
 
 - Desktop receives new-frame notifications, retaining a periodic safety check instead of continuous 8 ms polling. Window-order recovery uses coalesced event notifications.
 - GPU-busy presentations are retried and counted as accepted only after success. Transparent output is cleared before drawing; rendering resources are reused during resizing.

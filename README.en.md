@@ -4,23 +4,22 @@
 
 Watch an Edge or Chrome video over your game, with adjustable position and size. Interaction stays in the editor: the in-game video receives neither clicks nor keyboard focus.
 
-[**Download v0.18.0**](https://github.com/MaiconDAS/pip-overlay/releases/latest) · [User guide](docs/en/USAGE.md) · [Compatibility](docs/en/COMPATIBILITY.md) · [Report a problem](https://github.com/MaiconDAS/pip-overlay/issues/new/choose)
+[**Download v0.19.0**](https://github.com/MaiconDAS/pip-overlay/releases/latest) · [User guide](docs/en/USAGE.md) · [Compatibility](docs/en/COMPATIBILITY.md) · [Report a problem](https://github.com/MaiconDAS/pip-overlay/issues/new/choose)
 
 Windows x64 · Open source / MIT · No RTSS or extension
 
-> **0.19.0 candidate:** desktop scheduling, recovery and profile improvements are in the source. Further tests were stopped at the user’s request; stable download remains 0.18.0. [Candidate notes](docs/en/CHANGELOG.md).
+## Current release: 0.19.0
 
-## What's new
+- **Open PiP and play:** desktop output is the default; no game selection or restart is needed for windowed/borderless use.
+- **Efficient scheduling:** new-frame notifications, reduced idle polling and resource reuse when resizing.
+- **Presentation recovery:** busy submissions are retried; automatic FPS considers sustained delivery pressure while keeping resolution independent.
+- **Clear controls:** visible output mode, keyboard positioning and a profile manager for local games and monitors.
+- **Portable settings:** preference backup/import, monitor reassociation and verified installer downloads.
+- **Ten UI languages:** Portuguese, English, Spanish, German, Italian, French, Japanese, Korean, Simplified Chinese and Russian.
 
-**0.18.0** makes independent desktop output the default:
+On November 11, 2026, the user approved behavior and performance in **Black Desert Online and Digimon Masters Online**. This is a usage report, not a controlled benchmark or proof of exclusive-fullscreen support. Additional validation remains incomplete.
 
-- **Open PiP and play:** no process selection or game restart in desktop mode. No automatic switch to game integration.
-- **Simpler controls:** advanced game connection is opt-in; the video picker stays visible. Arrow keys move the PiP; Ctrl+arrows resize it, Shift increases the step.
-- **Monitor layouts:** proportional restoration after resolution changes, with a saved layout per monitor and a remembered preferred display.
-- **Recovery:** export/import settings with a backup, and verified installer downloads with previous stable versions available.
-- **Ten languages and diagnostics:** new controls translated; local reports distinguish desktop output from a connected renderer.
-
-[Release notes](docs/en/CHANGELOG.md) · [0.18 validation and limits](docs/en/VALIDATION-0.18.md)
+[Changelog](docs/en/CHANGELOG.md) · [Evidence and remaining limits](docs/en/VALIDATION-0.19.md) · [Release policy](docs/en/RELEASES.md)
 
 ## Getting started
 
@@ -34,6 +33,8 @@ Resolution and FPS are independent. Selecting 30 fps keeps your chosen resolutio
 [Complete installation, settings and uninstall guide](docs/en/USAGE.md)
 
 ## Visual editor
+
+*Illustration from 0.18; the current version also includes output-mode identification and the profile manager.*
 
 ![PiP Overlay editor with a settings sidebar](docs/assets/workspace-018-en.png)
 
@@ -60,7 +61,7 @@ The editor represents the monitor proportionally. Settings live in the sidebar, 
 | Vulkan | Experimental; 8-bit SDR with presentation limitations |
 | GPU transport | Optimized for DirectX 11; other APIs retain CPU transport |
 
-**Discovering a game does not guarantee that it accepts the overlay.** Protections, launchers and graphics configurations can prevent integration. A user reported successful desktop output over Black Desert Online; this does not validate direct integration or exclusive fullscreen. Newer-API fullscreen requires specific validation; synthetic tests do not certify every game or guarantee 60 fps.
+**Discovering a game does not guarantee that it accepts the overlay.** Protections, launchers and graphics configurations can prevent integration. User-reported success in Black Desert Online and Digimon Masters Online does not validate every integration or exclusive fullscreen. Newer-API fullscreen requires specific validation; synthetic tests do not certify every game or guarantee 60 fps.
 
 [Limits and game discovery](docs/en/COMPATIBILITY.md) · [Test matrix](docs/en/TEST-MATRIX.md)
 

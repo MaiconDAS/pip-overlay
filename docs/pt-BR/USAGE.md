@@ -4,7 +4,7 @@
 
 ## Instalar ou levar para outro computador
 
-Copie `PiP-Overlay-v0.18.0.exe` e execute-o. O atalho na área de trabalho é opcional e vem marcado por padrão. Atalhos no menu Iniciar e a entrada em Aplicativos instalados / Programas e Recursos são criados automaticamente. Runtime e renderizadores estão incluídos; não precisa de extensão, RTSS ou download separado de runtime.
+Copie `PiP-Overlay-v0.19.0.exe` e execute-o. O atalho na área de trabalho é opcional e vem marcado por padrão. Atalhos no menu Iniciar e a entrada em Aplicativos instalados / Programas e Recursos são criados automaticamente. Runtime e renderizadores estão incluídos; não precisa de extensão, RTSS ou download separado de runtime.
 
 A instalação registrada é detectada automaticamente. Atualizar na mesma pasta preserva preferências. Escolher outro destino importa as preferências da instalação registrada sem sobrescrever ajustes existentes no destino. Para uma cópia portátil antiga, selecione a própria pasta dela. Não há etapa manual de importação nem varredura indiscriminada do disco.
 
@@ -46,10 +46,10 @@ Layouts de monitores são salvos separadamente dentro do perfil atual. Mudanças
 
 ## Preferências e recuperação
 
-Em **Ajustes → Mais**, exporte um JSON e importe no outro computador. A importação valida o arquivo, mescla os perfis de jogos, salva os ajustes anteriores em `data/backups`, mantém o caminho local do executável e pausa o PiP. O aplicativo fecha; abra novamente para aplicar e escolha Retomar. Backups podem ser importados pela mesma ação. As chaves dos perfis dependem do caminho do executável; caminhos diferentes em outro PC exigem selecionar/copiar o perfil novamente. O monitor também pode precisar de nova seleção.
+Em **Ajustes → Mais**, exporte um JSON e importe no outro computador. A importação valida o arquivo, mescla os perfis de jogos, salva os ajustes anteriores em `data/backups`, mantém o caminho local do executável e pausa o PiP. O aplicativo fecha; abra novamente para aplicar e escolha Retomar. Backups podem ser importados pela mesma ação. Use Perfis e monitores para associar perfis importados aos caminhos de executáveis e monitores locais.
 
 **Atualizações** lista instaladores estáveis com SHA-256 informado pela release oficial do GitHub. Verifica tamanho e hash antes de aceitar o arquivo, salva um backup e permite escolher uma versão estável anterior. Feche o app e execute o instalador baixado. Versões antigas podem não entender ajustes novos; os backups continuam disponíveis. O hash não substitui assinatura do editor; a assinatura pública está pendente. Fechar a janela de download cancela a operação. Nenhum instalador é executado automaticamente. Downloads e backups permanecem locais até serem removidos pelo usuário.
 
-## Candidata 0.19
+## Perfis e estado da conexão
 
-O editor principal identifica o modo de saída. Quando há várias fontes na abertura com o editor visível, oferece a escolha do vídeo; cancelar pausa a conexão automática. Use **Ajustes → Mais → Perfis e monitores** para aplicar um perfil importado, associar uma cópia a um executável local ou mapear um layout salvo para um monitor atual. Perfis antigos sem nome mostram um identificador curto. A associação de monitor preserva a posição proporcional e a entrada da tela antiga. A recuperação após bloqueio/suspensão real e sessões longas não foi validada nesta candidata.
+O editor principal identifica o modo de saída. Quando há várias fontes na abertura com o editor visível, oferece a escolha do vídeo; cancelar pausa a conexão automática. Use **Ajustes → Mais → Perfis e monitores** para aplicar um perfil importado, associar uma cópia a um executável local ou mapear um layout salvo para um monitor atual. Perfis antigos sem nome mostram um identificador curto. A associação de monitor preserva a posição proporcional e a entrada da tela antiga. A recuperação após bloqueio/suspensão real e sessões longas não foi validada nesta versão.

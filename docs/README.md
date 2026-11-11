@@ -21,10 +21,12 @@
 | Arquitetura | [Guia](ARCHITECTURE.md) | [Guide](en/ARCHITECTURE.md) |
 | Como contribuir | [Guia](../CONTRIBUTING.md) | [Guide](en/CONTRIBUTING.md) |
 | Matriz de testes | [Matriz](TEST-MATRIX.md) | [Matrix](en/TEST-MATRIX.md) |
+| Evidências e limites da 0.19 | [Relatório](VALIDATION-0.19.md) | [Report](en/VALIDATION-0.19.md) |
+| Política e arquivo de releases | [Guia](RELEASES.md) | [Guide](en/RELEASES.md) |
 | Resultados da 0.18 | [Relatório](VALIDATION-0.18.md) | [Report](en/VALIDATION-0.18.md) |
 | Resultados da 0.17 | [Relatório](VALIDATION-0.17.md) | [Report](en/VALIDATION-0.17.md) |
 | Resultados da 0.16 | [Relatório](VALIDATION-0.16.md) | [Report](en/VALIDATION.md) |
-| Revisão do repositório | [Relatório](REPOSITORY-AUDIT-0.16.md) | [Report](en/REPOSITORY-AUDIT.md) |
+| Revisão histórica (0.16) | [Relatório](REPOSITORY-AUDIT-0.16.md) | [Report](en/REPOSITORY-AUDIT.md) |
 | Assinatura digital | [Guia](SIGNING.md) | [Guide](en/SIGNING.md) |
 | Dependências | [Avisos](../THIRD_PARTY_NOTICES.md) | [Notices](en/THIRD_PARTY_NOTICES.md) |
 | Identidade visual | [Guia](BRAND.md) | [Guide](en/BRAND.md) |

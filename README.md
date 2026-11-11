@@ -4,23 +4,22 @@
 
 Vídeo do Edge ou Chrome sobre seu jogo, com posição e tamanho ajustáveis. A interação fica no editor: o vídeo dentro do jogo não recebe cliques nem foco do teclado.
 
-[**Baixar v0.18.0**](https://github.com/MaiconDAS/pip-overlay/releases/latest) · [Guia de uso](docs/pt-BR/USAGE.md) · [Compatibilidade](docs/COMPATIBILITY.md) · [Relatar problema](https://github.com/MaiconDAS/pip-overlay/issues/new/choose)
+[**Baixar v0.19.0**](https://github.com/MaiconDAS/pip-overlay/releases/latest) · [Guia de uso](docs/pt-BR/USAGE.md) · [Compatibilidade](docs/COMPATIBILITY.md) · [Relatar problema](https://github.com/MaiconDAS/pip-overlay/issues/new/choose)
 
 Windows x64 · Código aberto / MIT · Sem RTSS ou extensão
 
-> **Candidata 0.19.0:** o código contém melhorias de agendamento desktop, recuperação e perfis. Os testes adicionais foram interrompidos a pedido do usuário; o download estável continua na 0.18.0. [Notas da candidata](CHANGELOG.md).
+## Versão atual: 0.19.0
 
-## Novidades da versão atual
+- **Abra o PiP e jogue:** saída desktop como padrão, sem selecionar ou reiniciar o jogo para uso em janela/borderless.
+- **Agendamento eficiente:** avisos de quadros novos, menos consultas ociosas e reutilização de recursos ao redimensionar.
+- **Recuperação de apresentação:** novas tentativas quando a GPU está ocupada; FPS automático considera pressão sustentada sem alterar a resolução.
+- **Controles claros:** modo de saída visível, posicionamento pelo teclado e gerenciador de perfis para jogos e monitores locais.
+- **Preferências portáveis:** backup/importação, associação de monitores e download verificado de instaladores.
+- **Dez idiomas na interface:** português, inglês, espanhol, alemão, italiano, francês, japonês, coreano, chinês simplificado e russo.
 
-A **0.18.0** torna a saída independente na área de trabalho o padrão:
+Em 11 de novembro de 2026, o usuário aprovou o funcionamento e o desempenho em **Black Desert Online e Digimon Masters Online**. É um relato de uso, não um benchmark controlado nem comprovação de fullscreen exclusivo. A validação adicional permanece incompleta.
 
-- **Abra o PiP e jogue:** sem selecionar processo ou reiniciar o jogo no modo desktop. Não há troca automática para integração no jogo.
-- **Controles simples:** conexão direta é opcional e avançada; o botão Vídeos permanece visível. Setas movem, Ctrl+setas redimensiona e Shift aumenta o passo.
-- **Layouts por monitor:** restauração proporcional ao mudar a resolução, com layout salvo por monitor e preferência de tela preservada.
-- **Recuperação:** exportação/importação com backup e download verificado de instaladores, incluindo versões estáveis anteriores.
-- **Dez idiomas e diagnóstico:** novos controles traduzidos; relatórios locais distinguem saída desktop de renderizador conectado.
-
-[Histórico](CHANGELOG.md) · [Validação e limites da 0.18](docs/VALIDATION-0.18.md)
+[Histórico](CHANGELOG.md) · [Evidências e limites pendentes](docs/VALIDATION-0.19.md) · [Política de versões](docs/RELEASES.md)
 
 ## Como usar
 
@@ -34,6 +33,8 @@ Resolução e FPS são independentes. Escolher 30 fps mantém o limite de resolu
 [Guia completo de instalação, ajustes e desinstalação](docs/pt-BR/USAGE.md)
 
 ## Editor visual
+
+*Imagem da 0.18; a versão atual também inclui identificação do modo de saída e gerenciador de perfis.*
 
 ![Editor do PiP Overlay com ajustes laterais](docs/assets/workspace-018.png)
 
@@ -60,7 +61,7 @@ O editor representa o monitor proporcionalmente. Os ajustes ficam na lateral, pr
 | Vulkan | Experimental; SDR de 8 bits, com limites de apresentação |
 | Transporte GPU | Otimizado em DirectX 11; outras APIs mantêm transporte CPU |
 
-**Detectar um jogo não garante que ele aceite a overlay.** Proteções, launchers e configurações gráficas podem impedir a integração. Há relato do usuário de funcionamento no Black Desert Online pela saída desktop; isso não valida integração direta ou fullscreen exclusivo. Fullscreen das APIs mais novas requer validação específica; testes sintéticos não certificam todos os jogos nem garantem 60 fps.
+**Detectar um jogo não garante que ele aceite a overlay.** Proteções, launchers e configurações gráficas podem impedir a integração. Há aprovação de uso em Black Desert Online e Digimon Masters Online; isso não valida todas as integrações ou fullscreen exclusivo. Fullscreen das APIs mais novas requer validação específica; testes sintéticos não certificam todos os jogos nem garantem 60 fps.
 
 [Limites e detecção de jogos](docs/COMPATIBILITY.md) · [Matriz de testes](docs/TEST-MATRIX.md)
 

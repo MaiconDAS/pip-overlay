@@ -2,7 +2,9 @@
 
 # Histórico
 
-## 0.19.0 — candidata, validação interrompida a pedido do usuário
+## 0.19.0 — agendamento desktop e perfis portáveis
+
+Publicada inicialmente como candidata em 6 de novembro de 2026; promovida a release principal em 11 de novembro após aprovação de uso nos dois jogos relatados. Os binários e checksums originais foram preservados. [Evidências e limites](docs/VALIDATION-0.19.md).
 
 - Desktop recebe notificações de novos quadros; mantém uma verificação periódica de segurança, em vez de consultar continuamente a cada 8 ms. Recuperação da ordem de janelas por eventos, com agrupamento de notificações.
 - Apresentações recusadas por GPU ocupada são tentadas novamente e só contam como aceitas após sucesso. O fundo transparente é limpo ao desenhar; recursos de desenho são reutilizados ao redimensionar.

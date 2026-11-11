@@ -2,7 +2,7 @@
 
 # Game compatibility
 
-Status for **0.18.0**. Desktop output is the default and does not depend on the game's graphics API while Windows can compose a window above it.
+Status for **0.19.0**. Desktop output is the default and does not depend on the game's graphics API while Windows can compose a window above it.
 
 | Component | Status |
 | --- | --- |
@@ -21,7 +21,14 @@ Status for **0.18.0**. Desktop output is the default and does not depend on the 
 
 Open PiP Overlay and put the browser video in PiP. No process selection is needed: desktop output sits above windows and borderless games, passes clicks through and does not take focus. It never automatically switches to direct integration when a game is detected.
 
-The user reported successful **desktop output over Black Desert Online on their home computer**, while selecting the process directly did not work. The exact presentation mode was not measured. This report does not certify direct integration, exclusive fullscreen or other game configurations.
+## Reported game usage
+
+| Game | Evidence |
+| --- | --- |
+| Black Desert Online | User approved behavior and performance on November 11, 2026; an earlier report identified desktop output as working while direct selection failed. |
+| Digimon Masters Online | User approved behavior and performance on November 11, 2026. |
+
+The latest report did not provide the exact executable version, GPU/driver, resolution, FPS or presentation mode for each game. Do not infer exclusive fullscreen, a working direct integration or a universal hardware guarantee from it. No controlled game-FPS comparison was supplied.
 
 ## Optional direct connection
 
@@ -32,9 +39,9 @@ D3D9/11 can connect to running processes when permitted. D3D12, OpenGL and Vulka
 ## Limits
 
 - No promise of support for every game or zero performance cost.
-- Real-game FPS impact was not measured for this release. Desktop mode skips game discovery but does not change video transport cost.
+- Real-game FPS impact was not measured for this release. Desktop mode skips game discovery but capture and composition still consume resources.
 - HDR and AMD/NVIDIA GPUs were not validated by the project in this round. The home report is usage evidence, not a controlled benchmark.
 - Vulkan does not compose with multiple swapchains, presentation extension chains, device groups or protected resources.
 - Native PiP is still required; ordinary browser tabs are not extracted automatically. Protected video may not be capturable.
 
-[Current validation](VALIDATION-0.18.md) · [0.17 renderer validation](VALIDATION-0.17.md) · [Test matrix](TEST-MATRIX.md) · [Architecture](ARCHITECTURE.md)
+[Current validation](VALIDATION-0.19.md) · [0.17 renderer validation](VALIDATION-0.17.md) · [Test matrix](TEST-MATRIX.md) · [Architecture](ARCHITECTURE.md)

@@ -2,6 +2,14 @@
 
 # Matriz de testes
 
+## Evidências atuais (0.19)
+
+Em 11 de novembro de 2026 foi recebida aprovação de funcionamento/desempenho em Black Desert Online e Digimon Masters Online. Hardware e modo de apresentação exatos não foram registrados. Não há novo benchmark controlado, validação física de monitores/suspensão ou resultado de sessão prolongada. [Evidências atuais](VALIDATION-0.19.md).
+
+## Resultados sintéticos históricos
+
+A matriz abaixo registra testes anteriores em hosts próprios. Não certifica todas as células na 0.19; os dados de hardware/driver pertencem aos relatórios originais.
+
 A matriz distingue suporte implementado de validação efetiva. Ambiente Intel UHD Graphics 770, driver 32.0.101.7092. Resultados de hosts próprios não equivalem a jogos certificados.
 
 | Ambiente | D3D9 | D3D11 | D3D12 | OpenGL | Vulkan |
@@ -22,4 +30,4 @@ A matriz distingue suporte implementado de validação efetiva. Ambiente Intel U
 
 Para desenvolvimento local: `scripts/Test-Graphics.ps1`, `--contention-test`, `--gpu-benchmark`, `scripts/Test-SharedGpu.ps1` e `scripts/Test-InstallerIntegration.ps1` (somente em runner descartável). O benchmark de host tem duração reduzida e serve como smoke test; não substitui as três rodadas de jogo real.
 
-A 0.16 inclui testes do transporte D3D11 compartilhado em 32/64 bits, mudança de resolução, posição, retorno forçado à CPU e verificação de cantos arredondados. Os resultados atuais estão em [VALIDATION-0.16.md](VALIDATION-0.16.md).
+A 0.16 inclui testes do transporte D3D11 compartilhado em 32/64 bits, mudança de resolução, posição, retorno forçado à CPU e verificação de cantos arredondados. Os resultados históricos estão em [VALIDATION-0.16.md](VALIDATION-0.16.md).

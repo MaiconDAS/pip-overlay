@@ -1,7 +1,7 @@
-PiP Overlay 0.18.0 — um único instalador
+PiP Overlay 0.19.0 — um único instalador
 
 PARA LEVAR PARA OUTRO COMPUTADOR
-Copie PiP-Overlay-v0.18.0.exe. Abra e siga o assistente. O atalho na área de trabalho vem marcado por padrão. O menu Iniciar e a entrada em Aplicativos instalados são criados automaticamente. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
+Copie PiP-Overlay-v0.19.0.exe. Abra e siga o assistente. O atalho na área de trabalho vem marcado por padrão. O menu Iniciar e a entrada em Aplicativos instalados são criados automaticamente. O runtime e os renderizadores já estão incluídos. Não é preciso extensão, RTSS ou outro download durante a instalação.
 
 PARA USAR
 1. Deixe PiP Overlay aberto; fechar a janela mantém a ferramenta junto ao relógio.
@@ -38,3 +38,9 @@ Exporte/importe preferências em Ajustes > Mais. A importação salva backup e f
 
 TECLADO E MONITORES
 Setas movem; Ctrl+setas redimensiona; Shift aumenta o passo; Ctrl+Z desfaz. Esses comandos só atuam no editor. Layouts são salvos por monitor, ajustados proporcionalmente à resolução e restaurados ao reconectar a tela preferida.
+
+PERFIS PORTÁVEIS
+Ajustes > Mais > Perfis e monitores permite aplicar um perfil salvo, associar uma cópia a outro executável e mapear um layout para uma tela local. A saída atual aparece na janela principal.
+
+ESTADO DA VERSÃO
+Aprovação de uso em Black Desert Online e Digimon Masters Online recebida em 11/11/2026. Não equivale a benchmark, compatibilidade universal ou confirmação de fullscreen exclusivo. Mais informações: https://github.com/MaiconDAS/pip-overlay/blob/main/docs/VALIDATION-0.19.md

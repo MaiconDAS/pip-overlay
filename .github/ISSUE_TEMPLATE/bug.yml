@@ -16,6 +16,18 @@ body:
     validations:
       required: true
   - type: dropdown
+    id: output_mode
+    attributes:
+      label: Modo de saída
+      options:
+        - Desktop (overlay independente)
+        - Conexão direta ao jogo
+        - Não sei
+  - type: input
+    id: game
+    attributes:
+      label: Jogo/aplicativo (opcional)
+  - type: dropdown
     id: api
     attributes:
       label: API gráfica

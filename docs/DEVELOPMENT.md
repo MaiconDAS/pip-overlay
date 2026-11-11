@@ -43,7 +43,7 @@ Esses testes abrem janelas próprias e o segundo ocupa a tela em fullscreen temp
 pwsh ./scripts/Package.ps1
 ```
 
-Saídas: `dist/installer/PiP-Overlay-v0.16.1.exe`, `dist/SHA256SUMS.txt` e o ZIP intermediário. O instalador inclui .NET, componentes nativos e os avisos de licença. Não inclui ferramentas de desenvolvimento, hosts de teste, extensão ou preferências do usuário.
+Saídas: `dist/installer/PiP-Overlay-v0.19.0.exe`, `dist/SHA256SUMS.txt` e o ZIP intermediário. O instalador inclui .NET, componentes nativos e os avisos de licença. Não inclui ferramentas de desenvolvimento, hosts de teste, extensão ou preferências do usuário.
 
 O instalador é compilado com Inno Setup 7.1.0. `Initialize-Installer.ps1` baixa arquivos fixados por SHA256 e extrai o compilador em `.tools`, sem executar seu instalador. O motor de distribuição gerencia atalhos, registro de desinstalação por usuário e atualização.
 
@@ -74,7 +74,7 @@ Não versionar executáveis, dados de uso, tokens, caches, resultados com caminh
 pwsh ./scripts/Test-Graphics.ps1 -ZigPath C:\caminho\zig.exe
 ```
 
-Esse teste abre exclusivamente hosts próprios de D3D11, D3D12, OpenGL e Vulkan, em 32 e 64 bits. Verifica cinco posições e tamanhos por API; requer drivers com suporte às APIs. Também valida a preservação dos pixels em 720p/1080p, restauração da janela de origem e captura contínua em um host D3D9. Não é um benchmark de jogos nem do YouTube. Relatórios locais ficam em `artifacts/tests` e não devem ser versionados porque incluem caminhos da máquina. Veja [VALIDATION-0.16.md](VALIDATION-0.16.md) para os resultados atuais.
+Esse teste abre exclusivamente hosts próprios de D3D11, D3D12, OpenGL e Vulkan, em 32 e 64 bits. Verifica cinco posições e tamanhos por API; requer drivers com suporte às APIs. Também valida a preservação dos pixels em 720p/1080p, restauração da janela de origem e captura contínua em um host D3D9. Não é um benchmark de jogos nem do YouTube. Relatórios locais ficam em `artifacts/tests` e não devem ser versionados porque incluem caminhos da máquina. Veja [VALIDATION-0.16.md](VALIDATION-0.16.md) para os resultados históricos dessa versão.
 
 Para conferir o instalador sem abrir o aplicativo nem alterar o Windows:
 
@@ -104,6 +104,10 @@ Para testar miniaturas e edição em uma sessão Windows com DWM, execute script
 
 ## Transporte integrado e documentação
 
-Após preparar uma build de desenvolvimento com hosts, bibliotecas e efeitos, use --shared-test report.json pixels 64 (ou 32) para pixels, posição, resolução e fallback. Os modos cpu e gpu comparam os transportes; reconnect verifica oito recriações de sessão. São comandos excluídos da produção. Test-Performance.ps1 executa a matriz de configuração e variantes experimentais. Não compare variantes simultaneamente nem generalize microbenchmarks para FPS de jogos.
+Após preparar uma build de desenvolvimento com hosts, bibliotecas e efeitos, use --shared-test report.json pixels 64 (ou 32) para pixels, posição, resolução e fallback. Os modos cpu e gpu comparam os transportes; reconnect verifica 24 recriações de sessão. São comandos excluídos da produção. Test-Performance.ps1 executa a matriz de configuração e variantes experimentais. Não compare variantes simultaneamente nem generalize microbenchmarks para FPS de jogos.
 
 Execute scripts/Test-Documentation.ps1 para verificar links locais, pares de idiomas e alinhamento da versão. O nome do instalador vem de scripts/Get-InstallerName.ps1, derivado da versão do projeto. Para uma release nova, atualize os manifestos e as duas edições dos guias.
+
+## Fluxo atual de publicação
+
+Veja a [política de versões](RELEASES.md) sobre artefatos preservados, canais e evidências da 0.19. Não foram executados novos testes na revisão documental/de releases de 11 de novembro. A ferramenta `--desktop-performance report.json 12 3` é exclusiva de desenvolvimento e requer os arquivos nativos e `PipTest32.exe`. Mede uma fonte e um host sintéticos, não um jogo real.

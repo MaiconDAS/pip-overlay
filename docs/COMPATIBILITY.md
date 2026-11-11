@@ -2,7 +2,7 @@
 
 # Compatibilidade com jogos
 
-Estado da versão **0.18.0**. O modo desktop é o padrão e independe da API do jogo enquanto o Windows consegue compor a janela por cima dele.
+Estado da versão **0.19.0**. O modo desktop é o padrão e independe da API do jogo enquanto o Windows consegue compor a janela por cima dele.
 
 | Componente | Situação |
 | --- | --- |
@@ -21,7 +21,14 @@ Estado da versão **0.18.0**. O modo desktop é o padrão e independe da API do 
 
 Abra o PiP Overlay e coloque o vídeo em PiP no navegador. Não selecione processo: o modo desktop aparece sobre janelas e jogos borderless, deixa os cliques atravessarem e não toma foco. Não troca automaticamente para integração direta ao detectar um jogo.
 
-O usuário relatou funcionamento no **Black Desert Online pela saída desktop em seu computador**, enquanto a seleção direta do processo não funcionou. O modo de apresentação exato não foi medido. Esse relato não certifica integração direta, fullscreen exclusivo ou outras configurações do jogo.
+## Relatos de uso em jogos
+
+| Jogo | Evidência |
+| --- | --- |
+| Black Desert Online | Funcionamento e desempenho aprovados pelo usuário em 11 de novembro de 2026; relato anterior identificou sucesso no modo desktop e falha na seleção direta. |
+| Digimon Masters Online | Funcionamento e desempenho aprovados pelo usuário em 11 de novembro de 2026. |
+
+O relato mais recente não informou a versão exata do executável, GPU/driver, resolução, FPS ou modo de apresentação de cada jogo. Não se deve inferir fullscreen exclusivo, integração direta funcionando ou garantia para qualquer hardware. Não foi fornecida comparação controlada do FPS dos jogos.
 
 ## Conexão direta opcional
 
@@ -32,9 +39,9 @@ DirectX 9/11 podem conectar a processos abertos quando permitido. DirectX 12, Op
 ## Limites
 
 - Não há promessa de cobertura de todos os jogos ou de custo zero de performance.
-- Não foi medido o impacto no FPS de jogos reais nesta versão; a mudança evita a descoberta de processos no modo desktop, mas não altera o custo do transporte de vídeo.
+- Não foi medido o impacto no FPS de jogos reais nesta versão; a mudança evita a descoberta de processos no modo desktop, mas captura e composição continuam consumindo recursos.
 - HDR e GPUs AMD/NVIDIA não foram validados pelo projeto nesta rodada. O relato doméstico é evidência de uso, não benchmark controlado.
 - Vulkan não compõe em múltiplas swapchains, cadeias de extensão na apresentação, device groups ou recursos protegidos.
 - PiP nativo continua obrigatório; uma aba comum não é extraída automaticamente. Vídeo protegido pode não ser capturável.
 
-[Validação atual](VALIDATION-0.18.md) · [Validação dos renderizadores na 0.17](VALIDATION-0.17.md) · [Matriz de testes](TEST-MATRIX.md) · [Arquitetura](ARCHITECTURE.md)
+[Validação atual](VALIDATION-0.19.md) · [Validação dos renderizadores na 0.17](VALIDATION-0.17.md) · [Matriz de testes](TEST-MATRIX.md) · [Arquitetura](ARCHITECTURE.md)

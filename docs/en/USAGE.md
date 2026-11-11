@@ -4,7 +4,7 @@
 
 ## Install or move to another computer
 
-Copy `PiP-Overlay-v0.18.0.exe` to the other computer and run it. The desktop shortcut is optional and selected by default. Start menu shortcuts and a Windows Installed apps / Programs and Features entry are created automatically. The runtime and renderers are included; no browser extension, RTSS or separate runtime download is needed.
+Copy `PiP-Overlay-v0.19.0.exe` to the other computer and run it. The desktop shortcut is optional and selected by default. Start menu shortcuts and a Windows Installed apps / Programs and Features entry are created automatically. The runtime and renderers are included; no browser extension, RTSS or separate runtime download is needed.
 
 Existing registered installations are detected automatically. Updating in the same folder preserves preferences. Choosing a different destination imports the registered installation's preferences without overwriting existing destination settings. For an old portable copy, select its existing folder. There is no manual import-path step or whole-disk search.
 
@@ -40,10 +40,10 @@ Monitor layouts are saved separately within the current profile. Resolution chan
 
 ## Preferences and recovery
 
-Under **Settings → More**, export a JSON file and import it on another PC. Import validates the file, merges its game profiles, backs up existing preferences under `data/backups`, preserves the local executable path and pauses PiP. The app closes; reopen it to apply the settings, then choose Resume. Backups can be imported through the same action. Game profile keys depend on the executable path; different paths on another PC require selecting/copying a profile again. Monitor names may also need reselection.
+Under **Settings → More**, export a JSON file and import it on another PC. Import validates the file, merges its game profiles, backs up existing preferences under `data/backups`, preserves the local executable path and pauses PiP. The app closes; reopen it to apply the settings, then choose Resume. Backups can be imported through the same action. Use Profiles and monitors to associate imported profiles with local executable paths and monitor names.
 
 **Updates** lists stable installers with SHA-256 metadata from the official GitHub release. It verifies size and hash before accepting the file, backs up preferences and allows selecting an older stable version. Close the app and run the downloaded installer yourself. Older versions may not understand new preferences; backups remain available. Hash validation is not a publisher signature; public code signing is pending. Closing the download window cancels the operation. No installer runs automatically. Downloads and backups are retained locally until removed by the user.
 
-## 0.19 candidate
+## Profiles and connection state
 
-The main editor identifies the output mode. When several sources are available at startup while the editor is visible, it offers a video choice; cancellation pauses automatic connection. Use **Settings → More → Profiles and monitors** to apply an imported profile, assign a copy to a local game executable, or map a saved monitor layout to a current display. Legacy unnamed profiles show a short identifier. Monitor mapping preserves proportional placement and the old display entry. Actual lock/sleep and long-session recovery have not been validated in this candidate.
+The main editor identifies the output mode. When several sources are available at startup while the editor is visible, it offers a video choice; cancellation pauses automatic connection. Use **Settings → More → Profiles and monitors** to apply an imported profile, assign a copy to a local game executable, or map a saved monitor layout to a current display. Legacy unnamed profiles show a short identifier. Monitor mapping preserves proportional placement and the old display entry. Actual lock/sleep and long-session recovery have not been validated in this release.

@@ -1,5 +1,13 @@
 # Test matrix
 
+## Current evidence (0.19)
+
+User approval of behavior/performance in Black Desert Online and Digimon Masters Online was received on November 11, 2026. Exact hardware and presentation settings were not recorded. There is no new controlled benchmark, physical monitor/sleep validation or prolonged-run result. [Current evidence](VALIDATION-0.19.md).
+
+## Historical synthetic results
+
+The matrix below records earlier host tests. It does not certify every cell for 0.19; hardware/driver details belong to the original reports.
+
 [Português](../TEST-MATRIX.md) · [English index](README.md)
 
 Results refer to Intel UHD Graphics 770, driver 32.0.101.7092. Dedicated test hosts are not certified games.
